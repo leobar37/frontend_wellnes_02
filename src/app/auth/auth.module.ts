@@ -1,3 +1,4 @@
+import { AuthService } from './services/auth.service';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -25,9 +26,11 @@ const zorro = [
   NzInputModule,
   NzButtonModule,
 ];
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { GridModule } from '@angular/flex-layout';
 import { SocialproviderComponent } from './components/socialprovider/socialprovider.component';
+
 @NgModule({
   declarations: [RegisterComponent, LoginComponent, SocialproviderComponent],
   imports: [
@@ -38,7 +41,7 @@ import { SocialproviderComponent } from './components/socialprovider/socialprovi
     FontAwesomeModule,
     ReactiveFormsModule,
   ],
-  providers: [{ provide: CONFIGAUTH, useValue: IdatConfigAuth }],
+  providers: [{ provide: CONFIGAUTH, useValue: IdatConfigAuth }, AuthService],
 })
 export class AuthModule {
   constructor(libray: FaIconLibrary) {

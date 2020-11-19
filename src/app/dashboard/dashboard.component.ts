@@ -13,8 +13,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isCollapsed = false;
   mediaObserbable: Subscription;
   constructor(private media: MediaObserver) {}
+
   ngOnInit(): void {
-    // throw new Error('Method not implemented.');
     this.mediaObserbable = this.media
       .asObservable()
       .subscribe((data: MediaChange[]) => {

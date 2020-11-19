@@ -4,20 +4,98 @@
     fxFlex.lt-sm="100%"
     style="height: 100vh"
     class="contain_oauth_form"
+    style="overflow-y: scroll"
   >
-    <img width="300" src="assets/wellenesslogo.png" alt="" />
+    <img width="150" src="assets/wellenesslogo.png" alt="" />
     <h2 class="title text-uppercase">Registrarse</h2>
     <form nz-form [formGroup]="registerForm" class="oauth_form">
+      <!-- name and lastName -->
       <nz-form-item>
-        <nz-form-control class="control_le" [nzSpan]="configAuth.widhtInput">
-          <nz-form-label nzFor="email"> Email </nz-form-label>
-          <input type="text" nz-input placeholder="Ingrese su email" />
+        <nz-form-control
+          [nzSpan]="configAuth.widhtInput / 2"
+          class="control_le mr-2"
+          nzErrorTip="Este campo es requerido"
+        >
+          <nz-form-label nzFor="name"> Nombre</nz-form-label>
+          <input
+            type="text"
+            formControlName="name"
+            nz-input
+            placeholder="Name"
+          />
+        </nz-form-control>
+        <nz-form-control
+          [nzSpan]="configAuth.widhtInput"
+          nzErrorTip="Este campo es requerido"
+          class="control_le"
+        >
+          <nz-form-label nzFor="lastName"> Apellidos</nz-form-label>
+          <input
+            type="text"
+            formControlName="lastName"
+            nz-input
+            placeholder="Enter LastName"
+          />
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
+        <nz-form-control
+          class="control_le"
+          nzErrorTip="Este email no es valido"
+          [nzSpan]="configAuth.widhtInput"
+        >
+          <nz-form-label nzFor="email"> Email </nz-form-label>
+          <input
+            type="text"
+            formControlName="email"
+            nz-input
+            placeholder="Ingrese su email"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <!-- PHONE -->
+      <nz-form-item>
         <nz-form-control [nzSpan]="configAuth.widhtInput" class="control_le">
+          <nz-form-label nzFor="phone"> Telefono</nz-form-label>
+          <input
+            type="tel"
+            formControlName="phone"
+            nz-input
+            placeholder="Enter phone"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control
+          [nzSpan]="configAuth.widhtInput"
+          [nzErrorTip]="errorPassword"
+          class="control_le"
+        >
           <nz-form-label nzFor="password"> Contraseña </nz-form-label>
-          <input type="password" nz-input placeholder="Ingrese su contraseña" />
+          <input
+            type="password"
+            formControlName="password"
+            nz-input
+            placeholder="Ingrese su contraseña"
+          />
+        </nz-form-control>
+        <!-- validate password -->
+        <ng-template #errorPassword let-control>
+          <ng-container *ngIf="control.hasError('password')">
+            {{ control.getError("password") }}
+          </ng-container>
+        </ng-template>
+      </nz-form-item>
+      <!-- repeat password -->
+      <nz-form-item>
+        <nz-form-control [nzSpan]="configAuth.widhtInput" class="control_le">
+          <nz-form-label nzFor="password">Repetir Contraseña </nz-form-label>
+          <input
+            type="password"
+            formControlName="repeatPassword"
+            nz-input
+            placeholder="Ingrese su contraseña"
+          />
         </nz-form-control>
       </nz-form-item>
       <!-- login with social providers -->
@@ -25,7 +103,9 @@
       <span class="changue_oauth">
         <a routerLink="/login">Ya tengo una cuenta</a>
       </span>
-      <button nz-button nzType="primary" class="button_le">Registrarse</button>
+      <button nz-button nzType="primary" class="button_le" (click)="senForm()">
+        Registrarse
+      </button>
     </form>
   </div>
   <!-- background image left -->

@@ -11,15 +11,26 @@
       <nz-form-item>
         <nz-form-control class="control_le" [nzSpan]="configAuth.widhtInput">
           <nz-form-label nzFor="email"> Email </nz-form-label>
-          <input type="text" nz-input placeholder="Ingrese su email" />
+          <input
+            type="text"
+            nz-input
+            formControlName="email"
+            placeholder="Ingrese su email"
+          />
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
         <nz-form-control [nzSpan]="configAuth.widhtInput" class="control_le">
           <nz-form-label nzFor="password"> Contraseña </nz-form-label>
-          <input type="password" nz-input placeholder="Ingrese su contraseña" />
+          <input
+            type="password"
+            nz-input
+            formControlName="password"
+            placeholder="Ingrese su contraseña"
+          />
         </nz-form-control>
       </nz-form-item>
+
       <!-- login with social providers -->
 
       <app-socialprovider> </app-socialprovider>

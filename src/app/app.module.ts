@@ -16,7 +16,7 @@ import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-// import { FontAwesomeModule } from '@fortawesome/';
+import { GraphQLModule } from './graphql.module';
 
 registerLocaleData(en);
 
@@ -34,6 +34,7 @@ registerLocaleData(en);
     BrowserAnimationsModule,
     AuthModule,
     FontAwesomeModule,
+    GraphQLModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],
