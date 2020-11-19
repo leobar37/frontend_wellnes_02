@@ -8,29 +8,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnDestroy {
-  collapsableWidth = 0;
-  widthSidebar = '256px';
-  isCollapsed = false;
-  mediaObserbable: Subscription;
-  constructor(private media: MediaObserver) {
-    // console.log(this.media.isActive('gt-xs'));
-    this.mediaObserbable = this.media
-      .asObservable()
-      .subscribe((data: MediaChange[]) => {
-        const existMd = data.some(
-          ({ mqAlias }) => mqAlias.toLocaleLowerCase() === 'gt-xs'
-        );
-        if (existMd) {
-          this.collapsableWidth = 80;
-          this.widthSidebar = '256px';
-        } else {
-          this.collapsableWidth = 0;
-          this.widthSidebar = '180px';
-        }
-      });
-  }
+  constructor(private media: MediaObserver) {}
 
-  ngOnDestroy(): void {
-    this.mediaObserbable.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

@@ -15,6 +15,8 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+// import { FontAwesomeModule } from '@fortawesome/';
 
 registerLocaleData(en);
 
@@ -31,6 +33,7 @@ registerLocaleData(en);
     HttpClientModule,
     BrowserAnimationsModule,
     AuthModule,
+    FontAwesomeModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }],
   bootstrap: [AppComponent],

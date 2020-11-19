@@ -12,7 +12,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   widthSidebar = '256px';
   isCollapsed = false;
   mediaObserbable: Subscription;
-  constructor(private media: MediaObserver) {
+  constructor(private media: MediaObserver) {}
+  ngOnInit(): void {
+    // throw new Error('Method not implemented.');
     this.mediaObserbable = this.media
       .asObservable()
       .subscribe((data: MediaChange[]) => {
@@ -27,9 +29,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.widthSidebar = '180px';
         }
       });
-  }
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
   }
 
   ngOnDestroy(): void {
