@@ -33,7 +33,8 @@
 
       <!-- login with social providers -->
 
-      <app-socialprovider> </app-socialprovider>
+      <app-socialprovider (userEmit)="withSocialProvider($event)">
+      </app-socialprovider>
       <span class="changue_oauth">
         <a href="" routerLink="/register">No tengo una cuenta</a>
       </span>

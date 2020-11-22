@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000',
+  fabookClienId: '369791231041330',
+  googleClientId:
+    '88372403405-iacpnj3bsfobsfellcl953408obpoe9n.apps.googleusercontent.com',
 };
 
 /*

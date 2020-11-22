@@ -99,7 +99,11 @@
         </nz-form-control>
       </nz-form-item>
       <!-- login with social providers -->
-      <app-socialprovider> </app-socialprovider>
+      <app-socialprovider
+        (userEmit)="eventOfProvider($event)"
+        text="Registrate con una red social"
+      >
+      </app-socialprovider>
       <span class="changue_oauth">
         <a routerLink="/login">Ya tengo una cuenta</a>
       </span>

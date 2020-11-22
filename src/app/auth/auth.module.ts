@@ -10,6 +10,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import {
   FontAwesomeModule,
   FaIconLibrary,
@@ -19,17 +20,21 @@ import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons';
 // providers
 import { CONFIGAUTH, IconfigAuth, IdatConfigAuth } from './config';
 
+// config social methods
+import { SocialLoginModule } from 'angularx-social-login';
 const zorro = [
   NzFormModule,
   NzLayoutModule,
   GridModule,
   NzInputModule,
   NzButtonModule,
+  NzModalModule,
 ];
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { GridModule } from '@angular/flex-layout';
 import { SocialproviderComponent } from './components/socialprovider/socialprovider.component';
+import { SocialprovidersModule } from './socialproviders.module';
 
 @NgModule({
   declarations: [RegisterComponent, LoginComponent, SocialproviderComponent],
@@ -38,8 +43,10 @@ import { SocialproviderComponent } from './components/socialprovider/socialprovi
     FlexLayoutModule,
     AuthRoutingModule,
     zorro,
+    SocialLoginModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    SocialprovidersModule,
   ],
   providers: [{ provide: CONFIGAUTH, useValue: IdatConfigAuth }, AuthService],
 })
