@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+
+// frontend\node_modules\bootstrap-4-grid\scss\grid.scss
+@import "~bootstrap-4-grid/scss/grid.scss";
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

@@ -3,8 +3,8 @@ import { IoauthResponse } from './../../@core/models/Responses';
 import { IUser } from './../../@core/models/User';
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { Observable } from 'rxjs';
 
+import { Observable } from 'rxjs';
 const SING_IN = gql`
   mutation signIn($userSignIn: SignInInput!) {
     sigIn(user: $userSignIn) {
@@ -17,7 +17,6 @@ const SING_IN = gql`
     }
   }
 `;
-
 const SING_UP = gql`
   mutation signUp($user: InputUser!, $provider: Provider) {
     signUp(user: $user, provider: $provider) {
@@ -39,7 +38,6 @@ export class AuthService {
     password: string,
     provider: string = 'email'
   ): Observable<IoauthResponse> {
-    console.log(email, password, provider);
     return this.apollo
       .mutate({
         mutation: SING_IN,
@@ -53,8 +51,6 @@ export class AuthService {
     localStorage.setItem('token', token);
   }
   public signUp(user: IUser, provider = 'email'): Observable<IoauthResponse> {
-    console.log(user, provider);
-
     return this.apollo
       .mutate({
         mutation: SING_UP,
@@ -65,4 +61,6 @@ export class AuthService {
       })
       .pipe(map((data: any) => data.data.signUp));
   }
+
+  private getToken() {}
 }

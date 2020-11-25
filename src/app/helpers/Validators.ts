@@ -20,6 +20,7 @@ schemaPasword
   .has()
   .not()
   .spaces();
+
 export class MyCustomValidators {
   static limitNumber(limit: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -34,7 +35,6 @@ export class MyCustomValidators {
   static identStrings(cads: [string, string], form: string): ValidatorFn {
     return (groupForm: FormGroup): ValidationErrors | null => {
       try {
-        // tslint:disable-next-line: no-string-literal
         const contr = cads.map((item) => this[form].get(item).value);
         return contr[0] === contr[1] ? null : { equalsStrings: true };
       } catch (error) {
