@@ -1,5 +1,5 @@
 import { map } from 'rxjs/operators';
-import { IoauthResponse } from './../../@core/models/Responses';
+import { IoauthResponse } from '../../@core/models/reponses/authResponse';
 import { IUser } from './../../@core/models/User';
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
@@ -61,6 +61,4 @@ export class AuthService {
       })
       .pipe(map((data: any) => data.data.signUp));
   }
-
-  private getToken() {}
 }

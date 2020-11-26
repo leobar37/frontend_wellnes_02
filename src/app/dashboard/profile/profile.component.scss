@@ -3,12 +3,9 @@
   margin: 2rem auto;
   width: 60%;
 }
-@include desktop {
-}
-
 .table_profile {
   th {
-    font-size: 1.2rem;
+    font-size: 1rem;
     min-width: 250px;
     position: relative;
     &:after {
@@ -17,10 +14,9 @@
       content: ":";
     }
   }
-
-  tr {
-    font-size: 1rem;
-  }
+  // tr {
+  //   font-size: 0.8rem;
+  // }
   tr {
     margin: 0.5rem 0;
     padding-top: 0.5rem;
@@ -35,7 +31,7 @@
   border: 1px solid lighten($color: black, $amount: 85);
   border-radius: 10px;
   outline: none;
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 1rem;
   &::placeholder {
     opacity: 0.5;
   }

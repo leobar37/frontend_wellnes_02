@@ -1,5 +1,5 @@
 export interface IUser {
-  id?: string;
+  id?: number;
   email?: string;
   password?: string;
   code?: string;
@@ -9,11 +9,13 @@ export interface IUser {
   rol?: string[];
   birth?: Date;
   image?: string;
+  description?: string;
+  sponsor?: IUser;
 }
 
 export const examplesUser: IUser[] = [
   {
-    id: '1',
+    id: 1,
     email: 'usatloqueando@gmail.com',
     password: 'holawenas',
     code: '564asas',
@@ -25,6 +27,17 @@ export const examplesUser: IUser[] = [
   },
 ];
 
-export class User {
-  id: string;
+export class User implements IUser {
+  id?: number;
+  email?: string;
+  password?: string;
+  code?: string;
+  phone?: string;
+  name?: string;
+  lastName?: string;
+  rol?: string[];
+  birth?: Date;
+  image?: string;
+  description?: string;
+  sponsor?: IUser;
 }

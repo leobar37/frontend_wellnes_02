@@ -1,3 +1,6 @@
+import { PROFILECONFIG, DEFAULTCONFIGPROFILE } from './config';
+
+import { JwtService } from './../../services/jwt.service';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProfileService } from './services/profile.service';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -11,6 +14,12 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+/*=============================================
+=            pipes            =
+=============================================*/
+
+import { ImageresolvePipe } from '../../@core/pipes/imageresolve.pipe';
 
 const zorro = [
   NzButtonModule,
@@ -18,9 +27,10 @@ const zorro = [
   NzInputModule,
   NzUploadModule,
   NzIconModule,
+  NzDatePickerModule,
 ];
 @NgModule({
-  declarations: [ProfileComponent],
+  declarations: [ProfileComponent, ImageresolvePipe],
   imports: [
     CommonModule,
     FlexLayoutModule,
@@ -28,6 +38,10 @@ const zorro = [
     zorro,
     FormsModule,
   ],
-  providers: [ProfileService],
+  providers: [
+    ProfileService,
+    JwtService,
+    { provide: PROFILECONFIG, useValue: DEFAULTCONFIGPROFILE },
+  ],
 })
 export class ProfileModule {}

@@ -11,18 +11,25 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
-import { en_US } from 'ng-zorro-antd/i18n';
+import { en_US, es_ES } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
+import es from '@angular/common/locales/es';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GraphQLModule } from './graphql.module';
-
-registerLocaleData(en);
-
+import { JwtModule } from '@auth0/angular-jwt';
+const tokenGetter = () => {
+  return localStorage.getItem('token');
+};
+registerLocaleData(es);
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+      },
+    }),
     FlexLayoutModule,
     BrowserModule,
     AppRoutingModule,
@@ -36,7 +43,7 @@ registerLocaleData(en);
     FontAwesomeModule,
     GraphQLModule,
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }],
+  providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -11,16 +11,17 @@ export class JwtService {
   getUserOfToken(): IUser {
     if (!localStorage.getItem('token')) {
       this.router.navigateByUrl('/login');
-      return {};
+      return null;
     } else {
-      return this._jwt.decodeToken(localStorage.get('token')) as IUser;
+      return this._jwt.decodeToken<IUser>();
     }
   }
+
   isTokenValid() {
     const token = localStorage.getItem('token');
     if (!token) {
       return false;
     }
-    return this._jwt.isTokenExpired(token);
+    return this._jwt.isTokenExpired();
   }
 }

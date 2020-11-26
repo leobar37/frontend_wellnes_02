@@ -1,22 +1,27 @@
-<div fxLayout="row" class="profile_page" fxFlexAlign="center center">
+<div
+  fxLayout="row"
+  *ngIf="user"
+  class="profile_page"
+  fxFlexAlign="center center"
+>
   <div fxFlex="40%" class="d-flex justify-content-center">
     <nz-upload
       class="avatar-uploader"
-      nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+      [nzCustomRequest]="actionServer"
       nzName="avatar"
       nzListType="picture-card"
       [nzShowUploadList]="false"
       (nzChange)="handleChange($event)"
     >
-      <ng-container *ngIf="!auxProfileImage && !user.image">
+      <ng-container *ngIf="!user?.image">
         <div class="upload_placeholder">
           <i class="far fa-grin"></i>
           <span>Sube una image para que te conozcan</span>
         </div>
       </ng-container>
       <img
-        *ngIf="auxProfileImage || user.image"
-        [src]="auxProfileImage || user.image"
+        *ngIf="user?.image"
+        [src]="user.image | imageresolve"
         style="width: 100%"
       />
     </nz-upload>
@@ -82,33 +87,42 @@
         </tr>
         <tr>
           <th>Nacimiento</th>
+          <td *ngIf="!edit">
+            {{ user.birth | date: "yyyy-MM-dd" }}
+          </td>
           <td>
-            {{ user.birth | date: "shortDate" }}
+            <nz-date-picker
+              *ngIf="edit"
+              [(ngModel)]="user.birth"
+              (ngModelChange)="changeBirth($event)"
+            ></nz-date-picker>
           </td>
         </tr>
       </table>
     </nz-card>
   </div>
 </div>
-<div fxLayout class="profile_page">
+<div fxLayout *ngIf="user" class="profile_page">
   <div fxFlex="60%" class="">
     <div class="profile_description">
       <h3>Descripción</h3>
-      <p [hidden]="true">Escribe una descripción bonita acerca de ti</p>
-      <p class="text-left paragraph">
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit sed minus
-        corporis laboriosam dolorum, vitae culpa suscipit, odio in voluptatibus
-        ullam esse aperiam voluptate aliquam quisquam cumque. Exercitationem,
-        temporibus illo.
-      </p>
-
-      <!-- <textarea class="description.text" name="" id="" cols="30" rows="10"></textarea> -->
+      <p *ngIf="!edit" class="text-left pa ragraph">{{ user.description }}</p>
+      <textarea
+        *ngIf="edit"
+        [(ngModel)]="user.description"
+        nz-input
+        class="description"
+        name=""
+        id=""
+        cols="30"
+        rows="10"
+      ></textarea>
     </div>
   </div>
-  <div fxFlex="40">
+  <!-- <div fxFlex="40">
     <h3>Asesor</h3>
     <nz-card [nzCover]="cover">
-      <!-- asesor -->
+       La parte de asesores queda pendiente por que todavia no se muy bien como seria  :)
       <div fxLayout="column">
         <h3>{{ user.name }}</h3>
         <button nz-button nzType="primary">contactar</button>
@@ -117,7 +131,7 @@
     <ng-template #cover>
       <img [src]="user.image" alt="" />
     </ng-template>
-  </div>
+  </div> -->
 </div>
 
 <div class="profile_page">
