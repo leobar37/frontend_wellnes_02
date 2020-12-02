@@ -9,40 +9,43 @@
     <div class="logo">
       <img src="assets/wellenesslogo.png" alt="" />
     </div>
+
     <ul
       nz-menu
       nzTheme="dark"
       nzMode="inline"
       [nzInlineCollapsed]="isCollapsed"
     >
-      <li
-        nz-submenu
-        class="sidebar_item"
-        nzTitle="Dashboard"
-        nzIcon="dashboard"
-      >
-        <ul>
-          <li nz-menu-item>
-            <a routerLink="/welcome">Welcome</a>
+      <ng-container *ngTemplateOutlet="tplmenu; context: { $implicit: menu }">
+      </ng-container>
+      <ng-template #tplmenu let-menu>
+        <ng-container *ngFor="let item of menu">
+          <li
+            class="sibebar_item"
+            *ngIf="!item.items"
+            nz-menu-item
+            [routerLink]="item.route"
+          >
+            <i nz-icon [nzType]="item.icon" *ngIf="item.icon"></i>
+            <span>{{ item.name }}</span>
           </li>
-          <li nz-menu-item>
-            <a routerLink="profile"> profile </a>
+          <li
+            nz-submenu
+            class="sidebar_item"
+            *ngIf="item.items"
+            [nzTitle]="item.name"
+            nzIcon="{{ item.icon }}"
+          >
+            <ul>
+              <li nz-menu-item *ngFor="let subItem of item.items">
+                <a [routerLink]="subItem.route">
+                  {{ subItem.name }}
+                </a>
+              </li>
+            </ul>
           </li>
-          <li nz-menu-item nzMatchRouter>
-            <a>Monitor</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a>Workplace</a>
-          </li>
-        </ul>
-      </li>
-      <li nz-submenu nzTitle="Form" nzIcon="form">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a>Basic Form</a>
-          </li>
-        </ul>
-      </li>
+        </ng-container>
+      </ng-template>
     </ul>
   </nz-sider>
   <nz-layout>
@@ -58,7 +61,7 @@
       </div>
     </nz-header>
     <nz-content>
-      <div class="inner-content">
+      <div class="inner-content" fxLayout="row" fxLayoutAlign="center start">
         <router-outlet></router-outlet>
       </div>
     </nz-content>

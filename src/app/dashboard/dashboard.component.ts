@@ -1,3 +1,4 @@
+import { SidebarService, Imenu } from './services/sidebar.service';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -11,9 +12,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   collapsableWidth = 0;
   widthSidebar = '256px';
   isCollapsed = false;
+  menu: Imenu[];
   mediaObserbable: Subscription;
-  constructor(private media: MediaObserver) {}
+  constructor(
+    private media: MediaObserver,
+    public sidebarSesvice: SidebarService
+  ) {
+    this.menu = sidebarSesvice.getSidebar;
+  }
 
+  test(da) {
+    console.log(da);
+  }
   ngOnInit(): void {
     this.mediaObserbable = this.media
       .asObservable()

@@ -9,6 +9,11 @@ const childrenRoutes: Routes = [
     loadChildren: () =>
       import('./profile/profile.module').then((m) => m.ProfileModule),
   },
+  {
+    path: 'events',
+    loadChildren: () =>
+      import('./events/events.module').then((m) => m.EventsModule),
+  },
 ];
 
 const routes: Routes = [

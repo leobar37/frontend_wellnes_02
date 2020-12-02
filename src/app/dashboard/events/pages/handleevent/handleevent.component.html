@@ -1,0 +1,112 @@
+<!--  upload -->
+<ng-template #uploadTemplate>
+  <nz-upload
+    class="event-uploader"
+    [nzCustomRequest]=""
+    nzName="avatar"
+    nzListType="picture-card"
+    [nzShowUploadList]="false"
+  >
+    <ng-container>
+      <div class="upload_placeholder">
+        <i class="fas fa-upload"></i>
+        <span>Imagén del evento</span>
+      </div>
+    </ng-container>
+    <!-- <img
+        *ngIf="user?.image"
+        [src]="user.image | imageresolve"
+        style="width: 100%"
+      /> -->
+  </nz-upload>
+</ng-template>
+
+<!-- event details -->
+
+<ng-template #eventDetailsTemplate>
+  <h1 class="title line_addon">Detalles del evento</h1>
+
+  <form action="">
+    <nz-form-item>
+      <nz-form-control class="control_form_le">
+        <nz-form-label>Titulo </nz-form-label>
+        <input type="text" nz-input placeholder="text here" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item fxLayout="row" fxLayoutGap="10px">
+      <nz-form-control fxFlex="45%" class="control_form_le">
+        <nz-form-label>Fecha</nz-form-label>
+        <input type="text" nz-input placeholder="text here" />
+      </nz-form-control>
+
+      <nz-form-control fxFlex="45%" class="control_form_le">
+        <nz-form-label>Hora</nz-form-label>
+        <input type="text" nz-input placeholder="text here" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control class="control_form_le">
+        <nz-form-label class="">Descripción</nz-form-label>
+        <textarea
+          style="width: 100%"
+          nx-input
+          [nzAutosize]="{ minRows: 5, maxRows: 5 }"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</ng-template>
+
+<!-- config event -->
+
+<ng-template #configEventTemplate>
+  <h1 class="title line_addon">Configuración del evento</h1>
+  <nz-card>
+    <!-- configura si los eventos pueden ser mostrados -->
+    <div class="my-3" fxLayout="row" fxLayoutGap="50px">
+      <span fxFlex="calc(100% - 80px)"> Incluir comentarios </span>
+      <nz-switch fxFlex="80px" fxFlexAlign="end"></nz-switch>
+    </div>
+    <!-- controla si el evento se programa o no -->
+    <div class="my-3" fxLayout="row" fxLayoutGap="50px">
+      <span fxFlex="calc(100% - 80px)"> programar evento</span>
+      <nz-switch fxFlex="80px" fxFlexAlign="end"></nz-switch>
+    </div>
+
+    <!-- programa cuandoe esta visible el evento -->
+    <div fxLayout="column">
+      <span class="subtitle"> fecha </span>
+      <nz-date-picker> </nz-date-picker>
+    </div>
+    <div fxLayout="column">
+      <span class="subtitle"> Hora </span>
+      <nz-time-picker></nz-time-picker>
+    </div>
+    <!-- boton para preparar sesiones -->
+    <button nz-button class="my-3 button_le" nzType="primary">
+      preparar sesiones
+    </button>
+  </nz-card>
+</ng-template>
+
+<!-- layout -->
+<div
+  class="contain"
+  gdAreas="upload upload upload  | form form config | form form config "
+  gdColumn="3"
+  gdRow="3"
+  gdGap="20px"
+>
+  <!-- upload -->
+  <div gdArea="upload">
+    <ng-container *ngTemplateOutlet="uploadTemplate"></ng-container>
+  </div>
+  <div gdArea="form">
+    <ng-container *ngTemplateOutlet="eventDetailsTemplate"></ng-container>
+  </div>
+  <div gdArea="config">
+    <ng-container *ngTemplateOutlet="configEventTemplate"></ng-container>
+  </div>
+</div>

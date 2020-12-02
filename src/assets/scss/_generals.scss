@@ -2,3 +2,43 @@
   font-size: 16px;
   font-weight: 300;
 }
+.window_dashboard {
+  max-width: 900px;
+  width: 900px;
+}
+.testbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid black;
+}
+/*my tittles*/
+
+.title {
+  font-family: $font-sans;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 35px;
+  &.line_addon {
+    position: relative;
+    &::after {
+      position: absolute;
+      content: "";
+      height: 6px;
+      width: 95%;
+      left: 0;
+      bottom: -10px;
+      background-color: $secondary-color;
+    }
+  }
+}
+
+/*=============================================
+=            subtitles            =
+=============================================*/
+
+.subtitle {
+  font-weight: 700;
+  font-size: 15px;
+  margin: 10px 0;
+}

@@ -16,7 +16,6 @@ export class JwtService {
       return this._jwt.decodeToken<IUser>();
     }
   }
-
   isTokenValid() {
     const token = localStorage.getItem('token');
     if (!token) {
