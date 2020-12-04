@@ -11,6 +11,6 @@ export const isBase64 = (str: string) => {
   return base64regex.test(str);
 };
 
-export const mergeDatetTime = (date: Date, time: Date) => {
+export const mergeDatetTime = (date: Date, time: Date): Date => {
   return setMinutes(setHours(date, time.getHours()), time.getMinutes());
 };

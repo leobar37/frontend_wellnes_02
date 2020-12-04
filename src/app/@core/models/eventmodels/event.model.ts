@@ -1,3 +1,4 @@
+import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 export interface IEvent {
   id?: number;
   name?: string;
@@ -6,6 +7,7 @@ export interface IEvent {
   description?: string;
   capacityAssistant?: number;
   createEvent?: Date;
-  published?: boolean;
+  published?: EventState;
   publishedDate?: Date;
+  includeComments?: boolean;
 }

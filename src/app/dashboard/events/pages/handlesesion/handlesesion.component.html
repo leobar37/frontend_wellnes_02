@@ -24,7 +24,7 @@
 <ng-template #eventDetailsTemplate>
   <h1 class="title line_addon">Detalles de la sesión</h1>
 
-  <form action="">
+  <form action="" [formGroup]="formSesion">
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label>Titulo </nz-form-label>
@@ -57,6 +57,7 @@
         <input type="url" nz-input placeholder="link de la sesión" />
       </nz-form-control>
     </nz-form-item>
+
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label class="">Descripción</nz-form-label>

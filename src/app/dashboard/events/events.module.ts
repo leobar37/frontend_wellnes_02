@@ -19,13 +19,18 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMessageModule } from 'ng-zorro-antd/message';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+
+import { NzModalModule } from 'ng-zorro-antd/modal';
 const zorro = [
+  NzModalModule,
   NzButtonModule,
   NzUploadModule,
   NzMessageModule,
   NzListModule,
   NzCardModule,
+  NzCheckboxModule,
   NzFormModule,
   NzSwitchModule,
   NzDatePickerModule,
@@ -36,7 +41,7 @@ const zorro = [
   declarations: [EventsComponent, HandleeventComponent, HandlesesionComponent],
   imports: [
     FlexLayoutModule,
-    // ReactiveFormsModule,
+    FormsModule,
     ReactiveFormsModule,
     CommonModule,
     EventsRoutingModule,

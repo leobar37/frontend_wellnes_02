@@ -91,16 +91,15 @@
     </div>
     <!-- controla si el evento se programa o no -->
     <div class="my-3" fxLayout="row" fxLayoutGap="50px">
-      <span fxFlex="calc(100% - 80px)"> programar evento</span>
-      <nz-switch
-        [formControl]="configForm.get('programEvent')"
-        fxFlex="80px"
-        fxFlexAlign="end"
-      ></nz-switch>
+      <nz-checkbox-group
+        [(ngModel)]="optionsPublished"
+        (ngModelChange)="publishedChangue(optionsPublished)"
+      >
+      </nz-checkbox-group>
     </div>
 
     <!-- programa cuandoe esta visible el evento -->
-    <ng-container *ngIf="configForm.get('programEvent').valueChanges | async">
+    <ng-container *ngIf="programEvent && programEvent == 2">
       <div fxLayout="column">
         <span class="subtitle"> fecha </span>
         <nz-date-picker [formControl]="configForm.get('programDate')">

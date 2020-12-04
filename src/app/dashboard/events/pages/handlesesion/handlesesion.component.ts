@@ -1,3 +1,5 @@
+import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['../../events.component.scss'],
 })
 export class HandlesesionComponent implements OnInit {
+  formSesion: FormGroup;
+
   sesions = Array(8)
     .fill(1)
     .map((_, i) => {
@@ -14,9 +18,11 @@ export class HandlesesionComponent implements OnInit {
         time: new Date(),
       };
     });
-  constructor() {
+  constructor(private fb: FormBuilder) {
     console.log(this.sesions);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.formSesion = this.fb.group({});
+  }
 }

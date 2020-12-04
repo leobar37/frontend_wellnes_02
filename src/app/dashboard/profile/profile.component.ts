@@ -21,7 +21,9 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
   ngOnDestroy(): void {
     this.subscriptions.forEach((sub) => {
-      sub.unsubscribe();
+      if (sub) {
+        sub.unsubscribe();
+      }
     });
   }
   ngOnChanges(changes: SimpleChanges): void {}
