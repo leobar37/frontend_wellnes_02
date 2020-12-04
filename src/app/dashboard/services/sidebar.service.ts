@@ -13,7 +13,13 @@ export class SidebarService {
     {
       name: 'events',
       icon: 'profile',
-      items: [{ name: 'Crear evento', route: 'events' }],
+      items: [
+        { name: 'Crear evento', route: 'events' },
+        {
+          name: 'sesion',
+          route: 'events/sesion',
+        },
+      ],
     },
   ];
   constructor() {}

@@ -1,3 +1,4 @@
+import { EventService } from './services/event.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -16,9 +17,14 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { ReactiveFormsModule } from '@angular/forms';
 const zorro = [
   NzButtonModule,
   NzUploadModule,
+  NzMessageModule,
+  NzListModule,
   NzCardModule,
   NzFormModule,
   NzSwitchModule,
@@ -31,9 +37,11 @@ const zorro = [
   imports: [
     FlexLayoutModule,
     // ReactiveFormsModule,
+    ReactiveFormsModule,
     CommonModule,
     EventsRoutingModule,
     zorro,
   ],
+  providers: [EventService],
 })
 export class EventsModule {}

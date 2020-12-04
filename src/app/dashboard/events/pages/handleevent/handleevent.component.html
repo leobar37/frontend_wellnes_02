@@ -2,22 +2,23 @@
 <ng-template #uploadTemplate>
   <nz-upload
     class="event-uploader"
-    [nzCustomRequest]=""
+    [nzCustomRequest]="actionServer"
     nzName="avatar"
     nzListType="picture-card"
     [nzShowUploadList]="false"
   >
-    <ng-container>
+    <ng-container *ngIf="!previewImage">
       <div class="upload_placeholder">
         <i class="fas fa-upload"></i>
         <span>Imagén del evento</span>
       </div>
     </ng-container>
-    <!-- <img
-        *ngIf="user?.image"
-        [src]="user.image | imageresolve"
-        style="width: 100%"
-      /> -->
+    <img
+      *ngIf="previewImage"
+      class="img_reponsive"
+      [src]="previewImage"
+      style="width: 100%"
+    />
   </nz-upload>
 </ng-template>
 
@@ -25,24 +26,38 @@
 
 <ng-template #eventDetailsTemplate>
   <h1 class="title line_addon">Detalles del evento</h1>
-
-  <form action="">
+  <form [formGroup]="eventForm">
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label>Titulo </nz-form-label>
-        <input type="text" nz-input placeholder="Titulo del evento" />
+        <input
+          type="text"
+          formControlName="title"
+          nz-input
+          placeholder="Titulo del evento"
+        />
       </nz-form-control>
     </nz-form-item>
 
     <nz-form-item fxLayout="row" fxLayoutGap="10px">
       <nz-form-control fxFlex="45%" class="">
-        <nz-form-label  class="subtitle" style="font-style: italic;">Fecha</nz-form-label>
-        <nz-date-picker class="w-100"></nz-date-picker>
+        <nz-form-label class="subtitle" style="font-style: italic"
+          >Fecha</nz-form-label
+        >
+        <nz-date-picker
+          formControlName="startEvent"
+          class="w-100"
+        ></nz-date-picker>
       </nz-form-control>
 
       <nz-form-control fxFlex="45%" class="">
-        <nz-form-label class="subtitle" style="font-style: italic;">Hora</nz-form-label>
-       <nz-time-picker class="w-100"></nz-time-picker>
+        <nz-form-label class="subtitle" style="font-style: italic"
+          >Hora</nz-form-label
+        >
+        <nz-time-picker
+          formControlName="timeStart"
+          class="w-100"
+        ></nz-time-picker>
       </nz-form-control>
     </nz-form-item>
 
@@ -51,7 +66,8 @@
         <nz-form-label class="">Descripción</nz-form-label>
         <textarea
           style="width: 100%"
-          nx-input
+          nz-input
+          formControlName="description"
           [nzAutosize]="{ minRows: 5, maxRows: 5 }"
         ></textarea>
       </nz-form-control>
@@ -67,25 +83,45 @@
     <!-- configura si los eventos pueden ser mostrados -->
     <div class="my-3" fxLayout="row" fxLayoutGap="50px">
       <span fxFlex="calc(100% - 80px)"> Incluir comentarios </span>
-      <nz-switch fxFlex="80px" fxFlexAlign="end"></nz-switch>
+      <nz-switch
+        [formControl]="configForm.get('includeComment')"
+        fxFlex="80px"
+        fxFlexAlign="end"
+      ></nz-switch>
     </div>
     <!-- controla si el evento se programa o no -->
     <div class="my-3" fxLayout="row" fxLayoutGap="50px">
       <span fxFlex="calc(100% - 80px)"> programar evento</span>
-      <nz-switch fxFlex="80px" fxFlexAlign="end"></nz-switch>
+      <nz-switch
+        [formControl]="configForm.get('programEvent')"
+        fxFlex="80px"
+        fxFlexAlign="end"
+      ></nz-switch>
     </div>
 
     <!-- programa cuandoe esta visible el evento -->
-    <div fxLayout="column">
-      <span class="subtitle"> fecha </span>
-      <nz-date-picker> </nz-date-picker>
-    </div>
-    <div fxLayout="column">
-      <span class="subtitle"> Hora </span>
-      <nz-time-picker></nz-time-picker>
-    </div>
+    <ng-container *ngIf="configForm.get('programEvent').valueChanges | async">
+      <div fxLayout="column">
+        <span class="subtitle"> fecha </span>
+        <nz-date-picker [formControl]="configForm.get('programDate')">
+        </nz-date-picker>
+      </div>
+
+      <div fxLayout="column">
+        <span class="subtitle"> Hora </span>
+        <nz-time-picker
+          [formControl]="configForm.get('programTime')"
+        ></nz-time-picker>
+      </div>
+    </ng-container>
+
     <!-- boton para preparar sesiones -->
-    <button nz-button class="my-3 button_le" nzType="primary">
+    <button
+      nz-button
+      class="my-3 button_le"
+      (click)="saveEvent()"
+      nzType="primary"
+    >
       preparar sesiones
     </button>
   </nz-card>

@@ -1,1 +1,114 @@
-<p>handlesesion works!</p>
+<!--  upload -->
+<ng-template #uploadTemplate>
+  <nz-upload
+    class="event-uploader"
+    nzName="avatar"
+    nzListType="picture-card"
+    [nzShowUploadList]="false"
+  >
+    <ng-container>
+      <div class="upload_placeholder">
+        <i class="fas fa-upload"></i>
+        <span>imagen de la sesión</span>
+      </div>
+    </ng-container>
+    <!-- <img
+      *ngIf="previewIam"
+      style="width: 100%"
+    /> -->
+  </nz-upload>
+</ng-template>
+
+<!-- event details -->
+
+<ng-template #eventDetailsTemplate>
+  <h1 class="title line_addon">Detalles de la sesión</h1>
+
+  <form action="">
+    <nz-form-item>
+      <nz-form-control class="control_form_le">
+        <nz-form-label>Titulo </nz-form-label>
+        <input type="text" nz-input placeholder="Titulo del evento" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item fxLayout="row" fxLayoutGap="10px">
+      <nz-form-control fxFlex="45%" class="">
+        <nz-form-label class="subtitle" style="font-style: italic"
+          >Fecha</nz-form-label
+        >
+        <nz-date-picker class="w-100"></nz-date-picker>
+      </nz-form-control>
+
+      <nz-form-control fxFlex="45%" class="">
+        <nz-form-label class="subtitle" style="font-style: italic"
+          >Hora</nz-form-label
+        >
+        <nz-time-picker class="w-100"></nz-time-picker>
+      </nz-form-control>
+    </nz-form-item>
+    <!-- url de la sesion -->
+    <nz-form-item>
+      <nz-form-control
+        class="control_form_le"
+        [nzErrorTip]="'No se reconoce el formato url'"
+      >
+        <nz-form-label>Link de la sesión </nz-form-label>
+        <input type="url" nz-input placeholder="link de la sesión" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control class="control_form_le">
+        <nz-form-label class="">Descripción</nz-form-label>
+        <textarea
+          style="width: 100%"
+          nx-input
+          [nzAutosize]="{ minRows: 5, maxRows: 15 }"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <div fxLayout="row">
+      <button nz-button nzType="primary" class="button_le ml-2">guardar</button>
+      <button nz-button nzType="primary" class="button_le ml-2">
+        Eliminar
+      </button>
+      <button nz-button nzType="primary" class="button_le ml-2">Editar</button>
+    </div>
+  </form>
+</ng-template>
+
+<!-- config event -->
+
+<ng-template #configEventTemplate>
+  <h1 class="title line_addon">Configuración del evento</h1>
+  <nz-card>
+    <nz-list>
+      <nz-list-item nzItemLayout="horizontal" *ngFor="let sesion of sesions">
+        <nz-list-item-meta-title>
+          {{ sesion.name }}
+        </nz-list-item-meta-title>
+        {{ sesion.time | date: "short" }}
+      </nz-list-item>
+    </nz-list>
+  </nz-card>
+</ng-template>
+
+<!-- layout -->
+<div
+  class="contain"
+  gdAreas="upload upload upload  | form form config | form form config "
+  gdColumn="3"
+  gdRow="3"
+  gdGap="20px"
+>
+  <!-- upload -->
+  <div gdArea="upload">
+    <ng-container *ngTemplateOutlet="uploadTemplate"></ng-container>
+  </div>
+  <div gdArea="form">
+    <ng-container *ngTemplateOutlet="eventDetailsTemplate"></ng-container>
+  </div>
+  <div gdArea="config">
+    <ng-container *ngTemplateOutlet="configEventTemplate"></ng-container>
+  </div>
+</div>

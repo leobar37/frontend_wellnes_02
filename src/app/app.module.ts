@@ -18,6 +18,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { GraphQLModule } from './graphql.module';
 import { JwtModule } from '@auth0/angular-jwt';
+
 const tokenGetter = () => {
   return localStorage.getItem('token');
 };
