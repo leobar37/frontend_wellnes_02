@@ -1,5 +1,8 @@
-import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
-import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
+import { EventState } from './../../../../@core/models/eventmodels/enums.event';
+import { IEvent } from './../../../../@core/models/eventmodels/event.model';
+import { SafeUrl } from '@angular/platform-browser';
+import { UtilsService } from './../../../../services/utils.service';
+
 import { EventService } from './../../services/event.service';
 import { mergeDatetTime } from './../../../../helpers/helpers';
 import { Component, OnInit } from '@angular/core';
@@ -9,6 +12,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { isPast, setHours, setMinutes } from 'date-fns';
 
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -17,7 +21,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['../../events.component.scss'],
 })
 export class HandleeventComponent implements OnInit {
-  public previewImage: string;
+  public previewImage: string | SafeUrl;
   public eventForm: FormGroup;
   public configForm: FormGroup;
   private fileForUpload: File;
@@ -45,21 +49,42 @@ export class HandleeventComponent implements OnInit {
     private msg: NzMessageService,
     private fb: FormBuilder,
     private eventService: EventService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private router: Router,
+    private activateRoute: ActivatedRoute,
+    private utils: UtilsService
   ) {}
   ngOnInit(): void {
     this.buildForm();
+    this.listenRoutes();
+    this.activateRoute.queryParams.subscribe((params) => {
+      console.log(params);
+    });
+  }
+
+  private listenRoutes(): void {
+    this.activateRoute.queryParams.subscribe((params: Params) => {
+      if ('edit' in params) {
+        console.log('you want edit?');
+      }
+    });
   }
   /**
    * upload file
    */
-  publishedChangue(
+
+  /*=============================================
+  =            helpers            =
+  =============================================*/
+
+  // checkbox
+  public publishedChangue(
     arr: {
       label: string;
       value: EventState;
       checked?: boolean;
     }[]
-  ) {
+  ): void {
     const val = arr.find(
       ({ checked, value }) =>
         checked && checked === true && this.programEvent !== value
@@ -71,6 +96,41 @@ export class HandleeventComponent implements OnInit {
     });
     this.programEvent = val.value;
   }
+
+  //  patch value in form
+  private setValuesOnFormEvent(event: IEvent) {
+    const statateEvent = Number(EventState[event.published]);
+    if (Number(EventState[event.published]) !== Number(this.programEvent)) {
+      this.programEvent = event.published;
+      console.log('equals');
+    }
+    this.optionsPublished = this.optionsPublished.map((item) => {
+      item.checked = item.checked =
+        item.value === this.programEvent ? true : false;
+
+      return item;
+    });
+
+    this.eventForm.patchValue({
+      title: event.name + 'test',
+      startEvent: new Date(event.startEvent),
+      timeStart: new Date(event.startEvent),
+      description: event.description,
+    });
+    this.configForm.patchValue({
+      includeComment: event.includeComments,
+      programDate:
+        statateEvent == EventState.PROGRAM
+          ? new Date(event.publishedDate)
+          : null,
+      programTime:
+        statateEvent == EventState.PROGRAM
+          ? new Date(event.publishedDate)
+          : null,
+    });
+  }
+
+  //  build form
   private buildForm(): void {
     this.configForm = this.fb.group({
       includeComment: this.fb.control(false),
@@ -85,6 +145,7 @@ export class HandleeventComponent implements OnInit {
     });
   }
 
+  //  control image
   actionServer = (info: any) => {
     const errors = [];
     getBase64(info.file, (image) => {
@@ -110,37 +171,61 @@ export class HandleeventComponent implements OnInit {
     });
     return of(null);
   };
+
+  // upload image on server
+  private uploadImage(id: any) {
+    this.eventService.uploadFile(this.fileForUpload, id).subscribe((res) => {
+      //  build url image
+      this.previewImage = this.utils.resolvePathImage(
+        res.data.addCoverEvent.path
+      );
+    });
+  }
   /** final load event nad prepare sesions */
   public saveEvent(): void {
-    const event = this.validateEvent();
+    let event;
+    try {
+      event = this.validateEvent();
+    } catch (error) {
+      console.log('error');
+
+      return;
+    }
     if (!this.fileForUpload) {
       this.modal.error({
         nzTitle: 'Error',
-        nzContent: 'El evento necesita una image',
+        nzContent: 'El evento necesita una imagen',
       });
       return;
     }
     this.eventService.addEvent(event).subscribe((res) => {
       if (res.data.createEvent.resp) {
+        this.setValuesOnFormEvent(res.data.createEvent.event);
         this.uploadImage(res.data.createEvent.event.id);
+        // changue url
+        this.router.navigate([], {
+          queryParams: {
+            edit: res.data.createEvent.event.id,
+          },
+        });
       }
-    });
-  }
-
-  private uploadImage(id: any) {
-    this.eventService.uploadFile(this.fileForUpload, id).subscribe((res) => {
-      console.log(res.data);
     });
   }
 
   private validateEvent(): IEvent {
     const configValue = this.configForm.value;
+
     if (this.eventForm.invalid) {
-      return;
+      this.modal.error({
+        nzTitle: 'Error',
+        nzContent: 'Formulario invalido',
+      });
+      throw new Error();
     }
     // value event
     const eventFormValue = this.eventForm.value;
     const title = eventFormValue.title;
+
     const startEvent = mergeDatetTime(
       eventFormValue.startEvent,
       eventFormValue.timeStart
@@ -149,11 +234,22 @@ export class HandleeventComponent implements OnInit {
     // value config
     let programDate: Date = null;
     if (this.programEvent === EventState.PROGRAM) {
+      // validate dates
+      console.log(configValue);
+
+      if (configValue.programDate == null || configValue.programTime == null) {
+        this.modal.error({
+          nzTitle: 'Error',
+          nzContent: 'Por favor proporcione todos los campos',
+        });
+
+        throw new Error();
+      }
       programDate = mergeDatetTime(
         configValue.programDate,
         configValue.programTime
       );
-      if (startEvent.getTime() > programDate.getTime()) {
+      if (startEvent.getTime() <= programDate.getTime()) {
         // la fecha de programacion no puede ser mayor a la fecha de inicio
         this.modal.error({
           nzTitle: 'ERROR',
@@ -161,7 +257,7 @@ export class HandleeventComponent implements OnInit {
             'la fecha de programacion no puede ser mayor a la fecha de inicio',
         });
 
-        return;
+        throw new Error();
       }
     }
     // validate event
@@ -174,7 +270,6 @@ export class HandleeventComponent implements OnInit {
 
       return;
     }
-
     return {
       name: title,
       startEvent: startEvent,

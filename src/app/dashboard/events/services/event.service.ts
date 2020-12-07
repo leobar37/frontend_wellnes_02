@@ -8,18 +8,42 @@ import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 
+const EVENTFRAGMENT = gql`
+  fragment eventFragment on Event {
+    name
+    id
+    published
+    startEvent
+    capacityAssistant
+    publishedDate
+    includeComments
+    description
+  }
+`;
+
 const CREATEEVENT = gql`
   mutation createEvent($eventInput: InputEvent!) {
     createEvent(event: $eventInput) {
+      ${EVENTFRAGMENT}
       resp
       event {
-        name
-        id
-        published
-        startEvent
-        capacityAssistant
-        publishedDate
-        includeComments
+        ...eventFragment
+      }
+      errors {
+        code
+        message
+      }
+    }
+  }
+`;
+
+const EDITEVENT = gql`
+  ${EVENTFRAGMENT}
+  mutation editEvent($id: Int!, $event: InputEvent!) {
+    editEvent(id: $id, event: $event) {
+      resp
+      event {
+        ...eventFragment
       }
       errors {
         code
@@ -45,7 +69,7 @@ const UPLOADCOVEREVENT = gql`
 @Injectable()
 export class EventService {
   constructor(private apollo: Apollo) {}
-  addEvent(
+  public addEvent(
     event: IEvent
   ): Observable<FetchResult<{ createEvent: EventResponse }>> {
     let publishDate = null;
@@ -82,6 +106,34 @@ export class EventService {
       },
       context: {
         useMultipart: true,
+      },
+    });
+  }
+
+  // edit event in server
+  public editEvent(
+    id: number,
+    event: IEvent
+  ): Observable<FetchResult<{ editEvent: EventResponse }>> {
+    let publishDate = null;
+    try {
+      publishDate = event.publishedDate.getTime();
+    } catch (error) {
+      publishDate = null;
+    }
+    return this.apollo.mutate<{ editEvent: EventResponse }>({
+      mutation: EDITEVENT,
+      variables: {
+        eventInput: {
+          name: event.name,
+          startEvent: event.startEvent.getTime(),
+          capacityAssistant: event.capacityAssistant,
+          published: EventState[event.published],
+          description: event.description,
+          publishedDate: publishDate,
+          includeComments: event.includeComments,
+        },
+        id,
       },
     });
   }
