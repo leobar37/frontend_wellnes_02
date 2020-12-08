@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 })
 export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   public user: IUser = examplesUser.shift();
-  subscriptions: Subscription[];
+  subscriptions: Subscription[] = [];
   dateBirth: Date;
   edit = false;
   constructor(

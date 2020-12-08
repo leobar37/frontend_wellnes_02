@@ -1,9 +1,10 @@
+import { map } from 'rxjs/operators';
 import { FileResponse } from './../../../@core/models/reponses/response';
-import { FetchResult } from '@apollo/client/core';
+import { FetchResult, ApolloQueryResult } from '@apollo/client/core';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 
 import { EventResponse } from 'src/app/@core/models/eventmodels/event.response';
-import { IEvent } from './../../../@core/models/eventmodels/event.model';
+import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
@@ -18,13 +19,14 @@ const EVENTFRAGMENT = gql`
     publishedDate
     includeComments
     description
+    eventCover
   }
 `;
 
 const CREATEEVENT = gql`
+  ${EVENTFRAGMENT}
   mutation createEvent($eventInput: InputEvent!) {
     createEvent(event: $eventInput) {
-      ${EVENTFRAGMENT}
       resp
       event {
         ...eventFragment
@@ -66,6 +68,14 @@ const UPLOADCOVEREVENT = gql`
   }
 `;
 
+const GETEVENT = gql`
+  ${EVENTFRAGMENT}
+  query getEvent($id: ID!) {
+    event(id: $id) {
+      ...eventFragment
+    }
+  }
+`;
 @Injectable()
 export class EventService {
   constructor(private apollo: Apollo) {}
@@ -106,6 +116,17 @@ export class EventService {
       },
       context: {
         useMultipart: true,
+      },
+    });
+  }
+
+  public getEvent(
+    id: number
+  ): Observable<ApolloQueryResult<{ event: IEvent }>> {
+    return this.apollo.query<{ event: IEvent }>({
+      query: GETEVENT,
+      variables: {
+        id: id,
       },
     });
   }

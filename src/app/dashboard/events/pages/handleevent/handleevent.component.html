@@ -121,7 +121,7 @@
       (click)="saveEvent()"
       nzType="primary"
     >
-      guardar evento
+      {{ editMode ? "actualizar evento" : "guardar evento" }}
     </button>
 
     <button nz-button class="my-3 button_le my-2" nzType="primary">

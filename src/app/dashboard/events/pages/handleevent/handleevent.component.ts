@@ -25,6 +25,8 @@ export class HandleeventComponent implements OnInit {
   public eventForm: FormGroup;
   public configForm: FormGroup;
   private fileForUpload: File;
+  private currentEvent: IEvent;
+  public editMode = false;
   public optionsPublished: {
     label: string;
     value: EventState;
@@ -64,8 +66,23 @@ export class HandleeventComponent implements OnInit {
 
   private listenRoutes(): void {
     this.activateRoute.queryParams.subscribe((params: Params) => {
+      const idParam: number = params['edit'];
+
       if ('edit' in params) {
-        console.log('you want edit?');
+        this.editMode = true;
+        if (!this.currentEvent) {
+          this.getEvent(idParam);
+        }
+      }
+    });
+  }
+
+  private getEvent(id: number) {
+    this.eventService.getEvent(id).subscribe((resp) => {
+      if (!resp.errors || resp.errors?.length == 0) {
+        this.setValuesOnFormEvent(resp.data.event);
+      } else {
+        console.log('this a error', resp);
       }
     });
   }
@@ -100,9 +117,8 @@ export class HandleeventComponent implements OnInit {
   //  patch value in form
   private setValuesOnFormEvent(event: IEvent) {
     const statateEvent = Number(EventState[event.published]);
-    if (Number(EventState[event.published]) !== Number(this.programEvent)) {
+    if (statateEvent !== Number(this.programEvent)) {
       this.programEvent = event.published;
-      console.log('equals');
     }
     this.optionsPublished = this.optionsPublished.map((item) => {
       item.checked = item.checked =
@@ -112,11 +128,12 @@ export class HandleeventComponent implements OnInit {
     });
 
     this.eventForm.patchValue({
-      title: event.name + 'test',
+      title: event.name,
       startEvent: new Date(event.startEvent),
       timeStart: new Date(event.startEvent),
       description: event.description,
     });
+
     this.configForm.patchValue({
       includeComment: event.includeComments,
       programDate:
@@ -128,6 +145,12 @@ export class HandleeventComponent implements OnInit {
           ? new Date(event.publishedDate)
           : null,
     });
+
+    // verify image not exist
+
+    if (!this.previewImage) {
+      this.previewImage = this.utils.resolvePathImage(event.eventCover);
+    }
   }
 
   //  build form
@@ -171,7 +194,6 @@ export class HandleeventComponent implements OnInit {
     });
     return of(null);
   };
-
   // upload image on server
   private uploadImage(id: any) {
     this.eventService.uploadFile(this.fileForUpload, id).subscribe((res) => {
@@ -187,8 +209,6 @@ export class HandleeventComponent implements OnInit {
     try {
       event = this.validateEvent();
     } catch (error) {
-      console.log('error');
-
       return;
     }
     if (!this.fileForUpload) {
@@ -200,9 +220,12 @@ export class HandleeventComponent implements OnInit {
     }
     this.eventService.addEvent(event).subscribe((res) => {
       if (res.data.createEvent.resp) {
-        this.setValuesOnFormEvent(res.data.createEvent.event);
-        this.uploadImage(res.data.createEvent.event.id);
+        const evenResp = res.data.createEvent.event;
+        this.setValuesOnFormEvent(evenResp);
+        this.uploadImage(evenResp.id);
         // changue url
+        this.msg.success('Evento creado satisfactioriamente');
+        this.currentEvent = evenResp;
         this.router.navigate([], {
           queryParams: {
             edit: res.data.createEvent.event.id,

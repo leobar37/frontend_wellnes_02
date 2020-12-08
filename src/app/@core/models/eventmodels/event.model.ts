@@ -10,4 +10,5 @@ export interface IEvent {
   published?: EventState;
   publishedDate?: Date;
   includeComments?: boolean;
+  eventCover: string;
 }
