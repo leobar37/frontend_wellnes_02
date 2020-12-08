@@ -145,16 +145,22 @@ export class EventService {
     return this.apollo.mutate<{ editEvent: EventResponse }>({
       mutation: EDITEVENT,
       variables: {
-        eventInput: {
+        event: {
           name: event.name,
-          startEvent: event.startEvent.getTime(),
+          startEvent:
+            typeof event.startEvent == 'number'
+              ? event.startEvent
+              : new Date(event.startEvent).getTime(),
           capacityAssistant: event.capacityAssistant,
-          published: EventState[event.published],
+          published:
+            typeof event.published == 'number'
+              ? EventState[event.published]
+              : event.published,
           description: event.description,
           publishedDate: publishDate,
           includeComments: event.includeComments,
         },
-        id,
+        id: Number(id),
       },
     });
   }

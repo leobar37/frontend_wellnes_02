@@ -16,6 +16,11 @@
       "dom",
       "esnext.asynciterable"
     ],
+    "paths": {
+       "@services/*"  :["src/app/services/*"],
+       "@core/*"  : ["src/app/@core/*"],
+       "@helpers/*"  : ["src/app/helpers/*"],
+    },
     "allowSyntheticDefaultImports": true
   }
 }

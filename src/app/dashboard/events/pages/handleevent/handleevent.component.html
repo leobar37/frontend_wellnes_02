@@ -50,7 +50,7 @@
         ></nz-date-picker>
       </nz-form-control>
 
-      <nz-form-control fxFlex="45%" class="">
+      <!-- <nz-form-control fxFlex="45%" class="">
         <nz-form-label class="subtitle" style="font-style: italic"
           >Hora</nz-form-label
         >
@@ -58,7 +58,7 @@
           formControlName="timeStart"
           class="w-100"
         ></nz-time-picker>
-      </nz-form-control>
+      </nz-form-control> -->
     </nz-form-item>
 
     <nz-form-item>
@@ -118,7 +118,7 @@
     <button
       nz-button
       class="my-4 button_le"
-      (click)="saveEvent()"
+      (click)="actionEvent()"
       nzType="primary"
     >
       {{ editMode ? "actualizar evento" : "guardar evento" }}
