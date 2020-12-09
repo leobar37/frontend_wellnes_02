@@ -7,7 +7,7 @@ import { EventsComponent } from './events.component';
 
 const routesChildren: Routes = [
   { path: 'event', component: HandleeventComponent },
-  { path: 'sesion', component: HandlesesionComponent },
+  { path: 'sesion/:id', component: HandlesesionComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'event' },
 ];
 

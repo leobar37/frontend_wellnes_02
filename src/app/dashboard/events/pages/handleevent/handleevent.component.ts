@@ -59,21 +59,93 @@ export class HandleeventComponent implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.listenRoutes();
-    this.activateRoute.queryParams.subscribe((params) => {
-      console.log(params);
-    });
+    this.activateRoute.queryParams.subscribe((params) => {});
   }
 
   private listenRoutes(): void {
-    this.activateRoute.queryParams.subscribe((params: Params) => {
-      if ('edit' in params) {
-        const idParam: number = params['edit'];
-        this.editMode = true;
-        if (!this.currentEvent) {
-          this.getEvent(idParam);
+    const subRoute = this.activateRoute.queryParams.subscribe(
+      (params: Params) => {
+        if ('edit' in params) {
+          const idParam: number = params['edit'];
+          this.editMode = true;
+          if (!this.currentEvent) {
+            this.getEvent(idParam);
+          }
         }
       }
-    });
+    );
+    this.subs.push(subRoute);
+  }
+
+  public navigateSesions(): void {
+    this.router.navigate([
+      '/dashboard',
+      'events',
+      'sesion',
+      this.currentEvent.id,
+    ]);
+  }
+
+  /** validations */
+  private validateEvent(): IEvent {
+    const configValue = this.configForm.value;
+
+    if (this.eventForm.invalid) {
+      this.modal.error({
+        nzTitle: 'Error',
+        nzContent: 'Formulario invalido',
+      });
+      throw new Error();
+    }
+    // value event
+    const eventFormValue = this.eventForm.value;
+    const title = eventFormValue.title;
+    const startEvent = eventFormValue.startEvent;
+    const description = eventFormValue.description;
+    // value config
+    let programDate: Date = null;
+    if (this.programEvent === EventState.PROGRAM) {
+      if (configValue.programDate == null || configValue.programTime == null) {
+        this.modal.error({
+          nzTitle: 'Error',
+          nzContent: 'Por favor proporcione todos los campos',
+        });
+        throw new Error();
+      }
+      programDate = mergeDatetTime(
+        configValue.programDate,
+        configValue.programTime
+      );
+      if (startEvent.getTime() <= programDate.getTime()) {
+        // la fecha de programacion no puede ser mayor a la fecha de inicio
+        this.modal.error({
+          nzTitle: 'ERROR',
+          nzContent:
+            'la fecha de programacion no puede ser mayor a la fecha de inicio',
+        });
+
+        throw new Error();
+      }
+    }
+    // validate event
+    if (isPast(startEvent) && !this.editMode) {
+      // el evento no puede ser pasado
+      this.modal.error({
+        nzTitle: 'ERROR',
+        nzContent: 'No puede programar un evento en fecha pasada',
+      });
+      throw new Error();
+    }
+
+    return {
+      ...this.currentEvent,
+      name: title,
+      startEvent: startEvent,
+      description: description,
+      publishedDate: programDate != null ? programDate : null,
+      published: this.programEvent,
+      includeComments: configValue.includeComment,
+    } as IEvent;
   }
 
   /*=============================================
@@ -108,6 +180,7 @@ export class HandleeventComponent implements OnInit {
       .subscribe((res) => {
         if (res.data.editEvent.resp) {
           this.currentEvent = res.data.editEvent.event;
+          this.uploadImage(this.currentEvent.id);
           this.msg.success('El evento ha sido actualizado');
         }
       });
@@ -136,11 +209,15 @@ export class HandleeventComponent implements OnInit {
 
   private getEvent(id: number) {
     const subGetEvent = this.eventService.getEvent(id).subscribe((resp) => {
-      if (!resp.errors || resp.errors?.length == 0) {
+      if (resp.data.event != null) {
         this.setValuesOnFormEvent(resp.data.event);
         this.currentEvent = resp.data.event;
       } else {
-        console.log('this a error', resp);
+        this.modal.error({
+          nzTitle: 'Error',
+          nzContent: 'Este evento no ha sido encontrado',
+        });
+        this.router.navigateByUrl('/dashboard');
       }
     });
     this.subs.push(subGetEvent);
@@ -196,6 +273,7 @@ export class HandleeventComponent implements OnInit {
       timeStart: new Date(event.startEvent),
       description: event.description,
     });
+
     this.configForm.patchValue({
       includeComment: event.includeComments,
       programDate:
@@ -207,7 +285,7 @@ export class HandleeventComponent implements OnInit {
           ? new Date(event.publishedDate)
           : null,
     });
-    // verify image not exist
+
     if (!this.previewImage) {
       this.previewImage = this.utils.resolvePathImage(event.eventCover);
     }
@@ -231,6 +309,7 @@ export class HandleeventComponent implements OnInit {
   //  control image
   actionServer = (info: any) => {
     const errors = [];
+
     getBase64(info.file, (image) => {
       const imagetest = new Image();
       imagetest.onload = () => {
@@ -238,6 +317,12 @@ export class HandleeventComponent implements OnInit {
         imagetest.width;
         if (imagetest.width <= 400) {
           errors.push('Esta image es muy pequña');
+        }
+        const isJpgOrPng =
+          info.file.type === 'image/jpeg' || info.file.type === 'image/png';
+
+        if (!isJpgOrPng) {
+          errors.push('Este tipo de archi no esta permitido');
         }
         if (info.size / 1024 / 1024 > 5) {
           errors.push('Excedio las 5mb por archivo');
@@ -256,74 +341,18 @@ export class HandleeventComponent implements OnInit {
   };
   // upload image on server
   private uploadImage(id: any) {
-    this.eventService.uploadFile(this.fileForUpload, id).subscribe((res) => {
-      //  build url image
-      this.previewImage = this.utils.resolvePathImage(
-        res.data.addCoverEvent.path
-      );
-    });
-  }
-
-  private validateEvent(): IEvent {
-    const configValue = this.configForm.value;
-
-    if (this.eventForm.invalid) {
-      this.modal.error({
-        nzTitle: 'Error',
-        nzContent: 'Formulario invalido',
-      });
-      throw new Error();
-    }
-    // value event
-    const eventFormValue = this.eventForm.value;
-    const title = eventFormValue.title;
-    const startEvent = eventFormValue.startEvent;
-    const description = eventFormValue.description;
-    // value config
-    let programDate: Date = null;
-    if (this.programEvent === EventState.PROGRAM) {
-      if (configValue.programDate == null || configValue.programTime == null) {
-        this.modal.error({
-          nzTitle: 'Error',
-          nzContent: 'Por favor proporcione todos los campos',
+    if (this.fileForUpload) {
+      const subUpload = this.eventService
+        .uploadFile(this.fileForUpload, id)
+        .subscribe((res) => {
+          //  build url image
+          this.previewImage = this.utils.resolvePathImage(
+            res.data.addCoverEvent.path
+          );
         });
 
-        throw new Error();
-      }
-      programDate = mergeDatetTime(
-        configValue.programDate,
-        configValue.programTime
-      );
-      if (startEvent.getTime() <= programDate.getTime()) {
-        // la fecha de programacion no puede ser mayor a la fecha de inicio
-        this.modal.error({
-          nzTitle: 'ERROR',
-          nzContent:
-            'la fecha de programacion no puede ser mayor a la fecha de inicio',
-        });
-
-        throw new Error();
-      }
-    }
-    // validate event
-    if (isPast(startEvent)) {
-      // el evento no puede ser pasado
-      this.modal.error({
-        nzTitle: 'ERROR',
-        nzContent: 'No puede programar un evento en fecha pasada',
-      });
-
+      this.subs.push(subUpload);
       return;
     }
-
-    return {
-      ...this.currentEvent,
-      name: title,
-      startEvent: startEvent,
-      description: description,
-      publishedDate: programDate != null ? programDate : null,
-      published: this.programEvent,
-      includeComments: configValue.includeComment,
-    } as IEvent;
   }
 }

@@ -124,7 +124,13 @@
       {{ editMode ? "actualizar evento" : "guardar evento" }}
     </button>
 
-    <button nz-button class="my-3 button_le my-2" nzType="primary">
+    <button
+      nz-button
+      *ngIf="editMode"
+      class="my-3 button_le my-2"
+      (click)="navigateSesions()"
+      nzType="primary"
+    >
       ver sesiones
     </button>
   </nz-card>

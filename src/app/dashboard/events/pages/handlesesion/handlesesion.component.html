@@ -28,7 +28,12 @@
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label>Titulo </nz-form-label>
-        <input type="text" nz-input placeholder="Titulo del evento" />
+        <input
+          type="text"
+          nz-input
+          formControlName="nameSesion"
+          placeholder="Titulo del evento"
+        />
       </nz-form-control>
     </nz-form-item>
 
@@ -37,14 +42,20 @@
         <nz-form-label class="subtitle" style="font-style: italic"
           >Fecha</nz-form-label
         >
-        <nz-date-picker class="w-100"></nz-date-picker>
+        <nz-date-picker
+          formControlName="startDateSesion"
+          class="w-100"
+        ></nz-date-picker>
       </nz-form-control>
 
       <nz-form-control fxFlex="45%" class="">
         <nz-form-label class="subtitle" style="font-style: italic"
           >Hora</nz-form-label
         >
-        <nz-time-picker class="w-100"></nz-time-picker>
+        <nz-time-picker
+          formControlName="startTimeSesion"
+          class="w-100"
+        ></nz-time-picker>
       </nz-form-control>
     </nz-form-item>
     <!-- url de la sesion -->
@@ -54,7 +65,12 @@
         [nzErrorTip]="'No se reconoce el formato url'"
       >
         <nz-form-label>Link de la sesión </nz-form-label>
-        <input type="url" nz-input placeholder="link de la sesión" />
+        <input
+          type="url"
+          nz-input
+          placeholder="link de la sesión"
+          formControlName="linkRoom"
+        />
       </nz-form-control>
     </nz-form-item>
 
@@ -63,7 +79,8 @@
         <nz-form-label class="">Descripción</nz-form-label>
         <textarea
           style="width: 100%"
-          nx-input
+          nz-input
+          formControlName="description"
           [nzAutosize]="{ minRows: 5, maxRows: 15 }"
         ></textarea>
       </nz-form-control>

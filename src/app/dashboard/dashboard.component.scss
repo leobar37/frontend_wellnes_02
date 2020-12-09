@@ -95,11 +95,15 @@ nz-header {
 
 nz-content {
   margin: 24px;
+  overflow-y: scroll;
+  height: 80vh;
+  &::-webkit-scrollbar {
+    visibility: hidden;
+  }
 }
 
 .inner-content {
   padding: 24px;
   background: #fff;
-  height: 110vh;
   // height: 100%;
 }
