@@ -3,19 +3,17 @@
   <nz-upload
     class="event-uploader"
     nzName="avatar"
+    [nzCustomRequest]="actionServer"
     nzListType="picture-card"
     [nzShowUploadList]="false"
   >
-    <ng-container>
+    <ng-container *ngIf="!previewImage">
       <div class="upload_placeholder">
         <i class="fas fa-upload"></i>
         <span>imagen de la sesión</span>
       </div>
     </ng-container>
-    <!-- <img
-      *ngIf="previewIam"
-      style="width: 100%"
-    /> -->
+    <img *ngIf="previewImage" [src]="previewImage" style="width: 100%" />
   </nz-upload>
 </ng-template>
 
@@ -25,6 +23,7 @@
   <h1 class="title line_addon">Detalles de la sesión</h1>
 
   <form action="" [formGroup]="formSesion">
+    <!-- title -->
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label>Titulo </nz-form-label>
@@ -36,7 +35,7 @@
         />
       </nz-form-control>
     </nz-form-item>
-
+    <!-- fecha -->
     <nz-form-item fxLayout="row" fxLayoutGap="10px">
       <nz-form-control fxFlex="45%" class="">
         <nz-form-label class="subtitle" style="font-style: italic"
@@ -47,7 +46,7 @@
           class="w-100"
         ></nz-date-picker>
       </nz-form-control>
-
+      <!--  time -->
       <nz-form-control fxFlex="45%" class="">
         <nz-form-label class="subtitle" style="font-style: italic"
           >Hora</nz-form-label
@@ -73,7 +72,16 @@
         />
       </nz-form-control>
     </nz-form-item>
-
+    <!--  time duration -->
+    <nz-form-item>
+      <nz-form-control>
+        <nz-form-label class="subtitle">
+          Tiempo de duración estimadod (horas)
+        </nz-form-label>
+        <nz-slider formControlName="duration" [nzMax]="15"> </nz-slider>
+      </nz-form-control>
+    </nz-form-item>
+    <!-- descripcion -->
     <nz-form-item>
       <nz-form-control class="control_form_le">
         <nz-form-label class="">Descripción</nz-form-label>
@@ -86,7 +94,14 @@
       </nz-form-control>
     </nz-form-item>
     <div fxLayout="row">
-      <button nz-button nzType="primary" class="button_le ml-2">guardar</button>
+      <button
+        nz-button
+        nzType="primary"
+        class="button_le ml-2"
+        (click)="actionsSesion()"
+      >
+        guardar
+      </button>
       <button nz-button nzType="primary" class="button_le ml-2">
         Eliminar
       </button>

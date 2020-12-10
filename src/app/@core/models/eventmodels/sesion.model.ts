@@ -2,7 +2,8 @@ export interface Isesion {
   id: number;
   duration: number;
   linkRoom?: string;
-  startSesión?: Date;
+  startSesion?: Date;
   description?: string;
   createdSesion?: Date;
+  nameSesion?: string;
 }

@@ -14,3 +14,15 @@ export const isBase64 = (str: string) => {
 export const mergeDatetTime = (date: Date, time: Date): Date => {
   return setMinutes(setHours(date, time.getHours()), time.getMinutes());
 };
+
+export const getTimestamp = (date: Date): number | null => {
+  try {
+    const result = date.getTime();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+
+    return null;
+  }
+};

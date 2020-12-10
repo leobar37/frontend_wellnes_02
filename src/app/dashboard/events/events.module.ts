@@ -1,3 +1,4 @@
+import { SesionService } from './services/sesion.service';
 import { EventService } from './services/event.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,10 +22,12 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
 
 import { NzModalModule } from 'ng-zorro-antd/modal';
 const zorro = [
   NzModalModule,
+  NzSliderModule,
   NzButtonModule,
   NzUploadModule,
   NzMessageModule,
@@ -47,6 +50,6 @@ const zorro = [
     EventsRoutingModule,
     zorro,
   ],
-  providers: [EventService],
+  providers: [EventService, SesionService],
 })
 export class EventsModule {}

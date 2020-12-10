@@ -128,7 +128,7 @@ export class HandleeventComponent implements OnInit {
       }
     }
     // validate event
-    if (isPast(startEvent) && !this.editMode) {
+    if (isPast(startEvent)) {
       // el evento no puede ser pasado
       this.modal.error({
         nzTitle: 'ERROR',
@@ -210,6 +210,7 @@ export class HandleeventComponent implements OnInit {
   private getEvent(id: number) {
     const subGetEvent = this.eventService.getEvent(id).subscribe((resp) => {
       if (resp.data.event != null) {
+        console.log(resp.data.event);
         this.setValuesOnFormEvent(resp.data.event);
         this.currentEvent = resp.data.event;
       } else {
@@ -287,6 +288,8 @@ export class HandleeventComponent implements OnInit {
     });
 
     if (!this.previewImage) {
+      console.log(event.eventCover);
+
       this.previewImage = this.utils.resolvePathImage(event.eventCover);
     }
   }
@@ -341,7 +344,10 @@ export class HandleeventComponent implements OnInit {
   };
   // upload image on server
   private uploadImage(id: any) {
+    console.log('it is image');
+
     if (this.fileForUpload) {
+      console.log('upload', id);
       const subUpload = this.eventService
         .uploadFile(this.fileForUpload, id)
         .subscribe((res) => {
