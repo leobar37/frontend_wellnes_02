@@ -7,13 +7,13 @@
     nzListType="picture-card"
     [nzShowUploadList]="false"
   >
-    <ng-container *ngIf="!previewImage">
+    <ng-container *ngIf="!isValidValueImage">
       <div class="upload_placeholder">
         <i class="fas fa-upload"></i>
         <span>imagen de la sesión</span>
       </div>
     </ng-container>
-    <img *ngIf="previewImage" [src]="previewImage" style="width: 100%" />
+    <img *ngIf="isValidValueImage" [src]="previewImage" style="width: 100%" />
   </nz-upload>
 </ng-template>
 
@@ -100,7 +100,7 @@
         class="button_le ml-2"
         (click)="actionsSesion()"
       >
-        guardar
+        {{ editMode ? "actualizar sesion" : "guardar" }}
       </button>
       <button nz-button nzType="primary" class="button_le ml-2">
         Eliminar
@@ -114,16 +114,11 @@
 
 <ng-template #configEventTemplate>
   <h1 class="title line_addon">Configuración del evento</h1>
-  <nz-card>
-    <nz-list>
-      <nz-list-item nzItemLayout="horizontal" *ngFor="let sesion of sesions">
-        <nz-list-item-meta-title>
-          {{ sesion.name }}
-        </nz-list-item-meta-title>
-        {{ sesion.time | date: "short" }}
-      </nz-list-item>
-    </nz-list>
-  </nz-card>
+  <app-list-sesions
+    (clickSesionEvent)="actionClickSesion($event)"
+    [sesions]="sesions"
+  >
+  </app-list-sesions>
 </ng-template>
 
 <!-- layout -->

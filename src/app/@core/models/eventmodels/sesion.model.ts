@@ -6,4 +6,5 @@ export interface Isesion {
   description?: string;
   createdSesion?: Date;
   nameSesion?: string;
+  sesionCover?: string;
 }

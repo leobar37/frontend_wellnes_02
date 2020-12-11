@@ -14,8 +14,25 @@ const FRAGMENTSESION = gql`
     startSesion
     nameSesion
     description
+    duration
     createdSesion
     linkRoom
+  }
+`;
+
+const GETSESIONS = gql`
+  ${FRAGMENTSESION}
+  query getSesions($idEvent: ID!) {
+    sesions(idEvent: $idEvent) {
+      resp
+      errors {
+        message
+        code
+      }
+      sesions {
+        ...sesionFragment
+      }
+    }
   }
 `;
 
@@ -104,18 +121,29 @@ export class SesionService {
   public editSesion(
     idSesion: number,
     sesion: Isesion
-  ): Observable<FetchResult<{ addSesion: ISesionResponse }>> {
+  ): Observable<FetchResult<{ updateSesion: ISesionResponse }>> {
     return this.apollo.mutate({
       mutation: EDIT_SESION,
       variables: {
         idSesion,
         sesion: {
           duration: sesion.duration,
-          nameSesion: sesion.duration,
+          nameSesion: sesion.nameSesion,
           linkRoom: sesion.linkRoom,
           startSesion: getTimestamp(sesion.startSesion),
           description: sesion.description,
         },
+      },
+    });
+  }
+
+  public getSesions(
+    id: number
+  ): Observable<ApolloQueryResult<{ sesions: ISesionResponse }>> {
+    return this.apollo.query({
+      query: GETSESIONS,
+      variables: {
+        idEvent: Number(id),
       },
     });
   }
@@ -126,7 +154,7 @@ export class SesionService {
     return this.apollo.query({
       query: GETSESION,
       variables: {
-        idSesion,
+        idSesion: Number(idSesion),
       },
     });
   }

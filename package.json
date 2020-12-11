@@ -38,6 +38,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
     "ng-zorro-antd": "^10.1.2",
+    "ngx-date-fns": "^6.6.0",
     "password-validator": "^5.1.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

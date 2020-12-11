@@ -23,8 +23,9 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
-
+import { DateFnsModule } from 'ngx-date-fns';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { ListSesionsComponent } from './pages/components/list-sesions/list-sesions.component';
 const zorro = [
   NzModalModule,
   NzSliderModule,
@@ -41,13 +42,20 @@ const zorro = [
   NzTimePickerModule,
 ];
 @NgModule({
-  declarations: [EventsComponent, HandleeventComponent, HandlesesionComponent],
+  declarations: [
+    EventsComponent,
+    HandleeventComponent,
+    HandlesesionComponent,
+    ListSesionsComponent,
+  ],
   imports: [
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
+    DateFnsModule.forRoot(),
     CommonModule,
     EventsRoutingModule,
+
     zorro,
   ],
   providers: [EventService, SesionService],

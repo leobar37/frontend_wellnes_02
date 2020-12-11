@@ -15,14 +15,22 @@ export const mergeDatetTime = (date: Date, time: Date): Date => {
   return setMinutes(setHours(date, time.getHours()), time.getMinutes());
 };
 
-export const getTimestamp = (date: Date): number | null => {
-  try {
-    const result = date.getTime();
-    console.log(result);
-    return result;
-  } catch (error) {
-    console.log(error);
-
+export const getTimestamp = (date: Date): number | Date | null => {
+  if (!date || date === null || date === undefined) {
     return null;
   }
+  try {
+    const result = date.getTime();
+    return result;
+  } catch (error) {
+    return new Date(date);
+  }
+};
+
+export const isValidValue = (value: any): boolean => {
+  if (value && typeof value != 'undefined' && value != null) {
+    return true;
+  }
+
+  return false;
 };

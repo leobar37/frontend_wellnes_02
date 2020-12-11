@@ -1,0 +1,19 @@
+<nz-card [nzTitle]="titlecard">
+  <nz-list>
+    <nz-list-item
+      (click)="selectItem(sesion.id)"
+      nzItemLayout="horizontal"
+      *ngFor="let sesion of sesions"
+    >
+      <nz-list-item-meta
+        nzDescription="{{
+          sesion.startSesion | dfnsFormatDistanceToNow: options
+        }}"
+      >
+      </nz-list-item-meta>
+      <nz-list-item-meta-title>
+        {{ sesion.nameSesion }}
+      </nz-list-item-meta-title>
+    </nz-list-item>
+  </nz-list>
+</nz-card>

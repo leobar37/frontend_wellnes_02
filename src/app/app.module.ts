@@ -22,6 +22,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 const tokenGetter = () => {
   return localStorage.getItem('token');
 };
+
 registerLocaleData(es);
 @NgModule({
   declarations: [AppComponent],
