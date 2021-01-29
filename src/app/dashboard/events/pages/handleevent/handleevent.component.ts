@@ -13,7 +13,6 @@ import { isPast } from 'date-fns';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import _, { partial } from 'lodash';
-import { error } from 'protractor';
 
 @Component({
   selector: 'app-handleevent',

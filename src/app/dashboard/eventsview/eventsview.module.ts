@@ -1,3 +1,4 @@
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -7,13 +8,18 @@ import { ListeventsComponent } from './pages/listevents/listevents.component';
 import { MatCardModule } from '@angular/material/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { EventService } from '../events/services/event.service';
+// service provide of principal module events
+import { EventService as EventServiceModule } from '../events/services/event.service';
 import { DisplayeventComponent } from './pages/displayevent/displayevent.component';
-const zorro = [NzButtonModule];
-
+import { EventService } from './services/event.service';
+const zorro = [NzButtonModule, NzModalModule];
 const material = [MatCardModule];
 @NgModule({
-  declarations: [EventsviewComponent, ListeventsComponent, DisplayeventComponent],
+  declarations: [
+    EventsviewComponent,
+    ListeventsComponent,
+    DisplayeventComponent,
+  ],
   imports: [
     CommonModule,
     EventsviewRoutingModule,
@@ -21,6 +27,6 @@ const material = [MatCardModule];
     ...material,
     FlexLayoutModule,
   ],
-  providers: [EventService],
+  providers: [EventServiceModule, EventService],
 })
 export class EventsviewModule {}

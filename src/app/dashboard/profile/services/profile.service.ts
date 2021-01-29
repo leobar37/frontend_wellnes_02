@@ -103,7 +103,7 @@ export class ProfileService {
   > {
     this.jwtService = this.injector.get<JwtService>(JwtService);
     const user = this.jwtService.getUserOfToken();
-    console.log(user.id);
+
     return this.apollo.query<{ getUser: UserResponse }>({
       query: GET_USER,
       variables: {

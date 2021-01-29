@@ -4,3 +4,6 @@ import { NormalResponse } from './../reponses/response';
 export interface EventResponse extends NormalResponse {
   event?: IEvent;
 }
+export interface IDetailResponse extends NormalResponse {
+  timeAttend?: Date;
+}
