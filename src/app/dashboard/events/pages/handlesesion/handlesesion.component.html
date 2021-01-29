@@ -105,7 +105,14 @@
       <button nz-button nzType="primary" class="button_le ml-2">
         Eliminar
       </button>
-      <button nz-button nzType="primary" class="button_le ml-2">Editar</button>
+      <button
+        nz-button
+        nzType="primary"
+        class="button_le ml-2"
+        (click)="newSesion()"
+      >
+        Nueva sesión
+      </button>
     </div>
   </form>
 </ng-template>

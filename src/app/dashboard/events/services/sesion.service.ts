@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { gql, Apollo } from 'apollo-angular';
 import { getTimestamp } from '@helpers/helpers';
 
-const FRAGMENTSESION = gql`
+export const FRAGMENTSESION = gql`
   fragment sesionFragment on Sesion {
     id
     sesionCover
@@ -59,9 +59,6 @@ const ADD_SESION = gql`
         message
       }
       sesions {
-        ...sesionFragment
-      }
-      sesion {
         ...sesionFragment
       }
     }

@@ -1,0 +1,25 @@
+<div class="contain">
+  <div fxLayout="row wrap" fxLayoutAlign="center start" fxLayoutGap="10px">
+    <mat-card class="viewcardevent" *ngFor="let item of items">
+      <img mat-card-image [src]="item.eventCover" alt="" />
+      <mat-card-content>
+        <h3>
+          {{ item.name }}
+        </h3>
+        <p>
+          {{ item.description }}
+        </p>
+      </mat-card-content>
+      <mat-card-footer>
+        <button
+          nz-button
+          (click)="redirectEvent(item.id)"
+          class="m-3"
+          nzType="primary"
+        >
+          registrarse
+        </button>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>

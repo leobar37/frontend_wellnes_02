@@ -26,6 +26,7 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
 import { DateFnsModule } from 'ngx-date-fns';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ListSesionsComponent } from './pages/components/list-sesions/list-sesions.component';
+import { ListeventsComponent } from './pages/listevents/listevents.component';
 const zorro = [
   NzModalModule,
   NzSliderModule,
@@ -47,6 +48,7 @@ const zorro = [
     HandleeventComponent,
     HandlesesionComponent,
     ListSesionsComponent,
+    ListeventsComponent,
   ],
   imports: [
     FlexLayoutModule,

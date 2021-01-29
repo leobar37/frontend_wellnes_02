@@ -4,10 +4,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { EventsComponent } from './events.component';
+import { ListeventsComponent } from './pages/listevents/listevents.component';
 
 const routesChildren: Routes = [
   { path: 'event', component: HandleeventComponent },
   { path: 'sesion/:id', component: HandlesesionComponent },
+  { path: 'list', component: ListeventsComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'event' },
 ];
 

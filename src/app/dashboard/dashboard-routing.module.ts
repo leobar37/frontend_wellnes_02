@@ -14,6 +14,11 @@ const childrenRoutes: Routes = [
     loadChildren: () =>
       import('./events/events.module').then((m) => m.EventsModule),
   },
+  {
+    path: 'view',
+    loadChildren: () =>
+      import('./eventsview/eventsview.module').then((m) => m.EventsviewModule),
+  },
 ];
 
 const routes: Routes = [

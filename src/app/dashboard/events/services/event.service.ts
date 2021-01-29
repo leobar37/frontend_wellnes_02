@@ -1,4 +1,3 @@
-import { map } from 'rxjs/operators';
 import { FileResponse } from './../../../@core/models/reponses/response';
 import { FetchResult, ApolloQueryResult } from '@apollo/client/core';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
@@ -8,7 +7,8 @@ import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
-
+import { FRAGMENTSESION } from './sesion.service';
+import { tap } from 'rxjs/operators';
 const EVENTFRAGMENT = gql`
   fragment eventFragment on Event {
     name
@@ -70,12 +70,38 @@ const UPLOADCOVEREVENT = gql`
 
 const GETEVENT = gql`
   ${EVENTFRAGMENT}
+  ${FRAGMENTSESION}
   query getEvent($id: ID!) {
     event(id: $id) {
+      ...eventFragment
+      sesions {
+        ...sesionFragment
+      }
+    }
+  }
+`;
+
+const GETEVENTWITHSESION = gql`
+  ${FRAGMENTSESION}
+  ${EVENTFRAGMENT}
+  query getEvent($id: ID!) {
+    event(id: $id) {
+      ...eventFragment
+      sesions {
+        ...sesionFragment
+      }
+    }
+  }
+`;
+const GETEVENTS = gql`
+  ${EVENTFRAGMENT}
+  query getEvents {
+    getEvents {
       ...eventFragment
     }
   }
 `;
+
 @Injectable()
 export class EventService {
   constructor(private apollo: Apollo) {}
@@ -121,13 +147,26 @@ export class EventService {
   }
 
   public getEvent(
-    id: number
+    id: number,
+    includeSesions?: boolean
   ): Observable<ApolloQueryResult<{ event: IEvent }>> {
-    return this.apollo.query<{ event: IEvent }>({
-      query: GETEVENT,
-      variables: {
-        id: id,
-      },
+    return this.apollo
+      .query<{ event: IEvent }>({
+        query: includeSesions ? GETEVENTWITHSESION : GETEVENT,
+        variables: {
+          id: id,
+        },
+      })
+      .pipe(
+        tap((data) => {
+          console.log(data);
+        })
+      );
+  }
+  // get events
+  public getEvents() {
+    return this.apollo.query<{ getEvents: IEvent[] }>({
+      query: GETEVENTS,
     });
   }
 

@@ -3,13 +3,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { SafeUrl } from '@angular/platform-browser';
 import { getBase64 } from 'src/app/helpers/helpers';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  OnDestroy,
+} from '@angular/core';
 import { mergeDatetTime, isValidValue } from '@helpers/helpers';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { of, Subscription } from 'rxjs';
 import { SesionService } from '../../services/sesion.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { getTimestamp } from '@helpers/helpers';
 import { Router } from '@angular/router';
@@ -27,7 +33,7 @@ interface IformSesion {
   templateUrl: './handlesesion.component.html',
   styleUrls: ['../../events.component.scss'],
 })
-export class HandlesesionComponent implements OnInit, OnChanges {
+export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public formSesion: FormGroup;
   private fileForUpload: File;
   public previewImage: string | SafeUrl;
@@ -46,17 +52,19 @@ export class HandlesesionComponent implements OnInit, OnChanges {
     private utilsService: UtilsService,
     private router: Router
   ) {}
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnDestroy(): void {
     this.subs.forEach((sub) => {
       if (sub) {
         sub.unsubscribe();
       }
     });
   }
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
     this.buildForms();
     this.idEvent = this.activateRoute.snapshot.params['id'];
+
     /** listen routes */
     this.listentRoutes();
     /**  gets sesions */
@@ -67,13 +75,7 @@ export class HandlesesionComponent implements OnInit, OnChanges {
     const subNavigation = this.activateRoute.queryParams
       .pipe(
         switchMap((params) => {
-          if ('edit' in params) {
-            //  enabled edit mode
-            const idSesion = Number(params.edit);
-
-            this.getSesion(idSesion);
-            // call sesions
-          }
+          this.verifyUrlInSesion();
           return of(params);
         })
       )
@@ -81,6 +83,20 @@ export class HandlesesionComponent implements OnInit, OnChanges {
 
     // add sub for cleanning
     this.subs.push(subNavigation);
+  }
+  // ve4rify params in url
+  private verifyUrlInSesion() {
+    const params = this.activateRoute.snapshot.queryParams;
+    if ('edit' in params) {
+      //  enabled edit mode
+      const idSesion = Number(params.edit);
+      this.getSesion(idSesion);
+      // call sesions
+    } else {
+      this.buildForms();
+      this.previewImage = null;
+      this.editMode = false;
+    }
   }
 
   /*=============================================
@@ -159,9 +175,10 @@ export class HandlesesionComponent implements OnInit, OnChanges {
     const subSesion = this.sesionService.getSesion(id).subscribe((reps) => {
       if (reps.data.sesion) {
         this.currentSesion = reps.data.sesion;
+        console.log(this.currentSesion);
+
         // fill sesions
         // patch values
-
         this.setValuesInForm(this.currentSesion);
         this.editMode = true;
       } else {
@@ -180,6 +197,7 @@ export class HandlesesionComponent implements OnInit, OnChanges {
         if (resp.data && data.resp) {
           this.sesions = data.sesions;
           this.setValuesInForm(data.sesion);
+          this.msg.success('actualizado');
           // verify image
           this.uploadImage(id);
         }
@@ -247,17 +265,30 @@ export class HandlesesionComponent implements OnInit, OnChanges {
   public actionClickSesion(id: number) {
     this.previewImage = null;
     this.navigateSesionEdit(id);
+    this.verifyUrlInSesion();
   }
 
+  public newSesion(): void {
+    this.router.navigate([], {
+      queryParams: {
+        edit: null,
+      },
+      queryParamsHandling: 'merge',
+    });
+  }
   /*=============================================
   =            helpers            =
   =============================================*/
   private navigateSesionEdit(id: number): void {
-    this.router.navigate([], {
-      queryParams: {
-        edit: id,
-      },
-    });
+    this.router
+      .navigate([], {
+        queryParams: {
+          edit: id,
+        },
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   // verify validvalueimage

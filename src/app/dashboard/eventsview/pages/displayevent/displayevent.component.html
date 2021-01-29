@@ -1,0 +1,70 @@
+<article class="contain" fxLayout="column" fxLayoutAlign="center center">
+  <h1 class="title">{{ currentEvent.name }}</h1>
+  <!-- MEDIA PREVIEW -->
+  <div class="media">
+    <img class="media__image" [src]="currentEvent.eventCover" alt="" />
+  </div>
+  <!-- information -->
+  <ul class="information" style="list-style: none">
+    <li>
+      <tr>
+        <th>Inicio</th>
+        <td>{{ currentEvent.startEvent | date }}</td>
+      </tr>
+    </li>
+    <li>
+      <tr>
+        <th>Sesiones</th>
+        <td>15</td>
+      </tr>
+    </li>
+    <li>
+      <tr>
+        <th>Asisitiran:</th>
+        <td>15</td>
+      </tr>
+    </li>
+  </ul>
+
+  <!-- content -->
+  <section class="content container">
+    <h3 class="title">Descripción</h3>
+    <div class="cotent_text">
+      <p class="paragraph">
+        {{ currentEvent.description }}
+      </p>
+    </div>
+    <button nz-button nzType="primary">Registrarse</button>
+  </section>
+  <!--  sesiones-->
+  <section class="contianer_sesions">
+    <h2 class="title text-center w-100 my-2 text-uppercase">sesiones</h2>
+    <ul
+      class="mx-auto sesions"
+      style="list-style: none"
+      fxLayout="row wrap"
+      fxLayoutGap="20px"
+      fxLayoutAlign="center  center"
+    >
+      <li class="sesion" *ngFor="let sesion of currentEvent.sesions">
+        <mat-card fxLayout class="item_sesion">
+          <div fxFlex="70%">
+            <h3 class="subtitle">{{ sesion.nameSesion }}</h3>
+            <p class="paragraph">
+              {{ sesion.description }}
+            </p>
+            <button nz-button nzType="primary">ver</button>
+          </div>
+          <div
+            class="side_right"
+            fxFlex="15%"
+            fxLayout
+            fxLayoutAlign="end center"
+          >
+            <span> {{ sesion.startSesion | date }} </span>
+          </div>
+        </mat-card>
+      </li>
+    </ul>
+  </section>
+</article>

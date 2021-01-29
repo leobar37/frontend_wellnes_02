@@ -13,6 +13,7 @@ import { isPast } from 'date-fns';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import _, { partial } from 'lodash';
+import { error } from 'protractor';
 
 @Component({
   selector: 'app-handleevent',
@@ -290,7 +291,9 @@ export class HandleeventComponent implements OnInit {
     if (!this.previewImage) {
       console.log(event.eventCover);
 
-      this.previewImage = this.utils.resolvePathImage(event.eventCover);
+      this.previewImage = this.utils.resolvePathImage(
+        event.eventCover as string
+      );
     }
   }
 
@@ -312,42 +315,47 @@ export class HandleeventComponent implements OnInit {
   //  control image
   actionServer = (info: any) => {
     const errors = [];
-
+    // el formato de validacion debe serapararse en un archivo de configuracion
+    const isJpgOrPng =
+      info.file.type === 'image/jpeg' || info.file.type === 'image/png';
+    if (!isJpgOrPng) {
+      errors.push('Este tipo de archivo no esta permitido');
+    }
     getBase64(info.file, (image) => {
       const imagetest = new Image();
       imagetest.onload = () => {
         // validations image
         imagetest.width;
+        if (imagetest.height > 1200) {
+          errors.push(
+            `Tamaño no permitido ${imagetest.height} * ${imagetest.width} -> 1200 * 1200`
+          );
+        }
         if (imagetest.width <= 400) {
-          errors.push('Esta image es muy pequña');
+          errors.push('Esta image es muy pequeña');
         }
-        const isJpgOrPng =
-          info.file.type === 'image/jpeg' || info.file.type === 'image/png';
 
-        if (!isJpgOrPng) {
-          errors.push('Este tipo de archi no esta permitido');
-        }
         if (info.size / 1024 / 1024 > 5) {
           errors.push('Excedio las 5mb por archivo');
         }
-        if (errors.length > 0) {
-          this.msg.error(errors.pop());
-        } else {
+        if (errors.length == 0) {
           this.fileForUpload = info.file;
           this.previewImage = image;
+        } else {
+          this.msg.error(errors.pop());
         }
       };
-
       imagetest.src = URL.createObjectURL(info.file);
     });
+    // launch errors
+    if (errors.length > 0) {
+      this.msg.error(errors.pop());
+    }
     return of(null);
   };
   // upload image on server
   private uploadImage(id: any) {
-    console.log('it is image');
-
     if (this.fileForUpload) {
-      console.log('upload', id);
       const subUpload = this.eventService
         .uploadFile(this.fileForUpload, id)
         .subscribe((res) => {

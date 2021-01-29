@@ -31,6 +31,5 @@ export const isValidValue = (value: any): boolean => {
   if (value && typeof value != 'undefined' && value != null) {
     return true;
   }
-
   return false;
 };

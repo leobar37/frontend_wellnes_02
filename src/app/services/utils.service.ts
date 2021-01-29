@@ -12,6 +12,7 @@ export class UtilsService {
     const url = this.str.bypassSecurityTrustUrl(
       `${environment.apiUrl}/${urlPa}`
     );
+
     return url;
   }
 }

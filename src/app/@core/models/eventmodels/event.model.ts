@@ -1,3 +1,5 @@
+import { Isesion } from '@core/models/eventmodels/sesion.model';
+import { SafeUrl } from '@angular/platform-browser';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 export interface IEvent {
   id?: number;
@@ -10,5 +12,6 @@ export interface IEvent {
   published?: EventState;
   publishedDate?: Date;
   includeComments?: boolean;
-  eventCover: string;
+  eventCover: string | SafeUrl;
+  sesions?: Isesion[];
 }

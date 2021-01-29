@@ -11,13 +11,27 @@ export class SidebarService {
   data: Imenu[] = [
     { name: 'Perfil', route: 'profile', icon: 'user' },
     {
-      name: 'events',
+      name: 'Administrar Eventos',
       icon: 'profile',
       items: [
         { name: 'Crear evento', route: 'events' },
         {
-          name: 'sesion',
-          route: 'events/sesion',
+          name: 'eventos creados',
+          route: 'events/list',
+        },
+      ],
+    },
+    {
+      name: 'Eventos',
+      icon: 'profile',
+      items: [
+        {
+          name: 'explorar eventos',
+          route: 'view/explorer',
+        },
+        {
+          name: 'test event',
+          route: 'view/event',
         },
       ],
     },
