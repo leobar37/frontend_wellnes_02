@@ -4,7 +4,7 @@ import { ListeventsComponent } from './pages/listevents/listevents.component';
 
 import { EventsviewComponent } from './eventsview.component';
 import { DisplayeventComponent } from './pages/displayevent/displayevent.component';
-
+import { DisplaySesionComponent } from './pages/display-sesion/display-sesion.component';
 const routes: Routes = [
   {
     path: '',
@@ -14,6 +14,10 @@ const routes: Routes = [
       {
         path: 'event/:id',
         component: DisplayeventComponent,
+      },
+      {
+        path: 'event/:id/:sesion',
+        component: DisplaySesionComponent,
       },
     ],
   },

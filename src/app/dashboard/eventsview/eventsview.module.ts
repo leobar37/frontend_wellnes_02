@@ -12,6 +12,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { EventService as EventServiceModule } from '../events/services/event.service';
 import { DisplayeventComponent } from './pages/displayevent/displayevent.component';
 import { EventService } from './services/event.service';
+import { SesionService as PrincipalSesionService } from '../events/services/sesion.service';
+import { DisplaySesionComponent } from './pages/display-sesion/display-sesion.component';
+import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
 const zorro = [NzButtonModule, NzModalModule];
 const material = [MatCardModule];
 @NgModule({
@@ -19,6 +22,7 @@ const material = [MatCardModule];
     EventsviewComponent,
     ListeventsComponent,
     DisplayeventComponent,
+    DisplaySesionComponent,
   ],
   imports: [
     CommonModule,
@@ -26,7 +30,8 @@ const material = [MatCardModule];
     ...zorro,
     ...material,
     FlexLayoutModule,
+    PipeShortParagraphModule,
   ],
-  providers: [EventServiceModule, EventService],
+  providers: [EventServiceModule, EventService, PrincipalSesionService],
 })
 export class EventsviewModule {}

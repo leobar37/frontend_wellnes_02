@@ -13,7 +13,7 @@ import { QueryRef } from 'apollo-angular';
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
-  styleUrls: ['./displayevent.component.scss'],
+  styleUrls: ['../styles.scss'],
 })
 export class DisplayeventComponent implements OnInit {
   currentEvent: IEvent = {
@@ -31,7 +31,8 @@ export class DisplayeventComponent implements OnInit {
     private utils: UtilsService,
     private jwtService: JwtService,
     private serviceDisplayEvent: DisplayEventService,
-    private modal: NzModalService
+    private modal: NzModalService,
+    private router: Router
   ) {}
 
   /*=============================================
@@ -57,10 +58,8 @@ export class DisplayeventComponent implements OnInit {
                   String(el.data.event.eventCover)
                 ),
               };
-
               // if register
               this.updateifRegiterInEvent();
-
               // enf id register
             });
           }
@@ -84,7 +83,6 @@ export class DisplayeventComponent implements OnInit {
       this.isRegister = resp.data.isRegisterEvent.resp;
     });
   }
-
   /*=============================================
   =            DOM EVENTs            =
   =============================================*/
@@ -103,5 +101,16 @@ export class DisplayeventComponent implements OnInit {
           });
         }
       });
+  }
+  // navigate sesion sesion
+  navigateSesion(idSesion: number) {
+    //  this.r
+    this.router.navigate([
+      '/dashboard',
+      'view',
+      'event',
+      this.currentEvent.id,
+      idSesion,
+    ]);
   }
 }

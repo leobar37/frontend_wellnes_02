@@ -29,10 +29,6 @@ export class SidebarService {
           name: 'explorar eventos',
           route: 'view/explorer',
         },
-        {
-          name: 'test event',
-          route: 'view/event',
-        },
       ],
     },
   ];

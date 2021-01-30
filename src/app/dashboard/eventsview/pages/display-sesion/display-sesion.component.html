@@ -1,0 +1,29 @@
+<article class="contain" fxLayout="column" fxLayoutAlign="center center">
+  <h1 class="title">{{ currentSesion.nameSesion }}</h1>
+  <!-- MEDIA PREVIEW -->
+  <div class="media">
+    <img class="media__image" [src]="currentSesion.sesionCover" alt="" />
+  </div>
+  <!-- information -->
+  <ul class="information" style="list-style: none">
+    <li>
+      <tr>
+        <th>Inicio</th>
+        <td>{{ currentSesion.startSesion | date: "medium" }}</td>
+      </tr>
+    </li>
+  </ul>
+  <!-- content -->
+  <section class="content container">
+    <h3 class="title">Descripción</h3>
+    <div class="cotent_text">
+      <p class="paragraph">
+        {{ currentSesion.description }}
+      </p>
+    </div>
+    <button nz-button nzType="primary" (click)="registerSesion()">
+      <!-- {{ isRegister ? "Registrado" : "Registrarse" }} -->
+      Ingresar
+    </button>
+  </section>
+</article>

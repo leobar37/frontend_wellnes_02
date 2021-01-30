@@ -52,9 +52,15 @@
           <div fxFlex="70%">
             <h3 class="subtitle">{{ sesion.nameSesion }}</h3>
             <p class="paragraph">
-              {{ sesion.description }}
+              {{ sesion.description | shortParagraph }}
             </p>
-            <button nz-button nzType="primary">ver</button>
+            <button
+              nz-button
+              (click)="navigateSesion(sesion.id)"
+              nzType="primary"
+            >
+              ver
+            </button>
           </div>
           <div
             class="side_right"

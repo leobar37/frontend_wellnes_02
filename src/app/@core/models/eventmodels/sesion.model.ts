@@ -1,5 +1,5 @@
 export interface Isesion {
-  id: number;
+  id?: number;
   duration: number;
   linkRoom?: string;
   startSesion?: Date;
