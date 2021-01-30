@@ -1,6 +1,7 @@
-import { FileResponse } from './../../../@core/models/reponses/response';
+import { FileResponse } from '@core/models/reponses/response';
 import { FetchResult, ApolloQueryResult } from '@apollo/client/core';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
+import { DetailEventAllResponse } from '@core/models/eventmodels/event.response';
 
 import { EventResponse } from 'src/app/@core/models/eventmodels/event.response';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
@@ -102,6 +103,29 @@ const GETEVENTS = gql`
   }
 `;
 
+const GETEVENTSOFUSER = gql`
+  ${FRAGMENTSESION}
+  ${EVENTFRAGMENT}
+  query getEvents($idUser: Int!) {
+    getEventsOfUser(idUser: $idUser) {
+      resp
+      errors {
+        code
+        message
+      }
+      events {
+        ...eventFragment
+        sesions {
+          ...sesionFragment
+          event {
+            ...eventFragment
+          }
+        }
+      }
+    }
+  }
+`;
+
 @Injectable()
 export class EventService {
   constructor(private apollo: Apollo) {}
@@ -130,6 +154,18 @@ export class EventService {
     });
   }
 
+  /*=============================================
+ =            get event of user            =
+ =============================================*/
+
+  public getEventsOfUser(idUser: number) {
+    return this.apollo.watchQuery<{ getEventsOfUser: DetailEventAllResponse }>({
+      query: GETEVENTSOFUSER,
+      variables: {
+        idUser,
+      },
+    });
+  }
   public uploadFile(
     file: File,
     id: number

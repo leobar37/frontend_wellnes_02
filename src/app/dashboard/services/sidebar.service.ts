@@ -9,7 +9,18 @@ export interface Imenu {
 @Injectable()
 export class SidebarService {
   data: Imenu[] = [
-    { name: 'Perfil', route: 'profile', icon: 'user' },
+    {
+      name: 'Perfil',
+      route: 'profile',
+      icon: 'user',
+      items: [{ name: 'calendario', route: 'calendar' }],
+    },
+    {
+      name: 'apps',
+      route: 'calendar',
+      icon: 'appstore',
+      items: [{ name: 'calendario', route: 'apps/calendar' }],
+    },
     {
       name: 'Administrar Eventos',
       icon: 'profile',

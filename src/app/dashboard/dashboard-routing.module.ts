@@ -19,6 +19,10 @@ const childrenRoutes: Routes = [
     loadChildren: () =>
       import('./eventsview/eventsview.module').then((m) => m.EventsviewModule),
   },
+  {
+    path: 'apps',
+    loadChildren: () => import('./apps/apps.module').then((m) => m.AppsModule),
+  },
 ];
 
 const routes: Routes = [

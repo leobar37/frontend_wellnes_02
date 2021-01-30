@@ -7,3 +7,6 @@ export interface EventResponse extends NormalResponse {
 export interface IDetailResponse extends NormalResponse {
   timeAttend?: Date;
 }
+export interface DetailEventAllResponse extends NormalResponse {
+  events?: IEvent[];
+}

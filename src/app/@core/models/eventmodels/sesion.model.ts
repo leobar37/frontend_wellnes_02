@@ -1,3 +1,4 @@
+import { IEvent } from '@core/models/eventmodels/event.model';
 export interface Isesion {
   id?: number;
   duration: number;
@@ -7,4 +8,5 @@ export interface Isesion {
   createdSesion?: Date;
   nameSesion?: string;
   sesionCover?: string;
+  event?: IEvent;
 }
