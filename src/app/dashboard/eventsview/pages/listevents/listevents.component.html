@@ -1,6 +1,6 @@
 <div class="contain">
-  <div fxLayout="row wrap" fxLayoutAlign="center start" fxLayoutGap="10px">
-    <mat-card class="viewcardevent" *ngFor="let item of items">
+  <ngx-masonry [options]="options" class="masonry">
+    <mat-card ngxMasonryItem class="viewcardevent" *ngFor="let item of items">
       <img mat-card-image [src]="item.eventCover" alt="" />
       <mat-card-content>
         <h3>
@@ -21,5 +21,5 @@
         </button>
       </mat-card-footer>
     </mat-card>
-  </div>
+  </ngx-masonry>
 </div>

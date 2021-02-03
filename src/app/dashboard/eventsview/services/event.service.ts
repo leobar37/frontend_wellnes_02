@@ -1,4 +1,3 @@
-import { FetchResult } from '@apollo/client/core';
 import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
 /*=============================================

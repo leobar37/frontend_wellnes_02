@@ -7,10 +7,9 @@ import { EventResponse } from 'src/app/@core/models/eventmodels/event.response';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FRAGMENTSESION } from './sesion.service';
-import { tap } from 'rxjs/operators';
-import { getTimestamp as getTimestampHelper } from '@helpers/helpers';
+import { tap, catchError } from 'rxjs/operators';
 const EVENTFRAGMENT = gql`
   fragment eventFragment on Event {
     name
@@ -194,17 +193,22 @@ export class EventService {
           id: id,
         },
       })
-      .pipe(
-        tap((data) => {
-          console.log(data);
-        })
-      );
+      .pipe(tap((data) => {}));
   }
   // get events
   public getEvents() {
-    return this.apollo.query<{ getEvents: IEvent[] }>({
-      query: GETEVENTS,
-    });
+    return this.apollo
+      .query<{ getEvents: IEvent[] }>({
+        query: GETEVENTS,
+      })
+      .pipe(
+        catchError((err) => {
+          console.log('errores');
+
+          console.log(err);
+          return of(err);
+        })
+      );
   }
 
   // edit event in server

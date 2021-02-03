@@ -41,6 +41,14 @@ export class DisplayeventComponent implements OnInit {
   ngOnInit(): void {
     this.listenRoutes();
   }
+
+  /*=============================================
+  =            gets             =
+  =============================================*/
+  get isVideo() {
+    return this.currentEvent.video?.length;
+  }
+
   /*=============================================
   =            listens            =
   =============================================*/
@@ -51,12 +59,14 @@ export class DisplayeventComponent implements OnInit {
           if ('id' in params) {
             // display event
             this.eventService.getEvent(params.id, true).subscribe((el) => {
+              console.log(el);
               this.currentEvent = {
                 ...el.data.event,
                 eventCover: this.utils.resolvePathImage(
                   String(el.data.event.eventCover)
                 ),
               };
+              console.log(this.currentEvent.sesions);
 
               this.updateifRegiterInEvent();
               // enf id register

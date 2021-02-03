@@ -1,8 +1,16 @@
+:host {
+  display: block;
+}
 .viewcardevent {
+  width: 300px;
   margin: 10px 10px;
-  max-width: 300px;
   cursor: pointer;
   h3 {
     text-transform: capitalize;
   }
+}
+
+.masonry {
+  text-align: center;
+  width: 1000px;
 }

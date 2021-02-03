@@ -11,11 +11,11 @@ import { CommonModule } from '@angular/common';
 import { VideoplayerComponent } from './components/videoplayer.component';
 import { VgCoreModule } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
-import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
+import { ThumbnailPlayModule } from './plugins/thumbnail-play/thumbnail-play.module';
 
 @NgModule({
   declarations: [VideoplayerComponent],
-  imports: [CommonModule, VgControlsModule, VgCoreModule, VgOverlayPlayModule],
+  imports: [CommonModule, VgControlsModule, VgCoreModule, ThumbnailPlayModule],
   exports: [VideoplayerComponent],
 })
 export class PlayerModule {}

@@ -17,6 +17,15 @@ import { DisplaySesionComponent } from './pages/display-sesion/display-sesion.co
 import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
 const zorro = [NzButtonModule, NzModalModule];
 const material = [MatCardModule];
+
+import { PlayerModule } from '@core/modules/player/player.module';
+
+/* Masonry Library 
+  documentation : https://github.com/wynfred/ngx-masonry/
+ 
+*/
+import { NgxMasonryModule } from 'ngx-masonry';
+
 @NgModule({
   declarations: [
     EventsviewComponent,
@@ -31,6 +40,8 @@ const material = [MatCardModule];
     ...material,
     FlexLayoutModule,
     PipeShortParagraphModule,
+    NgxMasonryModule,
+    PlayerModule,
   ],
   providers: [EventServiceModule, EventService, PrincipalSesionService],
 })

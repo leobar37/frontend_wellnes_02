@@ -1,22 +1,26 @@
 <article
   class="contain"
-  *ngIf="currentEvent.sesions?.length"
+  *ngIf="currentEvent?.sesions"
   fxLayout="column"
   fxLayoutAlign="center center"
 >
   <h1 class="title">{{ currentEvent.name }}</h1>
   <!-- MEDIA PREVIEW -->
   <div class="media">
-    <img class="media__image" [src]="currentEvent.eventCover" alt="" />
+    <img
+      class="media__image"
+      *ngIf="!isVideo"
+      [src]="currentEvent.eventCover"
+      alt=""
+    />
+    <app-videoplayer
+      *ngIf="isVideo"
+      [thumbnail]="currentEvent.eventCover"
+      [src]="currentEvent.video"
+    ></app-videoplayer>
   </div>
   <!-- information -->
   <ul class="information" style="list-style: none">
-    <li>
-      <tr>
-        <th>Inicio</th>
-        <td>{{ currentEvent.startEvent | date }}</td>
-      </tr>
-    </li>
     <li>
       <tr>
         <th>Sesiones</th>
