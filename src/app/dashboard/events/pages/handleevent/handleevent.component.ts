@@ -1,5 +1,6 @@
+import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { EventState } from '@core/models/eventmodels/enums.event';
-import { IEvent } from '@core/models/eventmodels/event.model';
+
 import { SafeUrl } from '@angular/platform-browser';
 import { UtilsService } from '@services/utils.service';
 import { EventService } from './../../services/event.service';
@@ -9,11 +10,23 @@ import { of, Subscription } from 'rxjs';
 import { getBase64 } from 'src/app/helpers/helpers';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { isPast } from 'date-fns';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { getVideoPreviw } from '@helpers/helpers';
 import _, { partial } from 'lodash';
-
+import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+interface IEventForm {
+  title: string;
+  description: string;
+}
+interface IconfigValueForm {
+  includeComment: boolean;
+  programDate: Date;
+  programTime: Date;
+  includeVideo: boolean;
+  optionPublished: EventState;
+}
 @Component({
   selector: 'app-handleevent',
   templateUrl: './handleevent.component.html',
@@ -26,7 +39,10 @@ export class HandleeventComponent implements OnInit {
   private fileForUpload: File;
   private currentEvent: IEvent;
   public editMode = false;
+  private fileVideoUpload: File;
   private subs: Subscription[] = [];
+  public videosrc: string;
+  public messageSpinner = 'Loading..';
   public optionsPublished: {
     label: string;
     value: EventState;
@@ -45,7 +61,6 @@ export class HandleeventComponent implements OnInit {
       value: EventState.PROGRAM,
     },
   ];
-  public programEvent: EventState;
 
   constructor(
     private msg: NzMessageService,
@@ -54,14 +69,15 @@ export class HandleeventComponent implements OnInit {
     private modal: NzModalService,
     private router: Router,
     private activateRoute: ActivatedRoute,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private serviceCloudinary: CloudinaryService,
+    private ngxSpinner: NgxSpinnerService
   ) {}
   ngOnInit(): void {
     this.buildForm();
     this.listenRoutes();
     this.activateRoute.queryParams.subscribe((params) => {});
   }
-
   private listenRoutes(): void {
     const subRoute = this.activateRoute.queryParams.subscribe(
       (params: Params) => {
@@ -77,6 +93,26 @@ export class HandleeventComponent implements OnInit {
     this.subs.push(subRoute);
   }
 
+  /*=============================================
+  =            cloudinary logic functions            =
+  =============================================*/
+
+  public selectVideo(video: File): void {
+    this.fileVideoUpload = video;
+    console.log('select vidoe', this.fileVideoUpload);
+    getVideoPreviw(video, (videoPreview: string) => {
+      this.videosrc = videoPreview;
+    });
+  }
+
+  private async uploadVIdeo() {
+    const auth = await this.serviceCloudinary.getSignature();
+    return this.serviceCloudinary.uploadFileCloudinary(
+      this.fileVideoUpload,
+      auth
+    );
+  }
+
   public navigateSesions(): void {
     this.router.navigate([
       '/dashboard',
@@ -85,11 +121,9 @@ export class HandleeventComponent implements OnInit {
       this.currentEvent.id,
     ]);
   }
-
   /** validations */
   private validateEvent(): IEvent {
-    const configValue = this.configForm.value;
-
+    const configValue = this.configForm.value as IconfigValueForm;
     if (this.eventForm.invalid) {
       this.modal.error({
         nzTitle: 'Error',
@@ -98,13 +132,12 @@ export class HandleeventComponent implements OnInit {
       throw new Error();
     }
     // value event
-    const eventFormValue = this.eventForm.value;
+    const eventFormValue = this.eventForm.value as IEventForm;
     const title = eventFormValue.title;
-    const startEvent = eventFormValue.startEvent;
     const description = eventFormValue.description;
     // value config
     let programDate: Date = null;
-    if (this.programEvent === EventState.PROGRAM) {
+    if (configValue.optionPublished === EventState.PROGRAM) {
       if (configValue.programDate == null || configValue.programTime == null) {
         this.modal.error({
           nzTitle: 'Error',
@@ -116,45 +149,32 @@ export class HandleeventComponent implements OnInit {
         configValue.programDate,
         configValue.programTime
       );
-      if (startEvent.getTime() <= programDate.getTime()) {
-        // la fecha de programacion no puede ser mayor a la fecha de inicio
-        this.modal.error({
-          nzTitle: 'ERROR',
-          nzContent:
-            'la fecha de programacion no puede ser mayor a la fecha de inicio',
-        });
-
-        throw new Error();
-      }
     }
-    // validate event
-    if (isPast(startEvent)) {
-      // el evento no puede ser pasado
-      this.modal.error({
-        nzTitle: 'ERROR',
-        nzContent: 'No puede programar un evento en fecha pasada',
-      });
-      throw new Error();
-    }
-
     return {
       ...this.currentEvent,
       name: title,
-      startEvent: startEvent,
       description: description,
       publishedDate: programDate != null ? programDate : null,
-      published: this.programEvent,
+      published: configValue.optionPublished,
       includeComments: configValue.includeComment,
     } as IEvent;
   }
 
   /*=============================================
- =            CRUD            =
+=            get for easy consult            =
+=============================================*/
+
+  get isIncludeVideo(): boolean {
+    return this.configForm.get('includeVideo').value;
+  }
+
+  /*=============================================
+ =            logic for interactue with BD          =
  =============================================*/
 
   /** final load event nad prepare sesions */
   public actionEvent(): void {
-    let event;
+    let event: IEvent | null = null;
     try {
       event = this.validateEvent();
     } catch (error) {
@@ -168,49 +188,101 @@ export class HandleeventComponent implements OnInit {
       return;
     }
 
-    if (!this.editMode) {
-      this.saveEvent(event);
-    } else {
-      this.editEvent(this.currentEvent.id, event);
-    }
+    const ctrlEvent = async () => {
+      /**
+       *  Si se envia un null en el video el backend debe editarlo
+       * o si se envia una url diferente
+       */
+      /// validations for video
+      if (!this.fileVideoUpload && !this.videosrc && this.isIncludeVideo) {
+        this.modal.confirm({
+          nzTitle: 'Ups',
+          nzContent:
+            'No se ha includo un video, este no es requerido, pero activo la opción ¿Desea continuar sin video?',
+          nzOkText: 'si',
+          nzCancelText: 'no',
+          nzOnOk: () => {
+            this.configForm.patchValue({ includeVideo: false });
+          },
+          nzOnCancel: () => {
+            throw new Error();
+          },
+        });
+      }
+
+      this.ngxSpinner.show();
+      // if exist video
+      console.log('verify here', this.fileForUpload);
+
+      if (this.fileVideoUpload && this.isIncludeVideo) {
+        console.log('update video');
+
+        this.messageSpinner = 'Cargando video';
+        const resp = await this.uploadVIdeo();
+        this.videosrc = resp.secure_url;
+        if (event !== null) {
+          event.cloudinarySource = JSON.stringify(resp);
+        }
+      }
+      if (!this.editMode) {
+        this.messageSpinner = 'Cargando evento';
+        this.saveEvent(event);
+      } else {
+        /** si edit mode esta desactivado entonces verificar que se envie un null en video */
+        if (!this.isIncludeVideo) {
+          event.video = 'delete';
+        }
+        this.messageSpinner = 'editando evento';
+
+        this.editEvent(this.currentEvent.id, event);
+      }
+    };
+    //
+    ctrlEvent();
   }
+
   private editEvent(id: number, event: IEvent) {
     const subEditEvent = this.eventService
       .editEvent(id, event)
       .subscribe((res) => {
+        this.ngxSpinner.hide();
         if (res.data.editEvent.resp) {
           this.currentEvent = res.data.editEvent.event;
           this.uploadImage(this.currentEvent.id);
           this.msg.success('El evento ha sido actualizado');
         }
       });
-
     this.subs.push(subEditEvent);
   }
   private saveEvent(event: IEvent): void {
-    const subSaveEvent = this.eventService.addEvent(event).subscribe((res) => {
-      if (res.data.createEvent.resp) {
-        const evenResp = res.data.createEvent.event;
-        this.setValuesOnFormEvent(evenResp);
-        this.uploadImage(evenResp.id);
-        // changue url
-        this.msg.success('Evento creado satisfactioriamente');
-        this.currentEvent = evenResp;
-        this.editMode = true;
-        this.router.navigate([], {
-          queryParams: {
-            edit: res.data.createEvent.event.id,
-          },
-        });
+    const subSaveEvent = this.eventService.addEvent(event).subscribe(
+      (res) => {
+        if (res.data.createEvent.resp) {
+          const evenResp = res.data.createEvent.event;
+          this.setValuesOnFormEvent(evenResp);
+          this.uploadImage(evenResp.id);
+          this.ngxSpinner.hide();
+          // changue url
+          this.msg.success('Evento creado satisfactioriamente');
+          this.currentEvent = evenResp;
+          this.editMode = true;
+          this.router.navigate([], {
+            queryParams: {
+              edit: res.data.createEvent.event.id,
+            },
+          });
+        }
+      },
+      (err) => {
+        this.ngxSpinner.hide();
       }
-    });
+    );
     this.subs.push(subSaveEvent);
   }
 
   private getEvent(id: number) {
     const subGetEvent = this.eventService.getEvent(id).subscribe((resp) => {
       if (resp.data.event != null) {
-        console.log(resp.data.event);
         this.setValuesOnFormEvent(resp.data.event);
         this.currentEvent = resp.data.event;
       } else {
@@ -231,51 +303,24 @@ export class HandleeventComponent implements OnInit {
   /*=============================================
   =            helpers            =
   =============================================*/
-
-  // checkbox
-  public publishedChangue(
-    arr: {
-      label: string;
-      value: EventState;
-      checked?: boolean;
-    }[]
-  ): void {
-    const val = arr.find(
-      ({ checked, value }) =>
-        checked && checked === true && this.programEvent !== value
-    );
-    if (!val) return;
-    this.optionsPublished = this.optionsPublished.map((ite) => {
-      ite.checked = ite.value === val.value ? true : false;
-      return ite;
-    });
-    this.programEvent = val.value;
-  }
-
   //  patch value in form
   private setValuesOnFormEvent(event: IEvent) {
+    this.optionsPublished = this.optionsPublished.map((el) =>
+      el.value == Number(EventState[event.published])
+        ? { ...el, checked: true }
+        : el
+    );
     const statateEvent =
       typeof event.published == 'number'
         ? event.published
         : EventState[event.published];
-
-    this.programEvent = Number(statateEvent);
-
-    this.optionsPublished = this.optionsPublished.map((item) => {
-      item.checked = item.checked =
-        item.value === this.programEvent ? true : false;
-
-      return item;
-    });
-
     this.eventForm.patchValue({
       title: event.name,
-      startEvent: new Date(event.startEvent),
-      timeStart: new Date(event.startEvent),
       description: event.description,
     });
 
     this.configForm.patchValue({
+      optionPublished: this.optionsPublished,
       includeComment: event.includeComments,
       programDate:
         statateEvent == EventState.PROGRAM
@@ -285,11 +330,11 @@ export class HandleeventComponent implements OnInit {
         statateEvent == EventState.PROGRAM
           ? new Date(event.publishedDate)
           : null,
+      includeVideo: event.video?.length ? true : false,
     });
 
+    this.videosrc = event.video;
     if (!this.previewImage) {
-      console.log(event.eventCover);
-
       this.previewImage = this.utils.resolvePathImage(
         event.eventCover as string
       );
@@ -302,15 +347,14 @@ export class HandleeventComponent implements OnInit {
       includeComment: this.fb.control(false),
       programDate: this.fb.control(null),
       programTime: this.fb.control(null),
+      includeVideo: this.fb.control(false),
+      optionPublished: this.fb.control(this.optionsPublished),
     });
     this.eventForm = this.fb.group({
       title: this.fb.control('', [Validators.required]),
-      startEvent: this.fb.control(null, [Validators.required]),
-      // timeStart: this.fb.control(null, [Validators.required]),
       description: this.fb.control(null, [Validators.required]),
     });
   }
-
   //  control image
   actionServer = (info: any) => {
     const errors = [];
@@ -355,10 +399,15 @@ export class HandleeventComponent implements OnInit {
   // upload image on server
   private uploadImage(id: any) {
     if (this.fileForUpload) {
+      this.ngxSpinner.show();
+      this.messageSpinner = 'Cargando Imagen';
       const subUpload = this.eventService
         .uploadFile(this.fileForUpload, id)
         .subscribe((res) => {
           //  build url image
+          console.log(res);
+          this.ngxSpinner.hide();
+
           this.previewImage = this.utils.resolvePathImage(
             res.data.addCoverEvent.path
           );

@@ -4,7 +4,6 @@ import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 export interface IEvent {
   id?: number;
   name?: string;
-  startEvent?: Date;
   endEvent?: Date;
   description?: string;
   capacityAssistant?: number;
@@ -14,4 +13,6 @@ export interface IEvent {
   includeComments?: boolean;
   eventCover: string | SafeUrl;
   sesions?: Isesion[];
+  video?: string;
+  cloudinarySource?: string;
 }

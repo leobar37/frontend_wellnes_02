@@ -1,3 +1,4 @@
+import { QueryRef } from 'apollo-angular';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { SafeUrl } from '@angular/platform-browser';
@@ -19,6 +20,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { getTimestamp } from '@helpers/helpers';
 import { Router } from '@angular/router';
+import { tr } from 'date-fns/locale';
 interface IformSesion {
   duration: number;
   linkRoom: string;
@@ -41,7 +43,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public currentSesion: Isesion;
   public editMode = false;
   private subs: Subscription[] = [];
-
+  private refQueryGetSesion: QueryRef<{ sesion: Isesion }> = null;
   public sesions: Isesion[] = [];
   constructor(
     private fb: FormBuilder,
@@ -75,8 +77,21 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     const subNavigation = this.activateRoute.queryParams
       .pipe(
         switchMap((params) => {
-          this.verifyUrlInSesion();
-          return of(params);
+          this.refQueryGetSesion = this.sesionService.getSesion();
+          if ('edit' in params) {
+            //  enabled edit mode
+            /// fetch sesion
+            const idSesion = Number(params.edit);
+            // /** traer la sesion por primera vez */
+            this.fetchSesion(idSesion);
+            // this.refQueryGetSesion.result().then((resp) => {
+            //   this.currentSesion = resp.data.sesion;
+            //   this.setValuesInForm(this.currentSesion);
+            //   this.editMode = true;
+            // });
+
+            return of(params);
+          }
         })
       )
       .subscribe();
@@ -84,14 +99,16 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     // add sub for cleanning
     this.subs.push(subNavigation);
   }
+  /** fetch sesion */
+
   // ve4rify params in url
   private verifyUrlInSesion() {
     const params = this.activateRoute.snapshot.queryParams;
     if ('edit' in params) {
       //  enabled edit mode
-      const idSesion = Number(params.edit);
-      this.getSesion(idSesion);
       // call sesions
+      const idSesion = Number(params.edit);
+      this.fetchSesion(idSesion);
     } else {
       this.buildForms();
       this.previewImage = null;
@@ -129,6 +146,14 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   /*=============================================
    =            operations sesion            =
    =============================================*/
+
+  public deleteSesion() {
+    this.sesionService.deleteSesion(this.currentSesion.id).then((result) => {
+      console.log('delete');
+
+      console.log(result);
+    });
+  }
   private getSesions(idEvent: number): void {
     const sub = this.sesionService.getSesions(idEvent).subscribe((re) => {
       if (re.data && re.data.sesions.resp) {
@@ -143,7 +168,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       .addSesion(this.idEvent, sesion)
       .subscribe((res) => {
         const response = res.data.addSesion;
-        if (response && response.resp) {
+        if (response && response.sesion) {
           this.currentSesion = response.sesion;
           this.uploadImage(response.sesion.id);
           this.setValuesInForm(this.currentSesion);
@@ -169,24 +194,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         });
       this.subs.push(subUpload);
     }
-  }
-
-  private getSesion(id: number) {
-    const subSesion = this.sesionService.getSesion(id).subscribe((reps) => {
-      if (reps.data.sesion) {
-        this.currentSesion = reps.data.sesion;
-        console.log(this.currentSesion);
-
-        // fill sesions
-        // patch values
-        this.setValuesInForm(this.currentSesion);
-        this.editMode = true;
-      } else {
-        // not exist sesion thow erro
-      }
-    });
-
-    this.subs.push(subSesion);
   }
 
   private editSesion(id: number, sesion: Isesion) {
@@ -225,6 +232,18 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     }
     // create sesion
   }
+  private async fetchSesion(id: number) {
+    console.log('fetch sesion', this.currentSesion);
+
+    if (this.refQueryGetSesion) {
+      this.refQueryGetSesion.refetch({ idSesion: id }).then((resp) => {
+        this.currentSesion = resp.data.sesion;
+        this.setValuesInForm(this.currentSesion);
+        console.log('fetch sesion two', this.currentSesion);
+        this.editMode = true;
+      });
+    }
+  }
 
   /*=============================================
   =            form operations            =
@@ -238,7 +257,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       nameSesion: sesion.nameSesion,
       description: sesion.description,
     });
-
     if (!isValidValue(this.previewImage)) {
       if (isValidValue(sesion.sesionCover))
         this.previewImage = this.utilsService.resolvePathImage(
@@ -267,7 +285,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     this.navigateSesionEdit(id);
     this.verifyUrlInSesion();
   }
-
   public newSesion(): void {
     this.router.navigate([], {
       queryParams: {
@@ -280,15 +297,11 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   =            helpers            =
   =============================================*/
   private navigateSesionEdit(id: number): void {
-    this.router
-      .navigate([], {
-        queryParams: {
-          edit: id,
-        },
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.router.navigate([], {
+      queryParams: {
+        edit: id,
+      },
+    });
   }
 
   // verify validvalueimage

@@ -34,17 +34,19 @@ export class DisplaySesionComponent implements OnInit {
   =============================================*/
   private listenRoutes() {
     this.activatRoute.params.subscribe((params: Params) => {
-      this.sesionServiceex.getSesion(params.sesion).subscribe((resp) => {
-        const sesion = resp.data.sesion;
-        if (sesion) {
-          this.currentSesion = {
-            ...resp.data.sesion,
-            sesionCover: this.utilsService.resolvePathImage(
-              sesion.sesionCover
-            ) as string,
-          };
-        }
-      });
+      this.sesionServiceex
+        .getSesion(params.sesion)
+        .valueChanges.subscribe((resp) => {
+          const sesion = resp.data.sesion;
+          if (sesion) {
+            this.currentSesion = {
+              ...resp.data.sesion,
+              sesionCover: this.utilsService.resolvePathImage(
+                sesion.sesionCover
+              ) as string,
+            };
+          }
+        });
     });
   }
   /*=============================================

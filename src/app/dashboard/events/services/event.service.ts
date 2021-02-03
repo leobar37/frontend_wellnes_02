@@ -10,17 +10,18 @@ import { gql, Apollo } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { FRAGMENTSESION } from './sesion.service';
 import { tap } from 'rxjs/operators';
+import { getTimestamp as getTimestampHelper } from '@helpers/helpers';
 const EVENTFRAGMENT = gql`
   fragment eventFragment on Event {
     name
     id
     published
-    startEvent
     capacityAssistant
     publishedDate
     includeComments
     description
     eventCover
+    video
   }
 `;
 
@@ -55,7 +56,6 @@ const EDITEVENT = gql`
     }
   }
 `;
-
 const UPLOADCOVEREVENT = gql`
   mutation addImageEvent($idEvent: Int!, $picture: Upload!) {
     addCoverEvent(idevent: $idEvent, picture: $picture) {
@@ -143,12 +143,13 @@ export class EventService {
       variables: {
         eventInput: {
           name: event.name,
-          startEvent: event.startEvent.getTime(),
+          video: event.video,
           capacityAssistant: event.capacityAssistant,
           published: EventState[event.published],
           description: event.description,
           publishedDate: publishDate,
           includeComments: event.includeComments,
+          cloudinarySource: event.cloudinarySource,
         },
       },
     });
@@ -222,10 +223,6 @@ export class EventService {
       variables: {
         event: {
           name: event.name,
-          startEvent:
-            typeof event.startEvent == 'number'
-              ? event.startEvent
-              : new Date(event.startEvent).getTime(),
           capacityAssistant: event.capacityAssistant,
           published:
             typeof event.published == 'number'
@@ -234,6 +231,8 @@ export class EventService {
           description: event.description,
           publishedDate: publishDate,
           includeComments: event.includeComments,
+          cloudinarySource: event.cloudinarySource,
+          video: event.video,
         },
         id: Number(id),
       },

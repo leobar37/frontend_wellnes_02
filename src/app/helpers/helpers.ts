@@ -11,6 +11,15 @@ export const isBase64 = (str: string) => {
   return base64regex.test(str);
 };
 
+export function getVideoPreviw(
+  video: File,
+  callback: (img: ArrayBuffer | string) => void
+): void {
+  const reader = new FileReader();
+  reader.addEventListener('load', (e) => callback(e.target.result));
+  reader.readAsDataURL(video);
+}
+
 export const mergeDatetTime = (date: Date, time: Date): Date => {
   return setMinutes(setHours(date, time.getHours()), time.getMinutes());
 };

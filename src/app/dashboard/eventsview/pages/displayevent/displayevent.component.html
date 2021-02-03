@@ -1,4 +1,9 @@
-<article class="contain" fxLayout="column" fxLayoutAlign="center center">
+<article
+  class="contain"
+  *ngIf="currentEvent.sesions?.length"
+  fxLayout="column"
+  fxLayoutAlign="center center"
+>
   <h1 class="title">{{ currentEvent.name }}</h1>
   <!-- MEDIA PREVIEW -->
   <div class="media">

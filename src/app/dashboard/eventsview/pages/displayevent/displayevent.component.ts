@@ -21,7 +21,6 @@ export class DisplayeventComponent implements OnInit {
     description:
       'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quia illum modi reiciendis libero iure at quae repudiandae enim ex.',
     eventCover: 'assets/img/profileexample.jpg',
-    startEvent: new Date(10),
   };
   public isRegister: boolean = false;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
@@ -58,7 +57,7 @@ export class DisplayeventComponent implements OnInit {
                   String(el.data.event.eventCover)
                 ),
               };
-              // if register
+
               this.updateifRegiterInEvent();
               // enf id register
             });

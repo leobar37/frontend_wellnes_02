@@ -27,6 +27,10 @@ import { DateFnsModule } from 'ngx-date-fns';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { ListSesionsComponent } from './pages/components/list-sesions/list-sesions.component';
 import { ListeventsComponent } from './pages/listevents/listevents.component';
+import { CustomCheckboxModule } from '@core/modules/custom-checkbox/custom-checkbox.module';
+import { PlayerModule } from '@core/modules/player/player.module';
+import { CloudinaryModule } from '@core/modules/cloudinary/cloudinary.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 const zorro = [
   NzModalModule,
   NzSliderModule,
@@ -56,8 +60,11 @@ const zorro = [
     ReactiveFormsModule,
     DateFnsModule.forRoot(),
     CommonModule,
+    NgxSpinnerModule,
     EventsRoutingModule,
-
+    CustomCheckboxModule,
+    PlayerModule,
+    CloudinaryModule,
     zorro,
   ],
   providers: [EventService, SesionService],

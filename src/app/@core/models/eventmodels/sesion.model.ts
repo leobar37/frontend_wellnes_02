@@ -9,4 +9,5 @@ export interface Isesion {
   nameSesion?: string;
   sesionCover?: string;
   event?: IEvent;
+  video?: string;
 }

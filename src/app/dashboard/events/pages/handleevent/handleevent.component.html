@@ -1,6 +1,7 @@
 <!--  upload -->
 <ng-template #uploadTemplate>
   <nz-upload
+    nzAccept="image/x-png,image/gif,image/jpeg"
     class="event-uploader"
     [nzCustomRequest]="actionServer"
     nzName="avatar"
@@ -27,6 +28,18 @@
 
 <ng-template #eventDetailsTemplate>
   <h1 class="title line_addon">Detalles del evento</h1>
+  <!-- Reproduce video here -->
+  <nz-card
+    *ngIf="videosrc?.length && configForm.get('includeVideo').value"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+  >
+    <h3 class="title text-center">video presentación</h3>
+    <ng-container>
+      <app-videoplayer [src]="videosrc"> </app-videoplayer>
+    </ng-container>
+  </nz-card>
+
   <form [formGroup]="eventForm">
     <nz-form-item>
       <nz-form-control class="control_form_le">
@@ -38,28 +51,6 @@
           placeholder="Titulo del evento"
         />
       </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item fxLayout="row" fxLayoutGap="10px">
-      <nz-form-control fxFlex="45%" class="">
-        <nz-form-label class="subtitle" style="font-style: italic"
-          >Fecha</nz-form-label
-        >
-        <nz-date-picker
-          formControlName="startEvent"
-          class="w-100"
-        ></nz-date-picker>
-      </nz-form-control>
-
-      <!-- <nz-form-control fxFlex="45%" class="">
-        <nz-form-label class="subtitle" style="font-style: italic"
-          >Hora</nz-form-label
-        >
-        <nz-time-picker
-          formControlName="timeStart"
-          class="w-100"
-        ></nz-time-picker>
-      </nz-form-control> -->
     </nz-form-item>
 
     <nz-form-item>
@@ -75,9 +66,7 @@
     </nz-form-item>
   </form>
 </ng-template>
-
 <!-- config event -->
-
 <ng-template #configEventTemplate>
   <h1 class="title line_addon">Configuración del evento</h1>
   <nz-card>
@@ -90,17 +79,28 @@
         fxFlexAlign="end"
       ></nz-switch>
     </div>
+    <!-- configurar si el evento incluye un video -->
+    <div class="my-3" fxLayout="row" fxLayoutGap="50px">
+      <span fxFlex="calc(100% - 80px)"> Incluir video </span>
+      <nz-switch
+        [formControl]="configForm.get('includeVideo')"
+        fxFlex="80px"
+        fxFlexAlign="end"
+      ></nz-switch>
+    </div>
+    <!--  uplod video component -->
+    <ng-container *ngIf="configForm.get('includeVideo').value">
+      <app-video-uplod (fileEmitter)="selectVideo($event)"> </app-video-uplod>
+    </ng-container>
     <!-- controla si el evento se programa o no -->
     <div class="my-3" fxLayout="row" fxLayoutGap="50px">
-      <nz-checkbox-group
-        [(ngModel)]="optionsPublished"
-        (ngModelChange)="publishedChangue(optionsPublished)"
-      >
-      </nz-checkbox-group>
+      <app-checkbox
+        [formControl]="configForm.get('optionPublished')"
+      ></app-checkbox>
     </div>
 
     <!-- programa cuandoe esta visible el evento -->
-    <ng-container *ngIf="programEvent && programEvent == 2">
+    <ng-container *ngIf="configForm.get('optionPublished').value == 2">
       <div fxLayout="column">
         <span class="subtitle"> fecha </span>
         <nz-date-picker [formControl]="configForm.get('programDate')">
@@ -156,3 +156,12 @@
     <ng-container *ngTemplateOutlet="configEventTemplate"></ng-container>
   </div>
 </div>
+
+<ngx-spinner
+  bdColor="rgba(12,239,25,0.8)"
+  size="medium"
+  color="#fff"
+  type="square-spin"
+  [fullScreen]="true"
+  ><p style="color: white">{{ messageSpinner }}</p></ngx-spinner
+>

@@ -8,6 +8,7 @@ export const environment = {
   fabookClienId: '369791231041330',
   googleClientId:
     '88372403405-iacpnj3bsfobsfellcl953408obpoe9n.apps.googleusercontent.com',
+  apiKeyCloudinary: '827568399999768',
 };
 
 /*

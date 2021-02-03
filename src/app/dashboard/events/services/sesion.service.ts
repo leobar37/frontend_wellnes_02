@@ -4,7 +4,7 @@ import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { Injectable } from '@angular/core';
 import { ISesionResponse } from '@core/models/reponses/sesion.response';
 import { Observable } from 'rxjs';
-import { gql, Apollo } from 'apollo-angular';
+import { gql, Apollo, QueryRef } from 'apollo-angular';
 import { getTimestamp } from '@helpers/helpers';
 
 export const FRAGMENTSESION = gql`
@@ -17,6 +17,20 @@ export const FRAGMENTSESION = gql`
     duration
     createdSesion
     linkRoom
+  }
+`;
+
+const DELETE_SESION = gql`
+  mutation deleteSesion($idSesion: ID!) {
+    deleteSesion(idSesion: $idSesion) {
+      resp
+      sesion {
+        sesionCover
+      }
+      sesions {
+        id
+      }
+    }
   }
 `;
 
@@ -59,6 +73,9 @@ const ADD_SESION = gql`
         message
       }
       sesions {
+        ...sesionFragment
+      }
+      sesion {
         ...sesionFragment
       }
     }
@@ -145,13 +162,24 @@ export class SesionService {
     });
   }
 
-  public getSesion(
+  public deleteSesion(
     idSesion: number
-  ): Observable<ApolloQueryResult<{ sesion: Isesion }>> {
-    return this.apollo.query({
+  ): Promise<ApolloQueryResult<{ deleteSesion: ISesionResponse }>> {
+    return this.apollo
+      .watchQuery<{ deleteSesion: ISesionResponse }>({
+        query: DELETE_SESION,
+        variables: {
+          idSesion: idSesion,
+        },
+      })
+      .result();
+  }
+
+  public getSesion(idSesion?: number): QueryRef<{ sesion: Isesion }> {
+    return this.apollo.watchQuery({
       query: GETSESION,
       variables: {
-        idSesion: Number(idSesion),
+        idSesion: idSesion ?? null,
       },
     });
   }
