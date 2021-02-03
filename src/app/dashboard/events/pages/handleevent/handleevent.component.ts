@@ -13,7 +13,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { getVideoPreviw } from '@helpers/helpers';
-import _, { partial } from 'lodash';
+import _ from 'lodash';
 import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 interface IEventForm {
@@ -99,12 +99,10 @@ export class HandleeventComponent implements OnInit {
 
   public selectVideo(video: File): void {
     this.fileVideoUpload = video;
-    console.log('select vidoe', this.fileVideoUpload);
     getVideoPreviw(video, (videoPreview: string) => {
       this.videosrc = videoPreview;
     });
   }
-
   private async uploadVIdeo() {
     const auth = await this.serviceCloudinary.getSignature();
     return this.serviceCloudinary.uploadFileCloudinary(
@@ -112,7 +110,6 @@ export class HandleeventComponent implements OnInit {
       auth
     );
   }
-
   public navigateSesions(): void {
     this.router.navigate([
       '/dashboard',
@@ -211,12 +208,8 @@ export class HandleeventComponent implements OnInit {
       }
 
       this.ngxSpinner.show();
-      // if exist video
-      console.log('verify here', this.fileForUpload);
 
       if (this.fileVideoUpload && this.isIncludeVideo) {
-        console.log('update video');
-
         this.messageSpinner = 'Cargando video';
         const resp = await this.uploadVIdeo();
         this.videosrc = resp.secure_url;
@@ -295,11 +288,9 @@ export class HandleeventComponent implements OnInit {
     });
     this.subs.push(subGetEvent);
   }
-
   /**
    * upload file
    */
-
   /*=============================================
   =            helpers            =
   =============================================*/

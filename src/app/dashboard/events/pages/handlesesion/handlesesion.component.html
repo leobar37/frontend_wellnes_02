@@ -21,6 +21,17 @@
 
 <ng-template #eventDetailsTemplate>
   <h1 class="title line_addon">Detalles de la sesión</h1>
+  <!-- video player -->
+  <nz-card
+    *ngIf="videosrc?.length && getIncludeVideo"
+    fxLayout="column"
+    fxLayoutAlign="center center"
+  >
+    <h3 class="title text-center">video presentación</h3>
+    <ng-container>
+      <app-videoplayer [src]="videosrc"> </app-videoplayer>
+    </ng-container>
+  </nz-card>
 
   <form action="" [formGroup]="formSesion">
     <!-- title -->
@@ -57,30 +68,35 @@
         ></nz-time-picker>
       </nz-form-control>
     </nz-form-item>
-    <!-- url de la sesion -->
-    <nz-form-item>
-      <nz-form-control
-        class="control_form_le"
-        [nzErrorTip]="'No se reconoce el formato url'"
-      >
-        <nz-form-label>Link de la sesión </nz-form-label>
-        <input
-          type="url"
-          nz-input
-          placeholder="link de la sesión"
-          formControlName="linkRoom"
-        />
-      </nz-form-control>
-    </nz-form-item>
-    <!--  time duration -->
-    <nz-form-item>
-      <nz-form-control>
-        <nz-form-label class="subtitle">
-          Tiempo de duración estimadod (horas)
-        </nz-form-label>
-        <nz-slider formControlName="duration" [nzMax]="15"> </nz-slider>
-      </nz-form-control>
-    </nz-form-item>
+
+    <!--  dependendens on include video :  -->
+    <ng-container *ngIf="!getIncludeVideo">
+      <!-- url de la sesion -->
+      <nz-form-item>
+        <nz-form-control
+          class="control_form_le"
+          [nzErrorTip]="'No se reconoce el formato url'"
+        >
+          <nz-form-label>Link de la sesión </nz-form-label>
+          <input
+            type="url"
+            nz-input
+            placeholder="link de la sesión"
+            formControlName="linkRoom"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <!--  time duration -->
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label class="subtitle">
+            Tiempo de duración (estimado en horas)
+          </nz-form-label>
+          <nz-slider formControlName="duration" [nzMax]="15"> </nz-slider>
+        </nz-form-control>
+      </nz-form-item>
+    </ng-container>
+
     <!-- descripcion -->
     <nz-form-item>
       <nz-form-control class="control_form_le">
@@ -125,12 +141,47 @@
 <!-- config event -->
 
 <ng-template #configEventTemplate>
+  <!-- config for sesion -->
   <h1 class="title line_addon">Configuración del evento</h1>
-  <app-list-sesions
-    (clickSesionEvent)="actionClickSesion($event)"
-    [sesions]="sesions"
-  >
-  </app-list-sesions>
+  <nz-space nzDirection="vertical" style="min-width: 320px">
+    <nz-space-item>
+      <nz-card>
+        <form [formGroup]="formConfigSesion">
+          <!-- inlude video option -->
+          <div class="my-3" fxLayout="row" fxLayoutGap="50px">
+            <span fxFlex="calc(100% - 80px)"> Incluir video </span>
+            <nz-switch
+              formControlName="includeVideo"
+              fxFlex="80px"
+              fxFlexAlign="end"
+            ></nz-switch>
+          </div>
+          <!-- result config video -->
+          <!--  uplod video component -->
+          <ng-container *ngIf="formConfigSesion.get('includeVideo').value">
+            <app-video-uplod (fileEmitter)="selectVideo($event)">
+            </app-video-uplod>
+          </ng-container>
+          <!-- include comments -->
+          <div class="my-3" fxLayout="row" fxLayoutGap="50px">
+            <span fxFlex="calc(100% - 80px)"> Incluir Comentarios </span>
+            <nz-switch
+              formControlName="includeComments"
+              fxFlex="80px"
+              fxFlexAlign="end"
+            ></nz-switch>
+          </div>
+        </form>
+      </nz-card>
+    </nz-space-item>
+    <nz-space-item>
+      <app-list-sesions
+        (clickSesionEvent)="actionClickSesion($event)"
+        [sesions]="sesions"
+      >
+      </app-list-sesions>
+    </nz-space-item>
+  </nz-space>
 </ng-template>
 
 <!-- layout -->
@@ -152,3 +203,12 @@
     <ng-container *ngTemplateOutlet="configEventTemplate"></ng-container>
   </div>
 </div>
+
+<ngx-spinner
+  bdColor="rgba(12,239,25,0.8)"
+  size="medium"
+  color="#fff"
+  type="square-spin"
+  [fullScreen]="true"
+  ><p style="color: white">{{ messageSpinner }}</p></ngx-spinner
+>

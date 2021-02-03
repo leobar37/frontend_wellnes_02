@@ -31,9 +31,17 @@ import { CustomCheckboxModule } from '@core/modules/custom-checkbox/custom-check
 import { PlayerModule } from '@core/modules/player/player.module';
 import { CloudinaryModule } from '@core/modules/cloudinary/cloudinary.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
+
+/**
+ *
+ * control space in inputs
+ *  documentation : https://ng.ant.design/components/space/en#nz-space
+ */
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 const zorro = [
-  NzModalModule,
+  NzSpaceModule,
   NzSliderModule,
+  NzModalModule,
   NzButtonModule,
   NzUploadModule,
   NzMessageModule,

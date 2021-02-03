@@ -27,7 +27,6 @@ export class CloudinaryService {
       .post(url, formData, { headers })
       .pipe(
         catchError((err) => {
-          console.log(err);
           return of(err);
         })
       )

@@ -17,6 +17,8 @@ export const FRAGMENTSESION = gql`
     duration
     createdSesion
     linkRoom
+    video
+    includeComments
   }
 `;
 
@@ -121,17 +123,25 @@ export class SesionService {
       mutation: ADD_SESION,
       variables: {
         idEvent,
-        sesion: {
-          duration: sesion.duration,
-          nameSesion: sesion.nameSesion,
-          linkRoom: sesion.linkRoom,
-          startSesion: getTimestamp(sesion.startSesion),
-          description: sesion.description,
-        },
+        sesion: this.buildSesion(sesion),
       },
     });
   }
 
+  private buildSesion(sesion: Isesion) {
+    console.log(sesion);
+
+    return {
+      includeComments: sesion.includeComments,
+      duration: sesion.duration,
+      nameSesion: sesion.nameSesion,
+      linkRoom: sesion.linkRoom,
+      startSesion: getTimestamp(sesion.startSesion),
+      description: sesion.description,
+      cloudinarySource: sesion.cloudinarySource,
+      video: sesion.video,
+    };
+  }
   public editSesion(
     idSesion: number,
     sesion: Isesion
@@ -140,13 +150,7 @@ export class SesionService {
       mutation: EDIT_SESION,
       variables: {
         idSesion,
-        sesion: {
-          duration: sesion.duration,
-          nameSesion: sesion.nameSesion,
-          linkRoom: sesion.linkRoom,
-          startSesion: getTimestamp(sesion.startSesion),
-          description: sesion.description,
-        },
+        sesion: this.buildSesion(sesion),
       },
     });
   }
@@ -165,6 +169,7 @@ export class SesionService {
   public deleteSesion(
     idSesion: number
   ): Promise<ApolloQueryResult<{ deleteSesion: ISesionResponse }>> {
+    /** se elimina la sesion tambien toca eliminar el recurso*/
     return this.apollo
       .watchQuery<{ deleteSesion: ISesionResponse }>({
         query: DELETE_SESION,

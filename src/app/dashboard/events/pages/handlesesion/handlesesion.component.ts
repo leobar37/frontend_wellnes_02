@@ -17,10 +17,15 @@ import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { of, Subscription } from 'rxjs';
 import { SesionService } from '../../services/sesion.service';
 import { ActivatedRoute, Params } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { getTimestamp } from '@helpers/helpers';
 import { Router } from '@angular/router';
-import { tr } from 'date-fns/locale';
+// helpers
+import { getVideoPreviw } from '@helpers/helpers';
+import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { isNull } from 'lodash';
+
 interface IformSesion {
   duration: number;
   linkRoom: string;
@@ -29,7 +34,10 @@ interface IformSesion {
   nameSesion: string;
   description: string;
 }
-
+interface IformConfigSesion {
+  includeVideo: boolean;
+  includeComments: boolean;
+}
 @Component({
   selector: 'app-handlesesion',
   templateUrl: './handlesesion.component.html',
@@ -42,9 +50,15 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private idEvent: number;
   public currentSesion: Isesion;
   public editMode = false;
+  // recolecta las sunscripciones para el ngOndestroy
   private subs: Subscription[] = [];
   private refQueryGetSesion: QueryRef<{ sesion: Isesion }> = null;
   public sesions: Isesion[] = [];
+  public formConfigSesion: FormGroup;
+  public videosrc: string;
+  private videoForUpload: File;
+
+  public messageSpinner = 'Loading..';
   constructor(
     private fb: FormBuilder,
     private msg: NzMessageService,
@@ -52,7 +66,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     private activateRoute: ActivatedRoute,
     private sesionService: SesionService,
     private utilsService: UtilsService,
-    private router: Router
+    private router: Router,
+    private serviceCloudinary: CloudinaryService,
+    private ngxSpinner: NgxSpinnerService
   ) {}
   ngOnDestroy(): void {
     this.subs.forEach((sub) => {
@@ -61,6 +77,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
   }
+
   ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
@@ -78,42 +95,22 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(
         switchMap((params) => {
           this.refQueryGetSesion = this.sesionService.getSesion();
+          console.log('here params', params);
           if ('edit' in params) {
             //  enabled edit mode
             /// fetch sesion
             const idSesion = Number(params.edit);
             // /** traer la sesion por primera vez */
             this.fetchSesion(idSesion);
-            // this.refQueryGetSesion.result().then((resp) => {
-            //   this.currentSesion = resp.data.sesion;
-            //   this.setValuesInForm(this.currentSesion);
-            //   this.editMode = true;
-            // });
-
-            return of(params);
+          } else {
+            this.resetValues();
           }
+          return of(params);
         })
       )
       .subscribe();
-
     // add sub for cleanning
     this.subs.push(subNavigation);
-  }
-  /** fetch sesion */
-
-  // ve4rify params in url
-  private verifyUrlInSesion() {
-    const params = this.activateRoute.snapshot.queryParams;
-    if ('edit' in params) {
-      //  enabled edit mode
-      // call sesions
-      const idSesion = Number(params.edit);
-      this.fetchSesion(idSesion);
-    } else {
-      this.buildForms();
-      this.previewImage = null;
-      this.editMode = false;
-    }
   }
 
   /*=============================================
@@ -128,6 +125,18 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       throw new Error('Formulario invalido , revise los campos');
     }
     const valueForm = this.formSesion.value as IformSesion;
+    const valueConfigSesion = this.formConfigSesion.value as IformConfigSesion;
+
+    // validate values  of the form
+    valueConfigSesion.includeComments = isNull(
+      valueConfigSesion.includeComments
+    )
+      ? false
+      : valueConfigSesion.includeComments;
+    valueConfigSesion.includeVideo = isNull(valueConfigSesion.includeVideo)
+      ? false
+      : valueConfigSesion.includeVideo;
+
     let sesion = {
       nameSesion: valueForm.nameSesion,
       linkRoom: valueForm.linkRoom,
@@ -137,6 +146,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         valueForm.startDateSesion,
         valueForm.startTimeSesion
       ),
+      includeComments: valueConfigSesion.includeComments,
     } as Isesion;
 
     return sesion;
@@ -146,13 +156,60 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   /*=============================================
    =            operations sesion            =
    =============================================*/
+  public actionsSesion(): void {
+    let sesion: Isesion | null;
+    try {
+      sesion = this.validateFormSesion();
+    } catch (error) {
+      this.modal.error({
+        nzTitle: 'Error',
+        nzContent: error.message,
+      });
+      return;
+    }
+
+    const ctrlEvent = async () => {
+      /**
+       *  Si se envia un null en el video el backend debe editarlo
+       * o si se envia una url diferente
+       */
+      /// validations for video
+      if (!this.videoForUpload && !this.videosrc && this.getIncludeVideo) {
+        this.modal.error({
+          nzTitle: 'Error',
+          nzContent:
+            'No se ha incluido un video, debe desabilitar esta opción he incluir un link o solo agregue un video',
+        });
+        return;
+      }
+      this.ngxSpinner.show();
+      if (this.videoForUpload && this.getIncludeVideo) {
+        this.messageSpinner = 'Cargando video';
+        this.ngxSpinner.show();
+        const resp = await this.uploadVIdeo();
+        this.videosrc = resp.secure_url;
+        if (sesion !== null) {
+          sesion.cloudinarySource = JSON.stringify(resp);
+        }
+      }
+      if (!this.editMode) {
+        this.addSesion(sesion);
+      } else {
+        console.log('it is get include video', this.getIncludeVideo);
+
+        if (!this.getIncludeVideo) {
+          sesion.video = 'delete';
+        } else {
+          sesion.linkRoom = null;
+        }
+        this.editSesion(this.currentSesion.id, sesion);
+      }
+    };
+    ctrlEvent();
+  }
 
   public deleteSesion() {
-    this.sesionService.deleteSesion(this.currentSesion.id).then((result) => {
-      console.log('delete');
-
-      console.log(result);
-    });
+    this.sesionService.deleteSesion(this.currentSesion.id).then((result) => {});
   }
   private getSesions(idEvent: number): void {
     const sub = this.sesionService.getSesions(idEvent).subscribe((re) => {
@@ -164,6 +221,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private addSesion(sesion: Isesion) {
+    this.messageSpinner = 'Guardando sesión';
+    this.ngxSpinner.show();
+    // loading
     const subAdd = this.sesionService
       .addSesion(this.idEvent, sesion)
       .subscribe((res) => {
@@ -175,6 +235,8 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           // fill sesions
           this.sesions = response.sesions;
           this.editMode = true;
+          // close loading
+          this.ngxSpinner.hide();
           // build url params
           this.navigateSesionEdit(response.sesion.id);
         }
@@ -182,10 +244,14 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     this.subs.push(subAdd);
   }
   private uploadImage(id: number) {
+    // loading
     if (this.fileForUpload) {
+      this.messageSpinner = 'Cargando imagen';
+      this.ngxSpinner.show();
       const subUpload = this.sesionService
         .uploadCover(this.fileForUpload, id)
         .subscribe((resp) => {
+          this.ngxSpinner.hide();
           if (resp.data.addCoverSesion.resp) {
             this.previewImage = this.utilsService.resolvePathImage(
               resp.data.addCoverSesion.path
@@ -197,6 +263,8 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private editSesion(id: number, sesion: Isesion) {
+    this.messageSpinner = 'Editando sesión';
+    this.ngxSpinner.show();
     const editSesionSub = this.sesionService
       .editSesion(id, sesion)
       .subscribe((resp) => {
@@ -206,6 +274,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           this.setValuesInForm(data.sesion);
           this.msg.success('actualizado');
           // verify image
+          // close loading
+          this.ngxSpinner.hide();
+
           this.uploadImage(id);
         }
       });
@@ -213,36 +284,22 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     this.subs.push(editSesionSub);
   }
 
-  public actionsSesion(): void {
-    let sesion;
-    try {
-      sesion = this.validateFormSesion();
-    } catch (error) {
-      this.modal.error({
-        nzTitle: 'Error',
-        nzContent: error.message,
-      });
-
-      return;
-    }
-    if (this.editMode) {
-      this.editSesion(this.currentSesion.id, sesion);
-    } else {
-      this.addSesion(sesion);
-    }
-    // create sesion
-  }
   private async fetchSesion(id: number) {
-    console.log('fetch sesion', this.currentSesion);
-
     if (this.refQueryGetSesion) {
       this.refQueryGetSesion.refetch({ idSesion: id }).then((resp) => {
         this.currentSesion = resp.data.sesion;
         this.setValuesInForm(this.currentSesion);
-        console.log('fetch sesion two', this.currentSesion);
         this.editMode = true;
       });
     }
+  }
+
+  /*=============================================
+=            GETS            =
+=============================================*/
+
+  public get getIncludeVideo() {
+    return this.formConfigSesion.get('includeVideo').value;
   }
 
   /*=============================================
@@ -257,22 +314,34 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       nameSesion: sesion.nameSesion,
       description: sesion.description,
     });
+    this.formConfigSesion.patchValue({
+      includeVideo: sesion.video?.length ? true : false,
+      includeComments: sesion.includeComments,
+    });
+    // preview image
     if (!isValidValue(this.previewImage)) {
       if (isValidValue(sesion.sesionCover))
         this.previewImage = this.utilsService.resolvePathImage(
           sesion.sesionCover
         );
     }
+    // preview video
+    if (sesion.video?.length) {
+      this.videosrc = sesion.video;
+    }
   }
-
   private buildForms(): void {
     this.formSesion = this.fb.group({
       duration: this.fb.control(null),
-      linkRoom: this.fb.control(null, [Validators.required]),
+      linkRoom: this.fb.control(null),
       startDateSesion: this.fb.control(null, [Validators.required]),
-      startTimeSesion: this.fb.control(null),
+      startTimeSesion: this.fb.control(null, [Validators.required]),
       nameSesion: this.fb.control('', [Validators.required]),
       description: this.fb.control('', [Validators.required]),
+    });
+    this.formConfigSesion = this.fb.group({
+      includeVideo: this.fb.control(false),
+      includeComments: this.fb.control(false),
     });
   }
 
@@ -282,16 +351,39 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
 
   public actionClickSesion(id: number) {
     this.previewImage = null;
+    this.resetValues();
     this.navigateSesionEdit(id);
-    this.verifyUrlInSesion();
+    if (!this.currentSesion) {
+      this.fetchSesion(id);
+    }
   }
   public newSesion(): void {
+    console.log('new Sesion');
     this.router.navigate([], {
       queryParams: {
         edit: null,
       },
       queryParamsHandling: 'merge',
     });
+  }
+
+  // video function
+  selectVideo(video: File) {
+    this.videoForUpload = video;
+    getVideoPreviw(video, (videoString: string) => {
+      this.videosrc = videoString;
+    });
+  }
+
+  /*=============================================
+=            cloudinary functions            =
+=============================================*/
+  private async uploadVIdeo() {
+    const auth = await this.serviceCloudinary.getSignature();
+    return this.serviceCloudinary.uploadFileCloudinary(
+      this.videoForUpload,
+      auth
+    );
   }
   /*=============================================
   =            helpers            =
@@ -304,6 +396,17 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  private resetValues() {
+    // reset forms
+    this.formConfigSesion.reset();
+    this.formSesion.reset();
+    this.previewImage = null;
+    this.videosrc = null;
+    this.fileForUpload = null;
+    this.videoForUpload = null;
+    this.editMode = false;
+    this.currentSesion = null;
+  }
   // verify validvalueimage
 
   get isValidValueImage() {

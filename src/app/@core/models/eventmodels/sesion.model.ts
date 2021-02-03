@@ -10,4 +10,6 @@ export interface Isesion {
   sesionCover?: string;
   event?: IEvent;
   video?: string;
+  cloudinarySource?: string;
+  includeComments?: boolean;
 }
