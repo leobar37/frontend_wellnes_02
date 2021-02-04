@@ -1,20 +1,33 @@
 <article class="contain" fxLayout="column" fxLayoutAlign="center center">
-  <h1 class="title">{{ currentSesion.nameSesion }}</h1>
   <!-- MEDIA PREVIEW -->
-  <div class="media">
-    <img class="media__image" [src]="currentSesion.sesionCover" alt="" />
-  </div>
-  <!-- information -->
-  <ul class="information" style="list-style: none">
-    <li>
-      <tr>
+  <nz-card>
+    <h1 class="title text-center">{{ currentSesion.nameSesion }}</h1>
+    <div class="media">
+      <img
+        class="media__image"
+        *ngIf="!isVideo"
+        [src]="currentSesion.sesionCover"
+        alt=""
+      />
+      <app-videoplayer
+        *ngIf="isVideo"
+        [thumbnail]="currentSesion.sesionCover"
+        [src]="currentSesion.video"
+      ></app-videoplayer>
+    </div>
+  </nz-card>
+
+  <nz-space class="information">
+    <nz-card style="background: white" class="box">
+      <div class="item">
         <th>Inicio</th>
         <td>{{ currentSesion.startSesion | date: "medium" }}</td>
-      </tr>
-    </li>
-  </ul>
+      </div>
+    </nz-card>
+  </nz-space>
   <!-- content -->
-  <section class="content container">
+  <!-- content -->
+  <nz-card class="description">
     <h3 class="title">Descripción</h3>
     <div class="cotent_text">
       <p class="paragraph">
@@ -25,5 +38,5 @@
       <!-- {{ isRegister ? "Registrado" : "Registrarse" }} -->
       Ingresar
     </button>
-  </section>
+  </nz-card>
 </article>

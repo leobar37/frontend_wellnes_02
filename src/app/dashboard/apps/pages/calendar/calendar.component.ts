@@ -1,21 +1,20 @@
 import { Isesion } from '@core/models/eventmodels/sesion.model';
-import { map } from 'rxjs/operators';
+import { map, pluck } from 'rxjs/operators';
 import { JwtService } from '@services/jwt.service';
 
-import { IEvent } from '@core/models/eventmodels/event.model';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NzCalendarMode } from 'ng-zorro-antd/calendar';
 import { EventService } from '../../../events/services/event.service';
-import { da } from 'date-fns/locale';
 import _ from 'lodash';
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalendarComponent implements OnInit {
-  date = new Date();
-  mode: NzCalendarMode = 'month';
+  public date = new Date();
+  public mode: NzCalendarMode = 'month';
   public sesions: Isesion[];
   constructor(
     private eventService: EventService,
@@ -36,7 +35,7 @@ export class CalendarComponent implements OnInit {
     this.eventService
       .getEventsOfUser(user.id)
       .valueChanges.pipe(
-        map((resp) => resp.data.getEventsOfUser),
+        pluck('data', 'getEventsOfUser'),
         map((response) => {
           return _.flatMap(response.events.map((ev) => ev.sesions));
         })
@@ -49,8 +48,6 @@ export class CalendarComponent implements OnInit {
   public existSesion(date: Date) {
     const sesions = (this.sesions || []).filter((ev) => {
       const startSesion = new Date(ev.startSesion);
-      console.log(startSesion.getDay());
-
       return (
         startSesion.getDate() === date.getDate() &&
         startSesion.getMonth() === date.getMonth() &&

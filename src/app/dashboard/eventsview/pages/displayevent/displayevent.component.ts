@@ -1,3 +1,4 @@
+import { Isesion } from './../../../../@core/models/eventmodels/sesion.model';
 import { IDetailResponse } from '@core/models/eventmodels/event.response';
 import { UtilsService } from 'src/app/services/utils.service';
 import { EventService } from './../../../events/services/event.service';
@@ -10,6 +11,7 @@ import { JwtService } from '@services/jwt.service';
 import { EventService as DisplayEventService } from '../../services/event.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { QueryRef } from 'apollo-angular';
+import { NgxMasonryOptions } from 'ngx-masonry';
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
@@ -24,6 +26,7 @@ export class DisplayeventComponent implements OnInit {
   };
   public isRegister: boolean = false;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
+
   constructor(
     private activateRoute: ActivatedRoute,
     private eventService: EventService,
@@ -59,14 +62,12 @@ export class DisplayeventComponent implements OnInit {
           if ('id' in params) {
             // display event
             this.eventService.getEvent(params.id, true).subscribe((el) => {
-              console.log(el);
               this.currentEvent = {
                 ...el.data.event,
                 eventCover: this.utils.resolvePathImage(
                   String(el.data.event.eventCover)
                 ),
               };
-              console.log(this.currentEvent.sesions);
 
               this.updateifRegiterInEvent();
               // enf id register
@@ -112,14 +113,14 @@ export class DisplayeventComponent implements OnInit {
       });
   }
   // navigate sesion sesion
-  navigateSesion(idSesion: number) {
+  navigateSesion(sesion: Isesion) {
     //  this.r
     this.router.navigate([
       '/dashboard',
       'view',
       'event',
       this.currentEvent.id,
-      idSesion,
+      sesion.id,
     ]);
   }
 }

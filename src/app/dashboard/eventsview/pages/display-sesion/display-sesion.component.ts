@@ -64,6 +64,15 @@ export class DisplaySesionComponent implements OnInit {
       window.open(this.currentSesion.linkRoom, '_blank');
     }
   }
+
+  /*=============================================
+  =            gets            =
+  =============================================*/
+
+  get isVideo() {
+    return this.currentSesion.video?.length;
+  }
+
   /*=============================================
   =            helpers            =
   =============================================*/

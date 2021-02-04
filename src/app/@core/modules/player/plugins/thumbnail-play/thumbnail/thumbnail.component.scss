@@ -1,3 +1,6 @@
+$background-play-color: #08f218;
+$box-width-play: 150px;
+$size-icon: 80px;
 app-overlay-play {
   z-index: 200;
 }
@@ -9,26 +12,47 @@ app-overlay-play .vg-overlay-play {
   cursor: pointer;
   position: absolute;
   display: block;
-  background-color: red;
-  color: black;
   width: 100%;
   height: 100%;
   font-size: 80px;
   filter: alpha(opacity=60);
-  opacity: 0.8;
+  opacity: 1;
 }
 app-overlay-play .vg-overlay-play.native-fullscreen.controls-hidden {
   cursor: none;
+}
+app-overlay-play .vg-overlay-play .overlay-play-container {
+  position: relative;
+  visibility: hidden;
+  // transition: all 0.3s;
+
+  img {
+    // transition: all 0.3s;
+    position: absolute;
+    width: 100%;
+  }
+  .icon {
+    transition: transform 0.3s;
+    position: absolute;
+    background-color: $background-play-color;
+    border-radius: 50%;
+    display: flex;
+    width: $box-width-play;
+    height: $box-width-play;
+    justify-content: center;
+    align-items: center;
+    i {
+      color: white;
+      font-size: $size-icon;
+    }
+  }
 }
 app-overlay-play .vg-overlay-play .overlay-play-container.vg-icon-play_arrow {
   pointer-events: none;
   width: 100%;
   height: 100%;
   position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 80px;
+  visibility: visible;
 }
 app-overlay-play .vg-overlay-play:hover {
   filter: alpha(opacity=100);
@@ -36,6 +60,7 @@ app-overlay-play .vg-overlay-play:hover {
 }
 app-overlay-play
   .vg-overlay-play:hover
-  .overlay-play-container.vg-icon-play_arrow:before {
-  transform: scale(1.2);
+  .overlay-play-container.vg-icon-play_arrow
+  .icon {
+  transform: scale(1.5);
 }

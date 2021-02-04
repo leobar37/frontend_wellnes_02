@@ -15,7 +15,9 @@ import { EventService } from './services/event.service';
 import { SesionService as PrincipalSesionService } from '../events/services/sesion.service';
 import { DisplaySesionComponent } from './pages/display-sesion/display-sesion.component';
 import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
-const zorro = [NzButtonModule, NzModalModule];
+import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzCardModule } from 'ng-zorro-antd/card';
+const zorro = [NzButtonModule, NzModalModule, NzSpaceModule, NzCardModule];
 const material = [MatCardModule];
 
 import { PlayerModule } from '@core/modules/player/player.module';
@@ -25,6 +27,7 @@ import { PlayerModule } from '@core/modules/player/player.module';
  
 */
 import { NgxMasonryModule } from 'ngx-masonry';
+import { ItemSesionComponent } from './components/item-sesion/item-sesion.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,7 @@ import { NgxMasonryModule } from 'ngx-masonry';
     ListeventsComponent,
     DisplayeventComponent,
     DisplaySesionComponent,
+    ItemSesionComponent,
   ],
   imports: [
     CommonModule,

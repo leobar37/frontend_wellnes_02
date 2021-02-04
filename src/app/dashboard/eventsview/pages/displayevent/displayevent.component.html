@@ -4,33 +4,36 @@
   fxLayout="column"
   fxLayoutAlign="center center"
 >
-  <h1 class="title">{{ currentEvent.name }}</h1>
   <!-- MEDIA PREVIEW -->
-  <div class="media">
-    <img
-      class="media__image"
-      *ngIf="!isVideo"
-      [src]="currentEvent.eventCover"
-      alt=""
-    />
-    <app-videoplayer
-      *ngIf="isVideo"
-      [thumbnail]="currentEvent.eventCover"
-      [src]="currentEvent.video"
-    ></app-videoplayer>
-  </div>
+  <nz-card>
+    <h1 class="title text-center">{{ currentEvent.name }}</h1>
+    <div class="media">
+      <img
+        class="media__image"
+        *ngIf="!isVideo"
+        [src]="currentEvent.eventCover"
+        alt=""
+      />
+      <app-videoplayer
+        *ngIf="isVideo"
+        [thumbnail]="currentEvent.eventCover"
+        [src]="currentEvent.video"
+      ></app-videoplayer>
+    </div>
+  </nz-card>
   <!-- information -->
-  <ul class="information" style="list-style: none">
-    <li>
-      <tr>
+
+  <nz-space class="information">
+    <nz-card style="background: white" class="box">
+      <div class="item">
         <th>Sesiones</th>
         <td>{{ currentEvent.sesions.length }}</td>
-      </tr>
-    </li>
-  </ul>
+      </div>
+    </nz-card>
+  </nz-space>
 
   <!-- content -->
-  <section class="content container">
+  <nz-card class="description">
     <h3 class="title">Descripción</h3>
     <div class="cotent_text">
       <p class="paragraph">
@@ -45,42 +48,22 @@
     >
       {{ isRegister ? "Registrado" : "Registrarse" }}
     </button>
-  </section>
+  </nz-card>
+
   <!--  sesiones-->
-  <section class="contianer_sesions">
-    <h2 class="title text-center w-100 my-2 text-uppercase">sesiones</h2>
-    <ul
-      class="mx-auto sesions"
-      style="list-style: none"
-      fxLayout="row wrap"
-      fxLayoutGap="20px"
-      fxLayoutAlign="center  center"
-    >
-      <li class="sesion" *ngFor="let sesion of currentEvent.sesions">
-        <mat-card fxLayout class="item_sesion">
-          <div fxFlex="70%">
-            <h3 class="subtitle">{{ sesion.nameSesion }}</h3>
-            <p class="paragraph">
-              {{ sesion.description | shortParagraph }}
-            </p>
-            <button
-              nz-button
-              (click)="navigateSesion(sesion.id)"
-              nzType="primary"
-            >
-              ver
-            </button>
-          </div>
-          <div
-            class="side_right"
-            fxFlex="15%"
-            fxLayout
-            fxLayoutAlign="end center"
-          >
-            <span> {{ sesion.startSesion | date }} </span>
-          </div>
-        </mat-card>
-      </li>
-    </ul>
-  </section>
+  <nz-card class="w-100 my-4">
+    <section class="contianer_sesions">
+      <h2 style="margin-bottom: 2rem" class="title text-left w-100">
+        Sesiones:
+      </h2>
+      <nz-space nzDirection="vertical" nzAlign="center" nzSize="large">
+        <nz-space-item *ngFor="let sesion of currentEvent.sesions">
+          <app-item-sesion
+            (selectItem)="navigateSesion($event)"
+            [sesion]="sesion"
+          ></app-item-sesion>
+        </nz-space-item>
+      </nz-space>
+    </section>
+  </nz-card>
 </article>

@@ -1,10 +1,13 @@
+import { SafeUrl } from '@angular/platform-browser';
 import {
   Component,
   OnInit,
   Injector,
   Input,
+  OnChanges,
   ViewChild,
   AfterViewInit,
+  SimpleChanges,
 } from '@angular/core';
 import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play';
 
@@ -25,8 +28,8 @@ import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play'
         <vg-mute></vg-mute>
       </vg-controls>
       <!-- custom  overlay play -->
-      <app-overlay-play #overlay class="overlay"> </app-overlay-play>
-
+      <app-overlay-play #overlay class="overlay" [thumbnail]="thumbnail">
+      </app-overlay-play>
       <video [vgMedia]="media" #media id="singleVideo" preload="auto">
         <source [src]="src" type="video/mp4" />
       </video>
@@ -34,16 +37,15 @@ import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play'
   `,
   styleUrls: [`./stylesplayer.components.scss`],
 })
-export class VideoplayerComponent implements OnInit, AfterViewInit {
-  @Input() src: string;
+export class VideoplayerComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() src: string | SafeUrl;
   @Input() thumbnail: string;
   @ViewChild('overlay') elment: VgOverlayPlayComponent;
-  constructor() {}
-  ngAfterViewInit(): void {
-    console.log('thumbanail');
 
-    console.log(this.thumbnail);
-  }
+  constructor() {}
+  ngOnChanges(changes: SimpleChanges): void {}
+
+  ngAfterViewInit(): void {}
   /*=============================================
 
 Documentation : https://videogular.github.io/ngx-videogular/docs/getting-started/master-media.html

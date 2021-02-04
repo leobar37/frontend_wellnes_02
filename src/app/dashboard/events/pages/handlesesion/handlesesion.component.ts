@@ -95,7 +95,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(
         switchMap((params) => {
           this.refQueryGetSesion = this.sesionService.getSesion();
-          console.log('here params', params);
           if ('edit' in params) {
             //  enabled edit mode
             /// fetch sesion

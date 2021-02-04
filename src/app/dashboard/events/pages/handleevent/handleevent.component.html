@@ -30,7 +30,7 @@
   <h1 class="title line_addon">Detalles del evento</h1>
   <!-- Reproduce video here -->
   <nz-card
-    *ngIf="videosrc?.length && configForm.get('includeVideo').value"
+    *ngIf="videosrc && configForm.get('includeVideo').value"
     fxLayout="column"
     fxLayoutAlign="center center"
   >

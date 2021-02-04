@@ -1,7 +1,6 @@
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { EventState } from '@core/models/eventmodels/enums.event';
-
-import { SafeUrl } from '@angular/platform-browser';
+import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { UtilsService } from '@services/utils.service';
 import { EventService } from './../../services/event.service';
 import { mergeDatetTime } from '@helpers/helpers';
@@ -12,10 +11,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { getVideoPreviw } from '@helpers/helpers';
+
 import _ from 'lodash';
 import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { da } from 'date-fns/locale';
+
 interface IEventForm {
   title: string;
   description: string;
@@ -41,7 +42,7 @@ export class HandleeventComponent implements OnInit {
   public editMode = false;
   private fileVideoUpload: File;
   private subs: Subscription[] = [];
-  public videosrc: string;
+  public videosrc: string | SafeUrl;
   public messageSpinner = 'Loading..';
   public optionsPublished: {
     label: string;
@@ -71,7 +72,8 @@ export class HandleeventComponent implements OnInit {
     private activateRoute: ActivatedRoute,
     private utils: UtilsService,
     private serviceCloudinary: CloudinaryService,
-    private ngxSpinner: NgxSpinnerService
+    private ngxSpinner: NgxSpinnerService,
+    private sanitize: DomSanitizer
   ) {}
   ngOnInit(): void {
     this.buildForm();
@@ -99,16 +101,19 @@ export class HandleeventComponent implements OnInit {
 
   public selectVideo(video: File): void {
     this.fileVideoUpload = video;
-    getVideoPreviw(video, (videoPreview: string) => {
-      this.videosrc = videoPreview;
-    });
+
+    this.videosrc = this.sanitize.bypassSecurityTrustUrl(
+      URL.createObjectURL(video)
+    );
   }
   private async uploadVIdeo() {
     const auth = await this.serviceCloudinary.getSignature();
-    return this.serviceCloudinary.uploadFileCloudinary(
-      this.fileVideoUpload,
-      auth
-    );
+
+    this.serviceCloudinary.uploadFile(this.fileVideoUpload, auth);
+
+    // .subscribe((data) => {
+    //   console.log(data);
+    // });
   }
   public navigateSesions(): void {
     this.router.navigate([
@@ -211,24 +216,25 @@ export class HandleeventComponent implements OnInit {
 
       if (this.fileVideoUpload && this.isIncludeVideo) {
         this.messageSpinner = 'Cargando video';
-        const resp = await this.uploadVIdeo();
-        this.videosrc = resp.secure_url;
-        if (event !== null) {
-          event.cloudinarySource = JSON.stringify(resp);
+        try {
+          this.uploadVIdeo();
+        } catch (error) {
+          console.log(error);
+          console.log();
         }
       }
-      if (!this.editMode) {
-        this.messageSpinner = 'Cargando evento';
-        this.saveEvent(event);
-      } else {
-        /** si edit mode esta desactivado entonces verificar que se envie un null en video */
-        if (!this.isIncludeVideo) {
-          event.video = 'delete';
-        }
-        this.messageSpinner = 'editando evento';
+      // if (!this.editMode) {
+      //   this.messageSpinner = 'Cargando evento';
+      //   this.saveEvent(event);
+      // } else {
+      //   /** si edit mode esta desactivado entonces verificar que se envie un null en video */
+      //   if (!this.isIncludeVideo) {
+      //     event.video = 'delete';
+      //   }
+      //   this.messageSpinner = 'editando evento';
 
-        this.editEvent(this.currentEvent.id, event);
-      }
+      //   this.editEvent(this.currentEvent.id, event);
+      // }
     };
     //
     ctrlEvent();
@@ -323,8 +329,9 @@ export class HandleeventComponent implements OnInit {
           : null,
       includeVideo: event.video?.length ? true : false,
     });
-
-    this.videosrc = event.video;
+    if (event.video?.length) {
+      this.videosrc = this.sanitize.bypassSecurityTrustUrl(event.video);
+    }
     if (!this.previewImage) {
       this.previewImage = this.utils.resolvePathImage(
         event.eventCover as string
@@ -360,11 +367,7 @@ export class HandleeventComponent implements OnInit {
       imagetest.onload = () => {
         // validations image
         imagetest.width;
-        if (imagetest.height > 1200) {
-          errors.push(
-            `Tamaño no permitido ${imagetest.height} * ${imagetest.width} -> 1200 * 1200`
-          );
-        }
+
         if (imagetest.width <= 400) {
           errors.push('Esta image es muy pequeña');
         }

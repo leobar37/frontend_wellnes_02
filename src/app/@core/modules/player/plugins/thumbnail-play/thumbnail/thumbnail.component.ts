@@ -31,7 +31,12 @@ import {
     <div
       class="overlay-play-container"
       [class.vg-icon-play_arrow]="getState() !== 'playing'"
-    ></div>
+    >
+      <img [src]="thumbnail" />
+      <div class="icon">
+        <i class="fas fa-play"></i>
+      </div>
+    </div>
   </div>`,
   styleUrls: ['./thumbnail.component.scss'],
 })
@@ -48,7 +53,6 @@ export class ThumbnailComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   @HostBinding('class.is-buffering') isBuffering = false;
-
   constructor(
     ref: ElementRef,
     public API: VgApiService,
