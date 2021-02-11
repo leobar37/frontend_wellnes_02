@@ -1,3 +1,4 @@
+import { IResource } from '@models/eventmodels/resource.model';
 import { IEvent } from '@core/models/eventmodels/event.model';
 export interface Isesion {
   id?: number;
@@ -9,7 +10,9 @@ export interface Isesion {
   nameSesion?: string;
   sesionCover?: string;
   event?: IEvent;
-  video?: string;
+  video?: IResource;
   cloudinarySource?: string;
   includeComments?: boolean;
+  id_resource?: number;
+  includeVideo?: boolean;
 }

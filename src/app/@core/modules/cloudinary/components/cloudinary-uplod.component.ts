@@ -10,9 +10,9 @@ import { CloudinaryService } from '../services/file.service';
   selector: 'app-video-uplod',
   template: `
     <nz-upload
-      nzAccept="video/mp4,video/x-m4v,video/*"
       nzAction="null"
       [nzFileListRender]="list"
+      nzAccept="video/mp4,video/x-m4v,video/*"
       [nzBeforeUpload]="nzBeforeUpload"
       nzListType="text"
     >

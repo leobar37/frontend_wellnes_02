@@ -28,7 +28,7 @@
 
 <ng-template #eventDetailsTemplate>
   <h1 class="title line_addon">Detalles del evento</h1>
-  <!-- Reproduce video here -->
+  <!-- logic video-->
   <nz-card
     *ngIf="videosrc && configForm.get('includeVideo').value"
     fxLayout="column"
@@ -163,5 +163,8 @@
   color="#fff"
   type="square-spin"
   [fullScreen]="true"
-  ><p style="color: white">{{ messageSpinner }}</p></ngx-spinner
->
+  ><p style="color: white">
+    {{ messageSpinner }}
+    <nz-progress *ngIf="percentVideo != -1" [nzPercent]="percentVideo">
+    </nz-progress></p
+></ngx-spinner>

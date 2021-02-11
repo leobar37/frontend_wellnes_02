@@ -2,7 +2,6 @@ import { FileResponse } from '@core/models/reponses/response';
 import { FetchResult, ApolloQueryResult } from '@apollo/client/core';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 import { DetailEventAllResponse } from '@core/models/eventmodels/event.response';
-
 import { EventResponse } from 'src/app/@core/models/eventmodels/event.response';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { Injectable } from '@angular/core';
@@ -19,8 +18,12 @@ const EVENTFRAGMENT = gql`
     publishedDate
     includeComments
     description
+    includeVideo
+    id_resource
     eventCover
-    video
+    video {
+      url
+    }
   }
 `;
 
@@ -137,21 +140,25 @@ export class EventService {
     } catch (error) {
       publishDate = null;
     }
-    return this.apollo.mutate<{ createEvent: EventResponse }>({
-      mutation: CREATEEVENT,
-      variables: {
-        eventInput: {
-          name: event.name,
-          video: event.video,
-          capacityAssistant: event.capacityAssistant,
-          published: EventState[event.published],
-          description: event.description,
-          publishedDate: publishDate,
-          includeComments: event.includeComments,
-          cloudinarySource: event.cloudinarySource,
+    return this.apollo
+      .mutate<{ createEvent: EventResponse }>({
+        mutation: CREATEEVENT,
+        variables: {
+          eventInput: {
+            name: event.name,
+            video: event.video,
+            capacityAssistant: event.capacityAssistant,
+            published: EventState[event.published],
+            description: event.description,
+            publishedDate: publishDate,
+            includeComments: event.includeComments,
+            cloudinarySource: event.cloudinarySource,
+            id_resource: Number(event.id_resource),
+            includeVideo: event.includeVideo,
+          },
         },
-      },
-    });
+      })
+      .pipe(tap(console.log));
   }
 
   /*=============================================
@@ -236,7 +243,7 @@ export class EventService {
           publishedDate: publishDate,
           includeComments: event.includeComments,
           cloudinarySource: event.cloudinarySource,
-          video: event.video,
+          includeVideo: event.includeVideo,
         },
         id: Number(id),
       },

@@ -20,7 +20,8 @@
        "@services/*"  :["src/app/services/*"],
        "@core/*"  : ["src/app/@core/*"],
        "@helpers/*"  : ["src/app/helpers/*"],
-       "@fragments/*" : ["src/app/@core/fragments/*"]
+       "@fragments/*" : ["src/app/@core/fragments/*"],
+       "@models/*" : ["src/app/@core/models/*"],
     },
     "allowSyntheticDefaultImports": true
   }

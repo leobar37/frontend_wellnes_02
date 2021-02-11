@@ -17,7 +17,12 @@ export const FRAGMENTSESION = gql`
     duration
     createdSesion
     linkRoom
-    video
+    includeVideo
+    id_resource
+    video {
+      id
+      url
+    }
     includeComments
   }
 `;
@@ -129,8 +134,6 @@ export class SesionService {
   }
 
   private buildSesion(sesion: Isesion) {
-    console.log(sesion);
-
     return {
       includeComments: sesion.includeComments,
       duration: sesion.duration,
@@ -139,7 +142,8 @@ export class SesionService {
       startSesion: getTimestamp(sesion.startSesion),
       description: sesion.description,
       cloudinarySource: sesion.cloudinarySource,
-      video: sesion.video,
+      id_resource: Number(sesion?.id_resource),
+      includeVideo: sesion.includeVideo,
     };
   }
   public editSesion(

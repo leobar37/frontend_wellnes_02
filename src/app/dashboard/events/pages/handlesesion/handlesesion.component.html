@@ -23,7 +23,7 @@
   <h1 class="title line_addon">Detalles de la sesión</h1>
   <!-- video player -->
   <nz-card
-    *ngIf="videosrc?.length && getIncludeVideo"
+    *ngIf="getIncludeVideo"
     fxLayout="column"
     fxLayoutAlign="center center"
   >
@@ -210,5 +210,8 @@
   color="#fff"
   type="square-spin"
   [fullScreen]="true"
-  ><p style="color: white">{{ messageSpinner }}</p></ngx-spinner
->
+  ><p style="color: white">
+    {{ messageSpinner }}
+    <nz-progress *ngIf="percentVideo != -1" [nzPercent]="percentVideo">
+    </nz-progress></p
+></ngx-spinner>

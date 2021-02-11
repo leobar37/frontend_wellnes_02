@@ -11,14 +11,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   styleUrls: ['../styles.scss'],
 })
 export class DisplaySesionComponent implements OnInit {
-  currentSesion: Isesion = {
-    nameSesion: 'Sesion uno',
-    description:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quia illum modi reiciendis libero iure at quae repudiandae enim ex.',
-    sesionCover: 'assets/img/profileexample.jpg',
-    startSesion: new Date(10),
-    duration: 2,
-  };
+  currentSesion: Isesion;
+
   constructor(
     private activatRoute: ActivatedRoute,
     private sesionServiceex: SesionService,
@@ -60,7 +54,6 @@ export class DisplaySesionComponent implements OnInit {
           'Esta sesion ya ha pasado o no esta disponible, si cree que es nuestro error comuniquese con un asesor',
       });
     } else {
-      console.log('todavia no pasa');
       window.open(this.currentSesion.linkRoom, '_blank');
     }
   }
@@ -70,7 +63,7 @@ export class DisplaySesionComponent implements OnInit {
   =============================================*/
 
   get isVideo() {
-    return this.currentSesion.video?.length;
+    return this.currentSesion.includeVideo;
   }
 
   /*=============================================

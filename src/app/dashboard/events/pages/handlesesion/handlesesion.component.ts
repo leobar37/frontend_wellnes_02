@@ -1,7 +1,9 @@
+import { ResourceService } from '@services/resource.service';
+import { StorageService } from './../../../../@core/modules/storage/storage.service';
 import { QueryRef } from 'apollo-angular';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { SafeUrl } from '@angular/platform-browser';
+import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { getBase64 } from 'src/app/helpers/helpers';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -55,8 +57,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private refQueryGetSesion: QueryRef<{ sesion: Isesion }> = null;
   public sesions: Isesion[] = [];
   public formConfigSesion: FormGroup;
-  public videosrc: string;
+  public videosrc: string | SafeUrl;
   private videoForUpload: File;
+  //  for video upload atributes
+  public percentVideo = -1;
 
   public messageSpinner = 'Loading..';
   constructor(
@@ -67,8 +71,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     private sesionService: SesionService,
     private utilsService: UtilsService,
     private router: Router,
-    private serviceCloudinary: CloudinaryService,
-    private ngxSpinner: NgxSpinnerService
+    private ngxSpinner: NgxSpinnerService,
+    private serviceStorage: StorageService,
+    private resourceService: ResourceService,
+    private sanitize: DomSanitizer
   ) {}
   ngOnDestroy(): void {
     this.subs.forEach((sub) => {
@@ -113,7 +119,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /*=============================================
- =            validations            =
+ =            validate FORM SESION           =
  =============================================*/
   /*  */
   private validateFormSesion(): Isesion {
@@ -125,7 +131,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     }
     const valueForm = this.formSesion.value as IformSesion;
     const valueConfigSesion = this.formConfigSesion.value as IformConfigSesion;
-
     // validate values  of the form
     valueConfigSesion.includeComments = isNull(
       valueConfigSesion.includeComments
@@ -141,6 +146,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       linkRoom: valueForm.linkRoom,
       duration: valueForm.duration,
       description: valueForm.description,
+      includeVideo: valueConfigSesion.includeVideo,
       startSesion: mergeDatetTime(
         valueForm.startDateSesion,
         valueForm.startTimeSesion
@@ -150,10 +156,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
 
     return sesion;
   }
-  /** ad sesion */
 
   /*=============================================
-   =            operations sesion            =
+   =     ACTION EVENT = ACTUE IF EDIT OR SAVE           =
    =============================================*/
   public actionsSesion(): void {
     let sesion: Isesion | null;
@@ -167,7 +172,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    const ctrlEvent = async () => {
+    const ctrlSesion = async () => {
       /**
        *  Si se envia un null en el video el backend debe editarlo
        * o si se envia una url diferente
@@ -182,34 +187,62 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         return;
       }
       this.ngxSpinner.show();
+      // determi if upload video
+
       if (this.videoForUpload && this.getIncludeVideo) {
         this.messageSpinner = 'Cargando video';
         this.ngxSpinner.show();
-        const resp = await this.uploadVIdeo();
-        this.videosrc = resp.secure_url;
-        if (sesion !== null) {
-          sesion.cloudinarySource = JSON.stringify(resp);
+
+        // upload video
+        const dataresource: {
+          bucket?: string;
+          key?: string;
+          type?: string;
+        } = await this.uploadVIdeo();
+        //  create resource  :id edit mode is true or their no id
+
+        if (!this.editMode || !this.currentSesion?.id_resource) {
+          console.log('create resource');
+          const resource = await this.resourceService.createResource({
+            key: dataresource.key,
+            bucket: dataresource.bucket,
+            type: dataresource.type,
+          });
+          sesion.id_resource = resource.data.createResource.id;
+        } else {
+          // edit resource
+          console.log('edit resource');
+
+          await this.resourceService.editResource(
+            {
+              bucket: dataresource.bucket,
+              key: dataresource.key,
+              type: dataresource.type,
+            },
+            this.currentSesion.id_resource
+          );
         }
       }
       if (!this.editMode) {
         this.addSesion(sesion);
       } else {
-        console.log('it is get include video', this.getIncludeVideo);
-
-        if (!this.getIncludeVideo) {
-          sesion.video = 'delete';
-        } else {
-          sesion.linkRoom = null;
-        }
         this.editSesion(this.currentSesion.id, sesion);
       }
     };
-    ctrlEvent();
+    ctrlSesion();
   }
 
+  /*=============================================
+ =            DELETE SESION            =
+ =============================================*/
   public deleteSesion() {
     this.sesionService.deleteSesion(this.currentSesion.id).then((result) => {});
   }
+
+  /*=============================================
+  =            GET ALL SESIONS            =
+  =============================================*/
+
   private getSesions(idEvent: number): void {
     const sub = this.sesionService.getSesions(idEvent).subscribe((re) => {
       if (re.data && re.data.sesions.resp) {
@@ -218,6 +251,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     });
     this.subs.push(sub);
   }
+
+  /*=============================================
+ =            ADD SESION            =
+ =============================================*/
 
   private addSesion(sesion: Isesion) {
     this.messageSpinner = 'Guardando sesión';
@@ -242,6 +279,11 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       });
     this.subs.push(subAdd);
   }
+
+  /*=============================================
+  =            UPLOD IMAGE IN SESION            =
+  =============================================*/
+
   private uploadImage(id: number) {
     // loading
     if (this.fileForUpload) {
@@ -286,6 +328,8 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private async fetchSesion(id: number) {
     if (this.refQueryGetSesion) {
       this.refQueryGetSesion.refetch({ idSesion: id }).then((resp) => {
+        console.log(resp);
+
         this.currentSesion = resp.data.sesion;
         this.setValuesInForm(this.currentSesion);
         this.editMode = true;
@@ -302,9 +346,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /*=============================================
-  =            form operations            =
+  =         PATCH VALUES IN FORM           =
   =============================================*/
   private setValuesInForm(sesion: Isesion) {
+    const videoUrl = sesion?.video?.url;
     this.formSesion.patchValue({
       duration: sesion.duration,
       linkRoom: sesion.linkRoom,
@@ -314,7 +359,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       description: sesion.description,
     });
     this.formConfigSesion.patchValue({
-      includeVideo: sesion.video?.length ? true : false,
+      includeVideo: sesion.includeVideo,
       includeComments: sesion.includeComments,
     });
     // preview image
@@ -325,10 +370,15 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         );
     }
     // preview video
-    if (sesion.video?.length) {
-      this.videosrc = sesion.video;
+    if (videoUrl) {
+      this.videosrc = videoUrl;
     }
   }
+
+  /*=============================================
+  =            BUILD FORMS            =
+  =============================================*/
+
   private buildForms(): void {
     this.formSesion = this.fb.group({
       duration: this.fb.control(null),
@@ -368,21 +418,44 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
 
   // video function
   selectVideo(video: File) {
+    console.log(video);
+
     this.videoForUpload = video;
-    getVideoPreviw(video, (videoString: string) => {
-      this.videosrc = videoString;
-    });
+
+    this.videosrc = this.sanitize.bypassSecurityTrustUrl(
+      URL.createObjectURL(video)
+    );
   }
 
   /*=============================================
-=            cloudinary functions            =
+=           Upload viodeo in S3           =
 =============================================*/
   private async uploadVIdeo() {
-    const auth = await this.serviceCloudinary.getSignature();
-    return this.serviceCloudinary.uploadFileCloudinary(
-      this.videoForUpload,
-      auth
-    );
+    return new Promise((resolve, reject) => {
+      let detailResource: {
+        bucket?: string;
+        key?: string;
+        type?: string;
+      } = {};
+      const subUpload = this.serviceStorage
+        .uploadFileAws3(this.videoForUpload)
+        .subscribe(
+          (res) => {
+            detailResource = res.resp;
+            this.percentVideo = res.percent;
+          },
+          () => {},
+          async () => {
+            // clean the file
+            this.videoForUpload = null;
+            // create resource in backend
+            this.percentVideo = -1;
+            subUpload.unsubscribe();
+            this.ngxSpinner.hide();
+            resolve(detailResource);
+          }
+        );
+    });
   }
   /*=============================================
   =            helpers            =
@@ -411,6 +484,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   get isValidValueImage() {
     return isValidValue(this.previewImage);
   }
+
+  /*=============================================
+  =            UPLOAD  AN VALIDATE IMAGE            =
+  =============================================*/
 
   actionServer = (info: any) => {
     const errors = [];

@@ -4,9 +4,9 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { EventService } from './../../../events/services/event.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { IEvent } from '@core/models/eventmodels/event.model';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { switchMap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { JwtService } from '@services/jwt.service';
 import { EventService as DisplayEventService } from '../../services/event.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -17,16 +17,11 @@ import { NgxMasonryOptions } from 'ngx-masonry';
   templateUrl: './displayevent.component.html',
   styleUrls: ['../styles.scss'],
 })
-export class DisplayeventComponent implements OnInit {
-  currentEvent: IEvent = {
-    name: 'Emprende con nosotros',
-    description:
-      'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Debitis quia illum modi reiciendis libero iure at quae repudiandae enim ex.',
-    eventCover: 'assets/img/profileexample.jpg',
-  };
+export class DisplayeventComponent implements OnInit, OnDestroy {
+  currentEvent: IEvent;
   public isRegister: boolean = false;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
-
+  private recolectSubs: Subscription[] = [];
   constructor(
     private activateRoute: ActivatedRoute,
     private eventService: EventService,
@@ -38,45 +33,52 @@ export class DisplayeventComponent implements OnInit {
   ) {}
 
   /*=============================================
-   =            lifeClycle            =
+   =           Lfe Cicle            =
    =============================================*/
 
   ngOnInit(): void {
     this.listenRoutes();
+  }
+  ngOnDestroy(): void {
+    this.recolectSubs.forEach((sub) => sub.unsubscribe());
   }
 
   /*=============================================
   =            gets             =
   =============================================*/
   get isVideo() {
-    return this.currentEvent.video?.length;
+    return this.currentEvent.video?.url;
   }
 
   /*=============================================
   =            listens            =
   =============================================*/
   private listenRoutes(): void {
-    this.activateRoute.params
+    const subRouter = this.activateRoute.params
       .pipe(
         switchMap((params: Params) => {
           if ('id' in params) {
             // display event
-            this.eventService.getEvent(params.id, true).subscribe((el) => {
-              this.currentEvent = {
-                ...el.data.event,
-                eventCover: this.utils.resolvePathImage(
-                  String(el.data.event.eventCover)
-                ),
-              };
+            this.recolectSubs.push(
+              // recolect sub
+              this.eventService.getEvent(params.id, true).subscribe((el) => {
+                this.currentEvent = {
+                  ...el.data.event,
+                  eventCover: this.utils.resolvePathImage(
+                    String(el.data.event.eventCover)
+                  ),
+                };
 
-              this.updateifRegiterInEvent();
-              // enf id register
-            });
+                this.updateifRegiterInEvent();
+                // enf id register
+              })
+            );
           }
           return of(params);
         })
       )
       .subscribe();
+    this.recolectSubs.push(subRouter);
   }
 
   /*=============================================

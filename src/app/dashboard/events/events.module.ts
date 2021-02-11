@@ -31,13 +31,20 @@ import { CustomCheckboxModule } from '@core/modules/custom-checkbox/custom-check
 import { PlayerModule } from '@core/modules/player/player.module';
 import { CloudinaryModule } from '@core/modules/cloudinary/cloudinary.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
-
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { VimeoModule } from '@core/modules/vimeo/vimeo.module';
+/*
+   Embed video in html : 
+   NPM :  https://www.npmjs.com/package/ngx-embed-video
+*/
+import { EmbedVideo } from 'ngx-embed-video';
 /**
  *
  * control space in inputs
  *  documentation : https://ng.ant.design/components/space/en#nz-space
  */
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { StorageModule } from '@core/modules/storage/storage.module';
 const zorro = [
   NzSpaceModule,
   NzSliderModule,
@@ -53,7 +60,9 @@ const zorro = [
   NzDatePickerModule,
   NzInputModule,
   NzTimePickerModule,
+  NzProgressModule,
 ];
+
 @NgModule({
   declarations: [
     EventsComponent,
@@ -64,6 +73,7 @@ const zorro = [
   ],
   imports: [
     FlexLayoutModule,
+    StorageModule,
     FormsModule,
     ReactiveFormsModule,
     DateFnsModule.forRoot(),
@@ -73,6 +83,8 @@ const zorro = [
     CustomCheckboxModule,
     PlayerModule,
     CloudinaryModule,
+    VimeoModule,
+    EmbedVideo.forRoot(),
     zorro,
   ],
   providers: [EventService, SesionService],

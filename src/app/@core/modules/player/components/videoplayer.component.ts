@@ -4,10 +4,13 @@ import {
   OnInit,
   Injector,
   Input,
+  ViewChildren,
   OnChanges,
   ViewChild,
   AfterViewInit,
   SimpleChanges,
+  ElementRef,
+  Renderer2,
 } from '@angular/core';
 import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play';
 
@@ -30,20 +33,38 @@ import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play'
       <!-- custom  overlay play -->
       <app-overlay-play #overlay class="overlay" [thumbnail]="thumbnail">
       </app-overlay-play>
-      <video [vgMedia]="media" #media id="singleVideo" preload="auto">
-        <source [src]="src" type="video/mp4" />
-      </video>
+      <video
+        [vgMedia]="media"
+        [src]="url"
+        #media
+        id="singleVideo"
+        preload="auto"
+      ></video>
     </vg-player>
   `,
   styleUrls: [`./stylesplayer.components.scss`],
 })
 export class VideoplayerComponent implements OnInit, AfterViewInit, OnChanges {
-  @Input() src: string | SafeUrl;
+  url: string | SafeUrl;
+
+  @ViewChild('media') elementvideo: ElementRef<HTMLVideoElement>;
+  @Input()
+  public set src(v: string | SafeUrl) {
+    this.url = v;
+  }
+
   @Input() thumbnail: string;
   @ViewChild('overlay') elment: VgOverlayPlayComponent;
 
-  constructor() {}
+  constructor(private render: Renderer2) {}
   ngOnChanges(changes: SimpleChanges): void {}
+
+  /**
+   *
+   * TODO:
+   * - IMPLEMENTS ONREADY PLAYER FOR SHOW LOADING
+   *
+   */
 
   ngAfterViewInit(): void {}
   /*=============================================

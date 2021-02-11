@@ -1,3 +1,6 @@
+import { IResource } from '@core/models/eventmodels/resource.model';
+import { ResourceService } from '@services/resource.service';
+import { StorageService } from '@core/modules/storage/storage.service';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { EventState } from '@core/models/eventmodels/enums.event';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
@@ -11,11 +14,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
-
 import _ from 'lodash';
-import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { da } from 'date-fns/locale';
 
 interface IEventForm {
   title: string;
@@ -34,6 +34,13 @@ interface IconfigValueForm {
   styleUrls: ['../../events.component.scss'],
 })
 export class HandleeventComponent implements OnInit {
+  /**
+   *
+   * TODO:
+   * [ ] implement reset forms
+   *
+   */
+
   public previewImage: string | SafeUrl;
   public eventForm: FormGroup;
   public configForm: FormGroup;
@@ -44,6 +51,9 @@ export class HandleeventComponent implements OnInit {
   private subs: Subscription[] = [];
   public videosrc: string | SafeUrl;
   public messageSpinner = 'Loading..';
+  public percentVideo = -1;
+  // usage for embed video in html
+
   public optionsPublished: {
     label: string;
     value: EventState;
@@ -62,7 +72,6 @@ export class HandleeventComponent implements OnInit {
       value: EventState.PROGRAM,
     },
   ];
-
   constructor(
     private msg: NzMessageService,
     private fb: FormBuilder,
@@ -71,14 +80,14 @@ export class HandleeventComponent implements OnInit {
     private router: Router,
     private activateRoute: ActivatedRoute,
     private utils: UtilsService,
-    private serviceCloudinary: CloudinaryService,
     private ngxSpinner: NgxSpinnerService,
-    private sanitize: DomSanitizer
+    private sanitize: DomSanitizer,
+    private serviceStorage: StorageService,
+    private resourceService: ResourceService
   ) {}
   ngOnInit(): void {
     this.buildForm();
     this.listenRoutes();
-    this.activateRoute.queryParams.subscribe((params) => {});
   }
   private listenRoutes(): void {
     const subRoute = this.activateRoute.queryParams.subscribe(
@@ -100,20 +109,45 @@ export class HandleeventComponent implements OnInit {
   =============================================*/
 
   public selectVideo(video: File): void {
+    /**
+     * FIXME:
+     * - the file preview in only show once
+     */
     this.fileVideoUpload = video;
-
     this.videosrc = this.sanitize.bypassSecurityTrustUrl(
       URL.createObjectURL(video)
     );
   }
+
+  /*=============================================
+   =            upload video (in S3)            =
+   =============================================*/
+
   private async uploadVIdeo() {
-    const auth = await this.serviceCloudinary.getSignature();
-
-    this.serviceCloudinary.uploadFile(this.fileVideoUpload, auth);
-
-    // .subscribe((data) => {
-    //   console.log(data);
-    // });
+    return new Promise((resolve, reject) => {
+      let detailResource: {
+        bucket?: string;
+        key?: string;
+        type?: string;
+      } = {};
+      const subUpload = this.serviceStorage
+        .uploadFileAws3(this.fileVideoUpload)
+        .subscribe(
+          (res) => {
+            detailResource = res.resp;
+            this.percentVideo = res.percent;
+          },
+          () => {},
+          async () => {
+            // clean the file
+            this.fileVideoUpload = null;
+            // create resource in backend
+            resolve(detailResource);
+            this.percentVideo = -1;
+            subUpload.unsubscribe();
+          }
+        );
+    });
   }
   public navigateSesions(): void {
     this.router.navigate([
@@ -123,6 +157,7 @@ export class HandleeventComponent implements OnInit {
       this.currentEvent.id,
     ]);
   }
+
   /** validations */
   private validateEvent(): IEvent {
     const configValue = this.configForm.value as IconfigValueForm;
@@ -155,25 +190,23 @@ export class HandleeventComponent implements OnInit {
     return {
       ...this.currentEvent,
       name: title,
+      includeVideo: configValue.includeVideo,
       description: description,
       publishedDate: programDate != null ? programDate : null,
       published: configValue.optionPublished,
       includeComments: configValue.includeComment,
     } as IEvent;
   }
-
   /*=============================================
 =            get for easy consult            =
 =============================================*/
-
   get isIncludeVideo(): boolean {
     return this.configForm.get('includeVideo').value;
   }
 
-  /*=============================================
+  /*============================================
  =            logic for interactue with BD          =
  =============================================*/
-
   /** final load event nad prepare sesions */
   public actionEvent(): void {
     let event: IEvent | null = null;
@@ -189,7 +222,6 @@ export class HandleeventComponent implements OnInit {
       });
       return;
     }
-
     const ctrlEvent = async () => {
       /**
        *  Si se envia un null en el video el backend debe editarlo
@@ -217,29 +249,47 @@ export class HandleeventComponent implements OnInit {
       if (this.fileVideoUpload && this.isIncludeVideo) {
         this.messageSpinner = 'Cargando video';
         try {
-          this.uploadVIdeo();
-        } catch (error) {
-          console.log(error);
-          console.log();
-        }
-      }
-      // if (!this.editMode) {
-      //   this.messageSpinner = 'Cargando evento';
-      //   this.saveEvent(event);
-      // } else {
-      //   /** si edit mode esta desactivado entonces verificar que se envie un null en video */
-      //   if (!this.isIncludeVideo) {
-      //     event.video = 'delete';
-      //   }
-      //   this.messageSpinner = 'editando evento';
+          const dataresource: {
+            bucket?: string;
+            key?: string;
+            type?: string;
+          } = await this.uploadVIdeo();
+          if (!this.editMode || !this.currentEvent?.id_resource) {
+            const resource = await this.resourceService.createResource({
+              key: dataresource.key,
+              bucket: dataresource.bucket,
+              type: dataresource.type,
+            });
+            event.id_resource = resource.data.createResource.id;
+          } else {
+            await this.resourceService.editResource(
+              {
+                bucket: dataresource.bucket,
+                key: dataresource.key,
+                type: dataresource.type,
+              },
+              this.currentEvent.id_resource
+            );
+          }
 
-      //   this.editEvent(this.currentEvent.id, event);
-      // }
+          // event.id_resource = resource.id;
+        } catch (error) {}
+      }
+
+      if (!this.editMode) {
+        this.messageSpinner = 'Cargando evento';
+        this.saveEvent(event);
+      } else {
+        /** si edit mode esta desactivado entonces verificar que se envie un null en video */
+
+        this.messageSpinner = 'Editando evento';
+
+        this.editEvent(this.currentEvent.id, event);
+      }
     };
     //
     ctrlEvent();
   }
-
   private editEvent(id: number, event: IEvent) {
     const subEditEvent = this.eventService
       .editEvent(id, event)
@@ -278,7 +328,6 @@ export class HandleeventComponent implements OnInit {
     );
     this.subs.push(subSaveEvent);
   }
-
   private getEvent(id: number) {
     const subGetEvent = this.eventService.getEvent(id).subscribe((resp) => {
       if (resp.data.event != null) {
@@ -298,19 +347,24 @@ export class HandleeventComponent implements OnInit {
    * upload file
    */
   /*=============================================
-  =            helpers            =
+  =           patch values in forms         =
   =============================================*/
   //  patch value in form
   private setValuesOnFormEvent(event: IEvent) {
+    const urlVideo = event.video?.url;
+
+    ///  reset values published
     this.optionsPublished = this.optionsPublished.map((el) =>
       el.value == Number(EventState[event.published])
         ? { ...el, checked: true }
         : el
     );
+
     const statateEvent =
       typeof event.published == 'number'
         ? event.published
         : EventState[event.published];
+    // patch valuees in  principal form
     this.eventForm.patchValue({
       title: event.name,
       description: event.description,
@@ -327,10 +381,10 @@ export class HandleeventComponent implements OnInit {
         statateEvent == EventState.PROGRAM
           ? new Date(event.publishedDate)
           : null,
-      includeVideo: event.video?.length ? true : false,
+      includeVideo: event.includeVideo,
     });
-    if (event.video?.length) {
-      this.videosrc = this.sanitize.bypassSecurityTrustUrl(event.video);
+    if (urlVideo.length) {
+      this.videosrc = this.sanitize.bypassSecurityTrustUrl(urlVideo);
     }
     if (!this.previewImage) {
       this.previewImage = this.utils.resolvePathImage(
@@ -339,7 +393,10 @@ export class HandleeventComponent implements OnInit {
     }
   }
 
-  //  build form
+  /*=============================================
+=            build Forms            =
+=============================================*/
+
   private buildForm(): void {
     this.configForm = this.fb.group({
       includeComment: this.fb.control(false),
@@ -353,7 +410,10 @@ export class HandleeventComponent implements OnInit {
       description: this.fb.control(null, [Validators.required]),
     });
   }
-  //  control image
+
+  /*=============================================
+ =           vaidate image             
+ =============================================*/
   actionServer = (info: any) => {
     const errors = [];
     // el formato de validacion debe serapararse en un archivo de configuracion
@@ -399,9 +459,7 @@ export class HandleeventComponent implements OnInit {
         .uploadFile(this.fileForUpload, id)
         .subscribe((res) => {
           //  build url image
-          console.log(res);
           this.ngxSpinner.hide();
-
           this.previewImage = this.utils.resolvePathImage(
             res.data.addCoverEvent.path
           );

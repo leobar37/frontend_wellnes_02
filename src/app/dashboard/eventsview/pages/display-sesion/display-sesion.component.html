@@ -12,11 +12,10 @@
       <app-videoplayer
         *ngIf="isVideo"
         [thumbnail]="currentSesion.sesionCover"
-        [src]="currentSesion.video"
+        [src]="currentSesion.video.url"
       ></app-videoplayer>
     </div>
   </nz-card>
-
   <nz-space class="information">
     <nz-card style="background: white" class="box">
       <div class="item">
