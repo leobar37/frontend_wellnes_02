@@ -11,7 +11,7 @@ import { JwtService } from '@services/jwt.service';
 import { EventService as DisplayEventService } from '../../services/event.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { QueryRef } from 'apollo-angular';
-import { NgxMasonryOptions } from 'ngx-masonry';
+
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
@@ -45,7 +45,7 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
 
   /*=============================================
   =            gets             =
-  =============================================*/
+  ============================================= */
   get isVideo() {
     return this.currentEvent.video?.url;
   }
@@ -62,6 +62,8 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
             this.recolectSubs.push(
               // recolect sub
               this.eventService.getEvent(params.id, true).subscribe((el) => {
+                console.log('resp of event');
+                console.log(el);
                 this.currentEvent = {
                   ...el.data.event,
                   eventCover: this.utils.resolvePathImage(

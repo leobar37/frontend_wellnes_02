@@ -11,6 +11,7 @@ export interface IUser {
   image?: string;
   description?: string;
   sponsor?: IUser;
+  getCompleteName?: string;
 }
 
 export const examplesUser: IUser[] = [

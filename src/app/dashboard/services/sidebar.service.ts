@@ -13,7 +13,6 @@ export class SidebarService {
       name: 'Perfil',
       route: 'profile',
       icon: 'user',
-      items: [{ name: 'calendario', route: 'calendar' }],
     },
     {
       name: 'apps',

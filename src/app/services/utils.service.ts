@@ -12,7 +12,9 @@ export class UtilsService {
     const url = this.str.bypassSecurityTrustUrl(
       `${environment.apiUrl}/${urlPa}`
     );
-
     return url;
+  }
+  resolveNormalPathImage(urlPa: string) {
+    return `${environment.apiUrl}/${urlPa}`;
   }
 }

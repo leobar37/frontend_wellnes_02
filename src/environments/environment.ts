@@ -9,6 +9,7 @@ export const environment = {
   googleClientId:
     '88372403405-iacpnj3bsfobsfellcl953408obpoe9n.apps.googleusercontent.com',
   apiKeyCloudinary: '827568399999768',
+  hostSubs: 'localhost:3000',
 };
 
 /*

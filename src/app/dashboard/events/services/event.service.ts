@@ -21,6 +21,7 @@ const EVENTFRAGMENT = gql`
     includeVideo
     id_resource
     eventCover
+    id_comment
     video {
       url
     }

@@ -66,4 +66,8 @@
       </nz-space>
     </section>
   </nz-card>
+  <!-- comments -->
+  <ng-container *ngIf="currentEvent.includeComments">
+    <app-comments [idBootrapComment]="currentEvent.id_comment"></app-comments>
+  </ng-container>
 </article>

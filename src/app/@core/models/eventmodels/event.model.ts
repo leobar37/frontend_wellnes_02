@@ -18,4 +18,5 @@ export interface IEvent {
   cloudinarySource?: string;
   id_resource?: number;
   includeVideo?: boolean;
+  id_comment?: number;
 }

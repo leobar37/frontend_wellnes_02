@@ -24,10 +24,10 @@ import { PlayerModule } from '@core/modules/player/player.module';
 
 /* Masonry Library 
   documentation : https://github.com/wynfred/ngx-masonry/
- 
 */
 import { NgxMasonryModule } from 'ngx-masonry';
 import { ItemSesionComponent } from './components/item-sesion/item-sesion.component';
+import { CommentsModule } from '@core/modules/comments/comments.module';
 
 @NgModule({
   declarations: [
@@ -42,6 +42,7 @@ import { ItemSesionComponent } from './components/item-sesion/item-sesion.compon
     EventsviewRoutingModule,
     ...zorro,
     ...material,
+    CommentsModule,
     FlexLayoutModule,
     PipeShortParagraphModule,
     NgxMasonryModule,

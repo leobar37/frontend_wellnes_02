@@ -383,7 +383,7 @@ export class HandleeventComponent implements OnInit {
           : null,
       includeVideo: event.includeVideo,
     });
-    if (urlVideo.length) {
+    if (urlVideo?.length) {
       this.videosrc = this.sanitize.bypassSecurityTrustUrl(urlVideo);
     }
     if (!this.previewImage) {
