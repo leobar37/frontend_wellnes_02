@@ -1,4 +1,4 @@
-import { IResource } from '@core/models/eventmodels/resource.model';
+import { IconfigAction } from './../../config';
 import { ResourceService } from '@services/resource.service';
 import { StorageService } from '@core/modules/storage/storage.service';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
@@ -7,15 +7,22 @@ import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { UtilsService } from '@services/utils.service';
 import { EventService } from './../../services/event.service';
 import { mergeDatetTime } from '@helpers/helpers';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Injector } from '@angular/core';
 import { of, Subscription } from 'rxjs';
 import { getBase64 } from 'src/app/helpers/helpers';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import {
+  Router,
+  ActivatedRoute,
+  Params,
+  Data,
+  NavigationExtras,
+} from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import _ from 'lodash';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { configResolveFactory, ICONFIG_ACTION } from '../../config';
 
 interface IEventForm {
   title: string;
@@ -32,6 +39,13 @@ interface IconfigValueForm {
   selector: 'app-handleevent',
   templateUrl: './handleevent.component.html',
   styleUrls: ['../../events.component.scss'],
+  providers: [
+    {
+      provide: ICONFIG_ACTION,
+      useFactory: configResolveFactory,
+      deps: [ActivatedRoute],
+    },
+  ],
 })
 export class HandleeventComponent implements OnInit {
   /**
@@ -40,18 +54,18 @@ export class HandleeventComponent implements OnInit {
    * [ ] implement reset forms
    *
    */
-
   public previewImage: string | SafeUrl;
   public eventForm: FormGroup;
   public configForm: FormGroup;
   private fileForUpload: File;
-  private currentEvent: IEvent;
+  public currentEvent: IEvent;
   public editMode = false;
   private fileVideoUpload: File;
   private subs: Subscription[] = [];
   public videosrc: string | SafeUrl;
   public messageSpinner = 'Loading..';
   public percentVideo = -1;
+  public isProgram = false;
   // usage for embed video in html
 
   public optionsPublished: {
@@ -83,13 +97,21 @@ export class HandleeventComponent implements OnInit {
     private ngxSpinner: NgxSpinnerService,
     private sanitize: DomSanitizer,
     private serviceStorage: StorageService,
-    private resourceService: ResourceService
+    private resourceService: ResourceService,
+    @Inject(ICONFIG_ACTION) public config: IconfigAction,
+    private injector: Injector
   ) {}
   ngOnInit(): void {
     this.buildForm();
     this.listenRoutes();
   }
   private listenRoutes(): void {
+    this.activateRoute.data.subscribe((data: Data) => {
+      if (data?.type && data.type === 'program') {
+      }
+      console.log(this.isProgram);
+    });
+
     const subRoute = this.activateRoute.queryParams.subscribe(
       (params: Params) => {
         if ('edit' in params) {
@@ -195,6 +217,7 @@ export class HandleeventComponent implements OnInit {
       publishedDate: programDate != null ? programDate : null,
       published: configValue.optionPublished,
       includeComments: configValue.includeComment,
+      modeEvent: this.config.type,
     } as IEvent;
   }
   /*=============================================
@@ -218,7 +241,7 @@ export class HandleeventComponent implements OnInit {
     if (!this.previewImage) {
       this.modal.error({
         nzTitle: 'Error',
-        nzContent: 'El evento necesita una imagen',
+        nzContent: `El ${this.config.action} necesita una imagen`,
       });
       return;
     }
@@ -275,15 +298,12 @@ export class HandleeventComponent implements OnInit {
           // event.id_resource = resource.id;
         } catch (error) {}
       }
-
       if (!this.editMode) {
-        this.messageSpinner = 'Cargando evento';
+        this.messageSpinner = 'Cargando' + this.config.action;
         this.saveEvent(event);
       } else {
         /** si edit mode esta desactivado entonces verificar que se envie un null en video */
-
-        this.messageSpinner = 'Editando evento';
-
+        this.messageSpinner = 'Editando' + this.config.action;
         this.editEvent(this.currentEvent.id, event);
       }
     };
@@ -298,7 +318,7 @@ export class HandleeventComponent implements OnInit {
         if (res.data.editEvent.resp) {
           this.currentEvent = res.data.editEvent.event;
           this.uploadImage(this.currentEvent.id);
-          this.msg.success('El evento ha sido actualizado');
+          this.msg.success(`El ${this.config.action} ha sido actualizado`);
         }
       });
     this.subs.push(subEditEvent);
@@ -312,7 +332,7 @@ export class HandleeventComponent implements OnInit {
           this.uploadImage(evenResp.id);
           this.ngxSpinner.hide();
           // changue url
-          this.msg.success('Evento creado satisfactioriamente');
+          this.msg.success(`${this.config.action} creado satisfactioriamente`);
           this.currentEvent = evenResp;
           this.editMode = true;
           this.router.navigate([], {
@@ -336,7 +356,7 @@ export class HandleeventComponent implements OnInit {
       } else {
         this.modal.error({
           nzTitle: 'Error',
-          nzContent: 'Este evento no ha sido encontrado',
+          nzContent: `Este ${this.config.action} no ha sido encontrado`,
         });
         this.router.navigateByUrl('/dashboard');
       }

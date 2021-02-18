@@ -1,4 +1,9 @@
-<article class="contain" fxLayout="column" fxLayoutAlign="center center">
+<article
+  class="contain"
+  *ngIf="currentSesion?.id"
+  fxLayout="column"
+  fxLayoutAlign="center center"
+>
   <!-- MEDIA PREVIEW -->
   <nz-card>
     <h1 class="title text-center">{{ currentSesion.nameSesion }}</h1>
@@ -37,5 +42,11 @@
       <!-- {{ isRegister ? "Registrado" : "Registrarse" }} -->
       Ingresar
     </button>
+    <!-- comments -->
+    <ng-container *ngIf="currentSesion.includeComments">
+      <app-comments
+        [idBootrapComment]="currentSesion.id_comment"
+      ></app-comments>
+    </ng-container>
   </nz-card>
 </article>

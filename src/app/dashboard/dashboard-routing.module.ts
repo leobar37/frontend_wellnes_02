@@ -5,7 +5,7 @@ import { DashboardComponent } from './dashboard.component';
 
 const childrenRoutes: Routes = [
   {
-    path: 'profile',
+    path: 'account',
     loadChildren: () =>
       import('./profile/profile.module').then((m) => m.ProfileModule),
   },

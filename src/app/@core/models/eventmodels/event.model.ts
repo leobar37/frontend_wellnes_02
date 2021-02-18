@@ -19,4 +19,8 @@ export interface IEvent {
   id_resource?: number;
   includeVideo?: boolean;
   id_comment?: number;
+  modeEvent?: MODEEVENT;
+  id_user?: number;
 }
+
+export type MODEEVENT = 'EVENT' | 'PROGRAM';

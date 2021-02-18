@@ -11,7 +11,7 @@
     <ng-container *ngIf="!previewImage">
       <div class="upload_placeholder">
         <i class="fas fa-upload"></i>
-        <span>Imagén del evento</span>
+        <span>Imagén del {{ config.action }}</span>
       </div>
     </ng-container>
     <img
@@ -27,7 +27,7 @@
 <!-- event details -->
 
 <ng-template #eventDetailsTemplate>
-  <h1 class="title line_addon">Detalles del evento</h1>
+  <h1 class="title line_addon">Detalles del {{ config.action }}</h1>
   <!-- logic video-->
   <nz-card
     *ngIf="videosrc && configForm.get('includeVideo').value"
@@ -48,7 +48,7 @@
           type="text"
           formControlName="title"
           nz-input
-          placeholder="Titulo del evento"
+          [placeholder]="'Titulo del ' + config.action"
         />
       </nz-form-control>
     </nz-form-item>
@@ -68,7 +68,7 @@
 </ng-template>
 <!-- config event -->
 <ng-template #configEventTemplate>
-  <h1 class="title line_addon">Configuración del evento</h1>
+  <h1 class="title line_addon">Configuración del {{ config.action }}</h1>
   <nz-card>
     <!-- configura si los eventos pueden ser mostrados -->
     <div class="my-3" fxLayout="row" fxLayoutGap="50px">
@@ -122,7 +122,9 @@
       (click)="actionEvent()"
       nzType="primary"
     >
-      {{ editMode ? "actualizar evento" : "guardar evento" }}
+      {{
+        editMode ? "actualizar " + config.action : "guardar " + config.action
+      }}
     </button>
 
     <button

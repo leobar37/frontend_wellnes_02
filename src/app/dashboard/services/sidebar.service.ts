@@ -10,9 +10,12 @@ export interface Imenu {
 export class SidebarService {
   data: Imenu[] = [
     {
-      name: 'Perfil',
-      route: 'profile',
+      name: 'cuenta',
       icon: 'user',
+      items: [
+        { name: 'Perfil', route: 'account/profile', icon: 'user' },
+        { name: 'Referidos', route: 'account/referreals', icon: 'user' },
+      ],
     },
     {
       name: 'apps',
@@ -24,10 +27,21 @@ export class SidebarService {
       name: 'Administrar Eventos',
       icon: 'profile',
       items: [
-        { name: 'Crear evento', route: 'events' },
+        { name: 'Agregar Evento', route: 'events' },
         {
-          name: 'eventos creados',
-          route: 'events/list',
+          name: 'Lista de eventos',
+          route: 'events/list/event',
+        },
+      ],
+    },
+    {
+      name: 'Administrar Programas',
+      icon: 'profile',
+      items: [
+        { name: 'Agregar Programa', route: 'events/program' },
+        {
+          name: 'Lista de Programas',
+          route: 'events/list/program',
         },
       ],
     },
@@ -36,7 +50,7 @@ export class SidebarService {
       icon: 'profile',
       items: [
         {
-          name: 'explorar eventos',
+          name: 'Eventos',
           route: 'view/explorer',
         },
       ],

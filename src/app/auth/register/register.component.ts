@@ -1,4 +1,4 @@
-import { Router } from '@angular/router';
+import { Router, Params } from '@angular/router';
 import { SocialUser } from 'angularx-social-login';
 import { Subscription, Subject } from 'rxjs';
 import { IUser } from './../../@core/models/User';
@@ -9,14 +9,16 @@ import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import _ from 'lodash';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['../auth.styles.scss'],
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  registerForm: FormGroup;
+  public registerForm: FormGroup;
   user: IUser;
+  public sponsor: string = '';
   stylesForBackground = {
     backgroundImage: `url('${this.configAuth.imageForRegister}')`,
     backgroundPosition: 'center',
@@ -24,19 +26,61 @@ export class RegisterComponent implements OnInit, OnDestroy {
   } as CSSStyleDeclaration;
   subscriptionProvider: Subscription;
   private eventSignUp = new Subject<string>();
-
+  private recolectSubs = [];
   constructor(
     private fb: FormBuilder,
     private _AUHtSERVICE: AuthService,
     @Inject(CONFIGAUTH) public configAuth: IconfigAuth,
     private modalZorro: NzModalService,
-    private router: Router
+    private router: Router,
+    private activateRoute: ActivatedRoute
   ) {}
+
+  /*=============================================
+  =            LIFECYCLE            =
+  =============================================*/
+  ngOnInit(): void {
+    this.buildForm();
+    this.configureProvider();
+    this.listens();
+  }
+
+  private configureProvider() {
+    this.subscriptionProvider = this.eventSignUp.subscribe((provider) => {
+      // if (!this.sponsor) {
+      //   throw new Error('');
+      // }
+      this.user = { ...this.user, sponsor: this.sponsor };
+
+      this._AUHtSERVICE.signUp(this.user, provider).subscribe((data) => {
+        if (data.resp) {
+          this._AUHtSERVICE.saveToken(data.token);
+          this.router.navigateByUrl('/dashboard');
+        } else {
+          this.modalZorro.error({
+            nzTitle: 'ERROR',
+            nzContent: data.errors.shift().message,
+            nzOkText: 'De acuerdo',
+          });
+        }
+      });
+    });
+  }
   ngOnDestroy(): void {
     this.subscriptionProvider.unsubscribe();
   }
 
-  buildForm(): void {
+  /*=============================================
+ =            listens            =
+ =============================================*/
+
+  private listens(): void {
+    this.activateRoute.queryParams.subscribe((params: Params) => {
+      this.sponsor = params.sponsor;
+    });
+  }
+
+  private buildForm(): void {
     this.registerForm = this.fb.group({
       name: this.fb.control(null, [Validators.required]),
       lastName: this.fb.control(null, [Validators.required]),
@@ -55,23 +99,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
       ]),
       phone: this.fb.control(null, [Validators.required]),
     });
+    if (!this.existSponsor) {
+      this.registerForm.addControl(
+        'sponsor',
+        this.fb.control(null, [Validators.required])
+      );
+    }
   }
-  ngOnInit(): void {
-    this.buildForm();
-    this.subscriptionProvider = this.eventSignUp.subscribe((provider) => {
-      this._AUHtSERVICE.signUp(this.user, provider).subscribe((data) => {
-        if (data.resp) {
-          this._AUHtSERVICE.saveToken(data.token);
-          this.router.navigateByUrl('/dashboard');
-        } else {
-          this.modalZorro.error({
-            nzTitle: 'ERROR',
-            nzContent: data.errors.shift().message,
-            nzOkText: 'De acuerdo',
-          });
-        }
-      });
-    });
+  get existSponsor() {
+    return this.sponsor && this.sponsor.length >= 0;
   }
 
   eventOfProvider($event: SocialUser) {
@@ -95,6 +131,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   senForm(): void {
     if (this.registerForm.valid) {
       const value = this.registerForm.value as IUser;
+      this.sponsor = value.sponsor;
+
       this.user = _.omit(value, ['repeatPassword']);
       this.eventSignUp.next('email');
     } else {

@@ -18,7 +18,9 @@ export const FRAGMENTSESION = gql`
     createdSesion
     linkRoom
     includeVideo
+    createdSesion
     id_resource
+    id_comment
     video {
       id
       url
@@ -139,7 +141,14 @@ export class SesionService {
       duration: sesion.duration,
       nameSesion: sesion.nameSesion,
       linkRoom: sesion.linkRoom,
-      startSesion: getTimestamp(sesion.startSesion),
+      // changue acording to mode
+      ...() => {
+        if (sesion.startSesion) {
+          return {
+            startSesion: getTimestamp(sesion.startSesion),
+          };
+        }
+      },
       description: sesion.description,
       cloudinarySource: sesion.cloudinarySource,
       id_resource: Number(sesion?.id_resource),

@@ -8,8 +8,13 @@ import { ListeventsComponent } from './pages/listevents/listevents.component';
 
 const routesChildren: Routes = [
   { path: 'event', component: HandleeventComponent },
+  {
+    path: 'program',
+    component: HandleeventComponent,
+    data: { type: 'program' },
+  },
   { path: 'sesion/:id', component: HandlesesionComponent },
-  { path: 'list', component: ListeventsComponent },
+  { path: 'list/:type', component: ListeventsComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'event' },
 ];
 

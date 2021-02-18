@@ -6,7 +6,7 @@ export interface IconfigAuth {
   imageForLogin?: string;
   imageForRegister?: string;
 }
-export const CONFIGAUTH = new InjectionToken<IconConfig>(
+export const CONFIGAUTH = new InjectionToken<IconfigAuth>(
   'config.auth.component'
 );
 export const IdatConfigAuth: IconfigAuth = {

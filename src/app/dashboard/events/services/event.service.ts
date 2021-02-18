@@ -1,3 +1,4 @@
+import { JwtService } from '@services/jwt.service';
 import { FileResponse } from '@core/models/reponses/response';
 import { FetchResult, ApolloQueryResult } from '@apollo/client/core';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
@@ -9,24 +10,7 @@ import { gql, Apollo } from 'apollo-angular';
 import { Observable, of } from 'rxjs';
 import { FRAGMENTSESION } from './sesion.service';
 import { tap, catchError } from 'rxjs/operators';
-const EVENTFRAGMENT = gql`
-  fragment eventFragment on Event {
-    name
-    id
-    published
-    capacityAssistant
-    publishedDate
-    includeComments
-    description
-    includeVideo
-    id_resource
-    eventCover
-    id_comment
-    video {
-      url
-    }
-  }
-`;
+import { EVENTFRAGMENT } from '@fragments/event.fragment';
 
 const CREATEEVENT = gql`
   ${EVENTFRAGMENT}
@@ -131,7 +115,7 @@ const GETEVENTSOFUSER = gql`
 
 @Injectable()
 export class EventService {
-  constructor(private apollo: Apollo) {}
+  constructor(private apollo: Apollo, private jwtService: JwtService) {}
   public addEvent(
     event: IEvent
   ): Observable<FetchResult<{ createEvent: EventResponse }>> {
@@ -141,6 +125,9 @@ export class EventService {
     } catch (error) {
       publishDate = null;
     }
+
+    const user = this.jwtService.getUserOfToken();
+
     return this.apollo
       .mutate<{ createEvent: EventResponse }>({
         mutation: CREATEEVENT,
@@ -156,6 +143,8 @@ export class EventService {
             cloudinarySource: event.cloudinarySource,
             id_resource: Number(event.id_resource),
             includeVideo: event.includeVideo,
+            modeEvent: event.modeEvent,
+            id_user: user.id,
           },
         },
       })
@@ -204,19 +193,11 @@ export class EventService {
       .pipe(tap((data) => {}));
   }
   // get events
-  public getEvents() {
-    return this.apollo
-      .query<{ getEvents: IEvent[] }>({
-        query: GETEVENTS,
-      })
-      .pipe(
-        catchError((err) => {
-          console.log('errores');
 
-          console.log(err);
-          return of(err);
-        })
-      );
+  public getEvents() {
+    return this.apollo.query<{ getEvents: IEvent[] }>({
+      query: GETEVENTS,
+    });
   }
 
   // edit event in server
@@ -245,6 +226,7 @@ export class EventService {
           includeComments: event.includeComments,
           cloudinarySource: event.cloudinarySource,
           includeVideo: event.includeVideo,
+          modeEvent: event.modeEvent,
         },
         id: Number(id),
       },

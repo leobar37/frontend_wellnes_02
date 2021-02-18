@@ -15,12 +15,17 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 /*=============================================
 =            pipes            =
 =============================================*/
 
-import { ImageresolvePipe } from '../../@core/pipes/imageresolve.pipe';
-
+import { ImageresolvePipe } from '@core/pipes/imageresolve.pipe';
+import { ReferrealsComponent } from './pages/referreals/referreals.component';
+import { ProfileComponent as ProfilePageComponent } from './pages/profile/profile.component';
+import { NzTableModule } from 'ng-zorro-antd/table';
 const zorro = [
   NzButtonModule,
   NzCardModule,
@@ -28,15 +33,23 @@ const zorro = [
   NzUploadModule,
   NzIconModule,
   NzDatePickerModule,
+  NzTableModule,
 ];
+const material = [MatFormFieldModule, MatInputModule];
 @NgModule({
-  declarations: [ProfileComponent, ImageresolvePipe],
+  declarations: [
+    ProfileComponent,
+    ImageresolvePipe,
+    ReferrealsComponent,
+    ProfilePageComponent,
+  ],
   imports: [
     CommonModule,
     FlexLayoutModule,
     ProfileRoutingModule,
-    zorro,
+    ...zorro,
     FormsModule,
+    ...material,
   ],
   providers: [
     ProfileService,

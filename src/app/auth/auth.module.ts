@@ -31,7 +31,7 @@ const zorro = [
   NzModalModule,
 ];
 
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { GridModule } from '@angular/flex-layout';
 import { SocialproviderComponent } from './components/socialprovider/socialprovider.component';
 import { SocialprovidersModule } from './socialproviders.module';
@@ -47,6 +47,7 @@ import { SocialprovidersModule } from './socialproviders.module';
     FontAwesomeModule,
     ReactiveFormsModule,
     SocialprovidersModule,
+    FormsModule,
   ],
   providers: [{ provide: CONFIGAUTH, useValue: IdatConfigAuth }, AuthService],
 })

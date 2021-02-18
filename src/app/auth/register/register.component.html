@@ -65,6 +65,16 @@
           />
         </nz-form-control>
       </nz-form-item>
+      <!-- sponsor -->
+      <nz-form-item *ngIf="!sponsor || sponsor.length == 0" class="control_le">
+        <nz-form-label>Codigo de invitación</nz-form-label>
+        <input
+          type="text"
+          formControlName="sponsor"
+          nz-input
+          placeholder="codigo de invitación"
+        />
+      </nz-form-item>
       <nz-form-item>
         <nz-form-control
           [nzSpan]="configAuth.widhtInput"

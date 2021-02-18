@@ -5,8 +5,9 @@ import { Injectable, Injector } from '@angular/core';
 import { ApolloQueryResult, FetchResult } from '@apollo/client/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { UserResponse } from 'src/app/@core/models/reponses/profile.response';
+import { EVENTFRAGMENT } from '@fragments/event.fragment';
 /*=============================================
        =            queries             =
 =============================================*/
@@ -18,19 +19,51 @@ const USERFRAGMENT = gql`
     id
     email
     image
-    sponsor {
-      id
-      name
-      lastName
-      email
-      phone
-      code
-      image
-    }
     description
+    create
+    phone
   }
 `;
 
+const GET_USER_EVENTCREATED = gql`
+  ${USERFRAGMENT}
+  ${EVENTFRAGMENT}
+  query getUser($id: ID!, $mode: String!) {
+    getUser(id: $id) {
+      resp
+      user {
+        ...userprofile
+        birth
+        eventsCreated(mode: $mode) {
+          ...eventFragment
+        }
+      }
+      errors {
+        message
+      }
+    }
+  }
+`;
+const GET_USER_WITH_REFERREALS = gql`
+  ${USERFRAGMENT}
+  query getUser($id: ID!) {
+    getUser(id: $id) {
+      resp
+      user {
+        ...userprofile
+        birth
+
+        referreals {
+          ...userprofile
+          birth
+        }
+      }
+      errors {
+        message
+      }
+    }
+  }
+`;
 const GET_USER = gql`
   ${USERFRAGMENT}
   query getUser($id: ID!) {
@@ -46,6 +79,7 @@ const GET_USER = gql`
     }
   }
 `;
+
 /*=============================================
 =            mutate            =
 =============================================*/
@@ -98,23 +132,38 @@ export class ProfileService {
       })
       .pipe(catchError((err) => throwError(err)));
   }
-  public get getUser(): Observable<
-    ApolloQueryResult<{ getUser: UserResponse }>
-  > {
+  public getUser(
+    mode?: string,
+    relation?: 'eventscreated' | 'referreals' | 'eventasisted'
+  ): Observable<ApolloQueryResult<{ getUser: UserResponse }>> {
     this.jwtService = this.injector.get<JwtService>(JwtService);
     const user = this.jwtService.getUserOfToken();
+    let query = GET_USER;
+    if (relation)
+      switch (relation) {
+        case 'referreals': {
+          query = GET_USER_WITH_REFERREALS;
+          break;
+        }
+        case 'eventscreated': {
+          query = GET_USER_EVENTCREATED;
+          break;
+        }
+      }
 
     return this.apollo.query<{ getUser: UserResponse }>({
-      query: GET_USER,
+      query: query,
       variables: {
         id: user.id,
+        mode: mode || 'EVENT',
       },
     });
   }
 
   public editUser(
     id: number,
-    user: IUser
+    user: IUser,
+    mode?: string
   ): Observable<FetchResult<{ editUser: UserResponse }>> {
     let time = null;
     try {
@@ -122,20 +171,22 @@ export class ProfileService {
     } catch (error) {
       time = null;
     }
-    return this.apollo.mutate<{ editUser: UserResponse }>({
-      mutation: EDITPROFILE,
-      variables: {
-        user: {
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          password: user.password,
-          phone: user.phone,
-          birth: time,
-          description: user.description || null,
+    return this.apollo
+      .mutate<{ editUser: UserResponse }>({
+        mutation: EDITPROFILE,
+        variables: {
+          user: {
+            name: user.name,
+            lastName: user.lastName,
+            email: user.email,
+            password: user.password,
+            phone: user.phone,
+            birth: time,
+            description: user.description || null,
+          },
+          id,
         },
-        id,
-      },
-    });
+      })
+      .pipe(tap(console.log));
   }
 }

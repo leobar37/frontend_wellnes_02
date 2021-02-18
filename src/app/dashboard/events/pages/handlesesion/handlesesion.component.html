@@ -47,7 +47,7 @@
       </nz-form-control>
     </nz-form-item>
     <!-- fecha -->
-    <nz-form-item fxLayout="row" fxLayoutGap="10px">
+    <nz-form-item *ngIf="!isProgram" fxLayout="row" fxLayoutGap="10px">
       <nz-form-control fxFlex="45%" class="">
         <nz-form-label class="subtitle" style="font-style: italic"
           >Fecha</nz-form-label
@@ -70,7 +70,7 @@
     </nz-form-item>
 
     <!--  dependendens on include video :  -->
-    <ng-container *ngIf="!getIncludeVideo">
+    <ng-container *ngIf="!getIncludeVideo && !isProgram">
       <!-- url de la sesion -->
       <nz-form-item>
         <nz-form-control
@@ -191,6 +191,7 @@
   gdColumn="3"
   gdRow="3"
   gdGap="20px"
+  *ngIf="currentEvent"
 >
   <!-- upload -->
   <div gdArea="upload">

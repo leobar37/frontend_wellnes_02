@@ -1,3 +1,5 @@
+import { IEvent } from '@core/models/eventmodels/event.model';
+import { EventService } from './../../services/event.service';
 import { ResourceService } from '@services/resource.service';
 import { StorageService } from './../../../../@core/modules/storage/storage.service';
 import { QueryRef } from 'apollo-angular';
@@ -16,15 +18,13 @@ import {
 import { mergeDatetTime, isValidValue } from '@helpers/helpers';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Isesion } from '@core/models/eventmodels/sesion.model';
-import { of, Subscription } from 'rxjs';
+import { of, Subscription, Subject, BehaviorSubject } from 'rxjs';
 import { SesionService } from '../../services/sesion.service';
 import { ActivatedRoute, Params } from '@angular/router';
-import { switchMap, catchError } from 'rxjs/operators';
+import { switchMap, catchError, tap, pluck } from 'rxjs/operators';
 import { getTimestamp } from '@helpers/helpers';
 import { Router } from '@angular/router';
 // helpers
-import { getVideoPreviw } from '@helpers/helpers';
-import { CloudinaryService } from '@core/modules/cloudinary/services/file.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { isNull } from 'lodash';
 
@@ -52,6 +52,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private idEvent: number;
   public currentSesion: Isesion;
   public editMode = false;
+  private isProgramEvent = new Subject<boolean>();
   // recolecta las sunscripciones para el ngOndestroy
   private subs: Subscription[] = [];
   private refQueryGetSesion: QueryRef<{ sesion: Isesion }> = null;
@@ -60,8 +61,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public videosrc: string | SafeUrl;
   private videoForUpload: File;
   //  for video upload atributes
-  public percentVideo = -1;
 
+  // current Event
+  public currentEvent: IEvent;
+  public percentVideo = -1;
   public messageSpinner = 'Loading..';
   constructor(
     private fb: FormBuilder,
@@ -69,6 +72,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     private modal: NzModalService,
     private activateRoute: ActivatedRoute,
     private sesionService: SesionService,
+    private eventService: EventService,
     private utilsService: UtilsService,
     private router: Router,
     private ngxSpinner: NgxSpinnerService,
@@ -141,18 +145,28 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       ? false
       : valueConfigSesion.includeVideo;
 
+    if (!this.isProgram) {
+    }
     let sesion = {
       nameSesion: valueForm.nameSesion,
       linkRoom: valueForm.linkRoom,
       duration: valueForm.duration,
       description: valueForm.description,
       includeVideo: valueConfigSesion.includeVideo,
-      startSesion: mergeDatetTime(
-        valueForm.startDateSesion,
-        valueForm.startTimeSesion
-      ),
+      // if is program not add startime :)
+      ...() => {
+        if (!this.isProgram) {
+          return {
+            startSesion: mergeDatetTime(
+              valueForm.startDateSesion,
+              valueForm.startTimeSesion
+            ),
+          };
+        }
+      },
       includeComments: valueConfigSesion.includeComments,
     } as Isesion;
+    console.log(sesion);
 
     return sesion;
   }
@@ -202,7 +216,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         //  create resource  :id edit mode is true or their no id
 
         if (!this.editMode || !this.currentSesion?.id_resource) {
-          console.log('create resource');
           const resource = await this.resourceService.createResource({
             key: dataresource.key,
             bucket: dataresource.bucket,
@@ -211,7 +224,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           sesion.id_resource = resource.data.createResource.id;
         } else {
           // edit resource
-          console.log('edit resource');
 
           await this.resourceService.editResource(
             {
@@ -244,12 +256,21 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   =============================================*/
 
   private getSesions(idEvent: number): void {
-    const sub = this.sesionService.getSesions(idEvent).subscribe((re) => {
-      if (re.data && re.data.sesions.resp) {
-        this.sesions = re.data.sesions.sesions;
-      }
-    });
-    this.subs.push(sub);
+    this.subs.push(
+      this.eventService
+        .getEvent(idEvent, true)
+        .pipe(
+          pluck('data', 'event'),
+          tap((event) => {
+            this.currentEvent = event;
+            this.sesions = event.sesions;
+            if (this.currentEvent.modeEvent == 'PROGRAM') {
+              this.isProgramEvent.next(true);
+            }
+          })
+        )
+        .subscribe()
+    );
   }
 
   /*=============================================
@@ -328,8 +349,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private async fetchSesion(id: number) {
     if (this.refQueryGetSesion) {
       this.refQueryGetSesion.refetch({ idSesion: id }).then((resp) => {
-        console.log(resp);
-
         this.currentSesion = resp.data.sesion;
         this.setValuesInForm(this.currentSesion);
         this.editMode = true;
@@ -344,7 +363,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public get getIncludeVideo() {
     return this.formConfigSesion.get('includeVideo').value;
   }
-
+  get isProgram() {
+    return this.currentEvent.modeEvent === 'PROGRAM';
+  }
   /*=============================================
   =         PATCH VALUES IN FORM           =
   =============================================*/
@@ -353,8 +374,15 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     this.formSesion.patchValue({
       duration: sesion.duration,
       linkRoom: sesion.linkRoom,
-      startDateSesion: getTimestamp(sesion.startSesion),
-      startTimeSesion: getTimestamp(sesion.startSesion),
+      ...() => {
+        // render if is programa
+        if (this.isProgram) {
+          return {
+            startDateSesion: getTimestamp(sesion.startSesion),
+            startTimeSesion: getTimestamp(sesion.startSesion),
+          };
+        }
+      },
       nameSesion: sesion.nameSesion,
       description: sesion.description,
     });
@@ -380,14 +408,25 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   =============================================*/
 
   private buildForms(): void {
-    this.formSesion = this.fb.group({
+    let formSesion: any = {
       duration: this.fb.control(null),
       linkRoom: this.fb.control(null),
-      startDateSesion: this.fb.control(null, [Validators.required]),
-      startTimeSesion: this.fb.control(null, [Validators.required]),
       nameSesion: this.fb.control('', [Validators.required]),
       description: this.fb.control('', [Validators.required]),
-    });
+    };
+    this.subs.push(
+      this.isProgramEvent.subscribe((res: boolean) => {
+        if (!res) {
+          formSesion = {
+            ...formSesion,
+            startDateSesion: this.fb.control(null, [Validators.required]),
+            startTimeSesion: this.fb.control(null, [Validators.required]),
+          };
+        }
+      })
+    );
+
+    this.formSesion = this.fb.group(formSesion);
     this.formConfigSesion = this.fb.group({
       includeVideo: this.fb.control(false),
       includeComments: this.fb.control(false),
@@ -407,7 +446,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   public newSesion(): void {
-    console.log('new Sesion');
     this.router.navigate([], {
       queryParams: {
         edit: null,
@@ -418,8 +456,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
 
   // video function
   selectVideo(video: File) {
-    console.log(video);
-
     this.videoForUpload = video;
 
     this.videosrc = this.sanitize.bypassSecurityTrustUrl(
@@ -452,6 +488,10 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
             this.percentVideo = -1;
             subUpload.unsubscribe();
             this.ngxSpinner.hide();
+            console.log('this is resource');
+
+            console.log(detailResource);
+
             resolve(detailResource);
           }
         );

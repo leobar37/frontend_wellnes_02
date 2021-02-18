@@ -32,12 +32,14 @@ import { PlayerModule } from '@core/modules/player/player.module';
 import { CloudinaryModule } from '@core/modules/cloudinary/cloudinary.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
-import { VimeoModule } from '@core/modules/vimeo/vimeo.module';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 /*
    Embed video in html : 
    NPM :  https://www.npmjs.com/package/ngx-embed-video
-*/
-import { EmbedVideo } from 'ngx-embed-video';
+
 /**
  *
  * control space in inputs
@@ -45,9 +47,11 @@ import { EmbedVideo } from 'ngx-embed-video';
  */
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { StorageModule } from '@core/modules/storage/storage.module';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 const zorro = [
   NzSpaceModule,
   NzSliderModule,
+  NzTagModule,
   NzModalModule,
   NzButtonModule,
   NzUploadModule,
@@ -61,6 +65,9 @@ const zorro = [
   NzInputModule,
   NzTimePickerModule,
   NzProgressModule,
+  NzTableModule,
+  NzBadgeModule,
+  NzDividerModule,
 ];
 
 @NgModule({
@@ -83,8 +90,6 @@ const zorro = [
     CustomCheckboxModule,
     PlayerModule,
     CloudinaryModule,
-    VimeoModule,
-    EmbedVideo.forRoot(),
     zorro,
   ],
   providers: [EventService, SesionService],

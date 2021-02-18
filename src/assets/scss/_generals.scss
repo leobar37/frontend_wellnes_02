@@ -32,6 +32,11 @@
     }
   }
 }
+// general size viewport
+.contain {
+  width: 800px !important;
+  min-height: 100vh;
+}
 
 /*=============================================
 =            subtitles            =

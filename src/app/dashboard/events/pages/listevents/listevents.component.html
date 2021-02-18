@@ -4,55 +4,43 @@
   fxLayoutAlign="start space-between"
   fxLayoutGap="20px"
 >
-  <nz-card class="shadow_box" *ngFor="let itemData of viewEventsData">
-    <li
-      fxLayout="row"
-      fxLayoutGap="10%"
-      style="height: 250px"
-      fxLayoutAlign="space-evenly stretch"
-    >
-      <picture fxLayout fxLayoutAlign="center center">
-        <img [src]="itemData.eventCover" width="220" alt="" />
-      </picture>
-      <div>
-        <h2>{{ itemData.name }}</h2>
-        <table>
-          <tr>
-            <th>Participantes:</th>
-            <td>
-              {{ itemData.participants }}
-            </td>
-          </tr>
-          <tr>
-            <th>Sesiones</th>
-            <td>
-              {{ itemData.countSesions }}
-            </td>
-          </tr>
-          <tr>
-            <th>Sesiones Restantes</th>
-            <td>
-              {{ itemData.lessSesions }}
-            </td>
-          </tr>
-          <tr>
-            <th>Ultima sesion</th>
-            <td>
-              {{ itemData.lastSesion | date }}
-            </td>
-          </tr>
-        </table>
-      </div>
-      <div fxLayout="column" fxLayoutAlign="end center">
-        <button
-          (click)="redirectEdit(itemData.id)"
-          nz-button
-          class=""
-          nzType="primary"
-        >
-          editar
-        </button>
-      </div>
-    </li>
+  <h1 class="title line_addon my-4 py-2">
+    {{ configAction.action + "s" }} creados
+  </h1>
+
+  <nz-card>
+    <nz-table #table [nzData]="viewEventsData">
+      <thead>
+        <tr>
+          <th>Titúlo</th>
+          <th>Creado</th>
+          <th>publicado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let item of table.data">
+        <tr>
+          <td>
+            {{ item.name }}
+          </td>
+          <td>
+            {{ item.createEvent | dfnsFormatDistanceToNow: options }}
+          </td>
+          <td>
+            <nz-tag [nzColor]="getStateEvent(item.published).color">
+              {{ getStateEvent(item.published).text }}
+            </nz-tag>
+          </td>
+          <td>
+            <button nz-button (click)="redirectEdit(item)" nzType="primary">
+              ver
+            </button>
+
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzDanger nzType="primary">eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
   </nz-card>
 </div>

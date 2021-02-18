@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-socialprovider',
   template: `
     <div class="contain_social_method">
-      <h3 class="text-lowercase">{{ this.text }}</h3>
+      <h3 class="">{{ this.text }}</h3>
       <div class="icons">
         <a (click)="autService.signInWithFB()">
           <i class="fab fa-facebook-f"></i>
@@ -31,13 +31,12 @@ export class SocialproviderComponent implements OnInit, OnDestroy {
   usbAutProvider: Subscription;
   @Input('text') text = 'Ingresa con una red social:';
   @Output() userEmit = new EventEmitter<SocialUser>();
- 
+
   constructor(
     public autService: AuthProviders,
     private socialAuthService: SocialAuthService
   ) {
     // console.log('load component')
-
   }
   ngOnDestroy(): void {
     this.usbAutProvider.unsubscribe();

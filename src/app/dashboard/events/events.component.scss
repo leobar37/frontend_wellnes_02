@@ -1,8 +1,4 @@
 @import "src/sass/utils";
-.contain {
-  width: 800px !important;
-  min-height: 100vh;
-}
 
 // alter upload ng angular
 :host ::ng-deep .event-uploader > .ant-upload {

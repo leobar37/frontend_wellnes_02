@@ -3,6 +3,7 @@ import { gql, Apollo } from 'apollo-angular';
 /*=============================================
 =             graphql            =
 =============================================*/
+
 import { IDetailResponse } from '@core/models/eventmodels/event.response';
 const ATTEND_SESION = gql`
   mutation attendEvent($idUser: Int!, $idEvent: Int!) {

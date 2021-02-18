@@ -15,4 +15,5 @@ export interface Isesion {
   includeComments?: boolean;
   id_resource?: number;
   includeVideo?: boolean;
+  id_comment?: number;
 }
