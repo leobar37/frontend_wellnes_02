@@ -6,7 +6,7 @@ import { EventService } from './../../../events/services/event.service';
 import { IEvent } from '@core/models/eventmodels/event.model';
 import { Component, OnInit } from '@angular/core';
 import { NgxMasonryOptions } from 'ngx-masonry';
-import { merge } from 'lodash';
+import { AlertService } from '@core/modules/alert/alert.service';
 
 @Component({
   selector: 'app-listevents',
@@ -30,9 +30,9 @@ export class ListeventsComponent implements OnInit {
     private eventService: EventService,
     private utilsService: UtilsService,
     private route: Router,
-    private activateRouter: ActivatedRoute
+    private activateRouter: ActivatedRoute,
+    private alertService: AlertService
   ) {}
-
   /*=============================================
  =            events DOM            =
  =============================================*/

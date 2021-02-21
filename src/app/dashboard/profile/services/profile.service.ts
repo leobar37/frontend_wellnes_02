@@ -22,6 +22,7 @@ const USERFRAGMENT = gql`
     description
     create
     phone
+    comfirmed
   }
 `;
 
@@ -134,7 +135,7 @@ export class ProfileService {
   }
   public getUser(
     mode?: string,
-    relation?: 'eventscreated' | 'referreals' | 'eventasisted'
+    relation?: 'eventscreated' | 'referreals' | 'eventasisted' | 'only'
   ): Observable<ApolloQueryResult<{ getUser: UserResponse }>> {
     this.jwtService = this.injector.get<JwtService>(JwtService);
     const user = this.jwtService.getUserOfToken();
@@ -147,6 +148,10 @@ export class ProfileService {
         }
         case 'eventscreated': {
           query = GET_USER_EVENTCREATED;
+          break;
+        }
+        case 'only': {
+          query = GET_USER;
           break;
         }
       }

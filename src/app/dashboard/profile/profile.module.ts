@@ -26,6 +26,11 @@ import { ImageresolvePipe } from '@core/pipes/imageresolve.pipe';
 import { ReferrealsComponent } from './pages/referreals/referreals.component';
 import { ProfileComponent as ProfilePageComponent } from './pages/profile/profile.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { ChangueEmailComponent } from './components/changue-email.component';
+import { NzFormModule } from 'ng-zorro-antd/form';
+
 const zorro = [
   NzButtonModule,
   NzCardModule,
@@ -34,6 +39,8 @@ const zorro = [
   NzIconModule,
   NzDatePickerModule,
   NzTableModule,
+  NzCollapseModule,
+  NzFormModule,
 ];
 const material = [MatFormFieldModule, MatInputModule];
 @NgModule({
@@ -42,6 +49,7 @@ const material = [MatFormFieldModule, MatInputModule];
     ImageresolvePipe,
     ReferrealsComponent,
     ProfilePageComponent,
+    ChangueEmailComponent,
   ],
   imports: [
     CommonModule,
@@ -50,6 +58,8 @@ const material = [MatFormFieldModule, MatInputModule];
     ...zorro,
     FormsModule,
     ...material,
+    NzDividerModule,
+    ReactiveFormsModule,
   ],
   providers: [
     ProfileService,

@@ -47,9 +47,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   private configureProvider() {
     this.subscriptionProvider = this.eventSignUp.subscribe((provider) => {
-      // if (!this.sponsor) {
-      //   throw new Error('');
-      // }
       this.user = { ...this.user, sponsor: this.sponsor };
 
       this._AUHtSERVICE.signUp(this.user, provider).subscribe((data) => {

@@ -15,6 +15,7 @@ export interface IUser {
   getCompleteName?: string;
   sponsor?: string;
   create?: Date;
+  comfirmed?: boolean;
 }
 
 export const examplesUser: IUser[] = [

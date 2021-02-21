@@ -8,7 +8,10 @@ import { CommonModule } from '@angular/common';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
-const zorro = [NzMenuModule, NzLayoutModule];
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+// ads component
+import { AlertModule } from '@core/modules/alert/alert.module';
+const zorro = [NzMenuModule, NzLayoutModule, NzBreadCrumbModule, AlertModule];
 
 @NgModule({
   declarations: [DashboardComponent],

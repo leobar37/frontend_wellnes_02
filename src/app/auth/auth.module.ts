@@ -30,23 +30,34 @@ const zorro = [
   NzButtonModule,
   NzModalModule,
 ];
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+
+import { SwiperModule } from 'swiper/angular';
 
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { GridModule } from '@angular/flex-layout';
 import { SocialproviderComponent } from './components/socialprovider/socialprovider.component';
 import { SocialprovidersModule } from './socialproviders.module';
+import { ChanguepasswordComponent } from './changuepassword/changuepassword.component';
 
 @NgModule({
-  declarations: [RegisterComponent, LoginComponent, SocialproviderComponent],
+  declarations: [
+    RegisterComponent,
+    LoginComponent,
+    SocialproviderComponent,
+    ChanguepasswordComponent,
+  ],
   imports: [
     CommonModule,
     FlexLayoutModule,
     AuthRoutingModule,
     zorro,
+    SwiperModule,
     SocialLoginModule,
     FontAwesomeModule,
     ReactiveFormsModule,
     SocialprovidersModule,
+    NzStepsModule,
     FormsModule,
   ],
   providers: [{ provide: CONFIGAUTH, useValue: IdatConfigAuth }, AuthService],

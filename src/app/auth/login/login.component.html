@@ -30,14 +30,14 @@
           />
         </nz-form-control>
       </nz-form-item>
-
+      <span class="changue_oauth">
+        <a href="" routerLink="/forgotpassword">Olvide mi contraseña</a>
+      </span>
       <!-- login with social providers -->
 
-      <app-socialprovider (userEmit)="withSocialProvider($event)">
-      </app-socialprovider>
-      <span class="changue_oauth">
-        <a href="" routerLink="/register">No tengo una cuenta</a>
-      </span>
+      <!-- <app-socialprovider (userEmit)="withSocialProvider($event)">
+      </app-socialprovider> -->
+
       <button
         nz-button
         (click)="submitForm()"
@@ -47,6 +47,9 @@
       >
         Ingresar
       </button>
+      <span class="changue_oauth">
+        <a href="" routerLink="/register">No tengo una cuenta</a>
+      </span>
     </form>
   </div>
   <!-- background image left -->

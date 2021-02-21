@@ -22,6 +22,14 @@
   </nz-upload>
 </ng-template>
 
+<ng-template #pendenting>
+  <nz-collapse>
+    <nz-collapse-panel [nzHeader]="'Confirmar email'" [nzActive]="true">
+      <app-changue-email [user]="user"></app-changue-email>
+    </nz-collapse-panel>
+  </nz-collapse>
+</ng-template>
+
 <ng-template #detailprofile>
   <table class="table_profile">
     <tr>
@@ -121,6 +129,11 @@
     <ng-container [ngTemplateOutlet]="upload"> </ng-container>
   </div>
   <div gdArea="detail" class="my-4">
+    <ng-container *ngIf="!user.comfirmed">
+      <h2 class="title line_addon">Pendiente</h2>
+      <ng-container [ngTemplateOutlet]="pendenting"></ng-container>
+    </ng-container>
+
     <h2 class="title line_addon">Datos de Perfil</h2>
     <ng-container [ngTemplateOutlet]="detailprofile"></ng-container>
   </div>

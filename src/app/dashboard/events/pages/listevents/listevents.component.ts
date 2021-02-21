@@ -1,5 +1,5 @@
 import { ICONFIG_ACTION, IconfigAction } from './../../config';
-import { pluck, map } from 'rxjs/operators';
+import { pluck, map, tap } from 'rxjs/operators';
 import { ProfileService } from './../../../profile/services/profile.service';
 import { EventState } from 'src/app/@core/models/eventmodels/enums.event';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -81,8 +81,9 @@ export class ListeventsComponent implements OnInit, OnDestroy {
       this.configAction = data;
       this.recolectSubs.push(
         this.profileService
-          .getUser(data.type)
+          .getUser(data.type, 'eventscreated')
           .pipe(
+            tap(console.log),
             pluck('data', 'getUser', 'user', 'eventsCreated'),
             map(buildData)
           )

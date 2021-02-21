@@ -6,8 +6,8 @@
     class="contain_oauth_form"
     style="overflow-y: scroll"
   >
-    <img width="150" src="assets/wellenesslogo.png" alt="" />
-    <h2 class="title text-uppercase">Registrarse</h2>
+    <!-- <img width="150" src="assets/wellenesslogo.png" alt="" /> -->
+    <h2 class="title line_addon w-50 text-center">Registro</h2>
     <form nz-form [formGroup]="registerForm" class="oauth_form">
       <!-- name and lastName -->
       <nz-form-item>
@@ -75,6 +75,7 @@
           placeholder="codigo de invitación"
         />
       </nz-form-item>
+      <!-- password -->
       <nz-form-item>
         <nz-form-control
           [nzSpan]="configAuth.widhtInput"
@@ -109,11 +110,11 @@
         </nz-form-control>
       </nz-form-item>
       <!-- login with social providers -->
-      <app-socialprovider
+      <!-- <app-socialprovider
         (userEmit)="eventOfProvider($event)"
         text="Registrate con una red social"
       >
-      </app-socialprovider>
+      </app-socialprovider> -->
       <span class="changue_oauth">
         <a routerLink="/login">Ya tengo una cuenta</a>
       </span>
