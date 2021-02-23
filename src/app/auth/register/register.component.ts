@@ -133,7 +133,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.user = _.omit(value, ['repeatPassword']);
       this.eventSignUp.next('email');
     } else {
-      console.log('form is invalid');
     }
   }
 }

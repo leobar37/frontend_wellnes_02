@@ -7,3 +7,8 @@ $color-shadow: rgba(
   box-shadow: $shadowupload $shadowupload 5px 1px $color-shadow,
     -$shadowupload -$shadowupload 3px 1px $color-shadow;
 }
+@mixin hoverMenu {
+  &:hover {
+    background-color: rgba($color: $secondary-color, $alpha: 0.1);
+  }
+}

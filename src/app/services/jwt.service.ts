@@ -23,4 +23,9 @@ export class JwtService {
     }
     return this._jwt.isTokenExpired();
   }
+  logout(): void {
+    if (localStorage.getItem('token')) {
+      localStorage.removeItem('token');
+    }
+  }
 }
