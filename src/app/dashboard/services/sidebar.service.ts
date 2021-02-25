@@ -55,6 +55,11 @@ export class SidebarService {
         },
       ],
     },
+    {
+      name: 'Categorias',
+      icon: 'bars',
+      route: 'categorie',
+    },
   ];
   constructor() {}
 

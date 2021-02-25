@@ -3,10 +3,11 @@ export const RESOURCEFRAGMENT = gql`
   fragment resourceFragment on Resource {
     id
     key
-    acces
+    access
     bucket
     updateResource
     type
     url
+    instace
   }
 `;

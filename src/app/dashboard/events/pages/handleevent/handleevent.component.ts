@@ -23,10 +23,12 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import _ from 'lodash';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { configResolveFactory, ICONFIG_ACTION } from '../../config';
+import { Icategorie } from 'src/app/dashboard/categorie/model.categorie';
 
 interface IEventForm {
   title: string;
   description: string;
+  categorie: any;
 }
 interface IconfigValueForm {
   includeComment: boolean;
@@ -66,6 +68,8 @@ export class HandleeventComponent implements OnInit {
   public messageSpinner = 'Loading..';
   public percentVideo = -1;
   public isProgram = false;
+
+  public categories: Icategorie[] = [];
   // usage for embed video in html
 
   public optionsPublished: {
@@ -106,10 +110,12 @@ export class HandleeventComponent implements OnInit {
     this.listenRoutes();
   }
   private listenRoutes(): void {
+    this.eventService.getCategories().subscribe((categories: Icategorie[]) => {
+      this.categories = categories;
+    });
     this.activateRoute.data.subscribe((data: Data) => {
       if (data?.type && data.type === 'program') {
       }
-      console.log(this.isProgram);
     });
 
     const subRoute = this.activateRoute.queryParams.subscribe(
@@ -192,6 +198,9 @@ export class HandleeventComponent implements OnInit {
     }
     // value event
     const eventFormValue = this.eventForm.value as IEventForm;
+
+    console.log(eventFormValue);
+
     const title = eventFormValue.title;
     const description = eventFormValue.description;
     // value config
@@ -218,6 +227,7 @@ export class HandleeventComponent implements OnInit {
       published: configValue.optionPublished,
       includeComments: configValue.includeComment,
       modeEvent: this.config.type,
+      category_id: eventFormValue.categorie,
     } as IEvent;
   }
   /*=============================================
@@ -351,6 +361,13 @@ export class HandleeventComponent implements OnInit {
   private getEvent(id: number) {
     const subGetEvent = this.eventService.getEvent(id).subscribe((resp) => {
       if (resp.data.event != null) {
+        // fill categorie
+        const categorie = this.categories.find(
+          ({ id }) => id == resp.data.event.category_id
+        );
+
+        this.eventForm.patchValue({ categorie: categorie.name });
+
         this.setValuesOnFormEvent(resp.data.event);
         this.currentEvent = resp.data.event;
       } else {
@@ -428,6 +445,7 @@ export class HandleeventComponent implements OnInit {
     this.eventForm = this.fb.group({
       title: this.fb.control('', [Validators.required]),
       description: this.fb.control(null, [Validators.required]),
+      categorie: this.fb.control(null, [Validators.required]),
     });
   }
 

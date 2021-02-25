@@ -18,8 +18,8 @@
           <th></th>
         </tr>
       </thead>
-      <tbody *ngFor="let item of table.data">
-        <tr>
+      <tbody>
+        <tr *ngFor="let item of table.data">
           <td>
             {{ item.name }}
           </td>

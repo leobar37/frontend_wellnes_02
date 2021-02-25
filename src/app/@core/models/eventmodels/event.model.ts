@@ -21,6 +21,7 @@ export interface IEvent {
   id_comment?: number;
   modeEvent?: MODEEVENT;
   id_user?: number;
+  category_id?: number;
 }
 
 export type MODEEVENT = 'EVENT' | 'PROGRAM';

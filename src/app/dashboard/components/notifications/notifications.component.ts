@@ -64,7 +64,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.preparateEventReadNotifications();
-    // init conifuration service
+    // init configuration service
     this.notificationService.initConfigurations();
 
     this.notifications = this.notificationService.notifications.pipe(
@@ -88,12 +88,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       return els.map((el) => ({ ...el, read: true }));
     };
     const onReadNotification = async () => {
-      console.log('excute');
-
       // read notification on server only has unread notifications :)
       if (!this.allNotificationRead)
         await this.notificationService.readNotifications();
-      else console.log('ignore all notifications is read :)');
+      else console.log('ignore all notifications => read :)');
       // read local notifications
       this.notifications = this.notifications.pipe(
         map(readNotification),

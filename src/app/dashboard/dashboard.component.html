@@ -58,7 +58,13 @@
             [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
           ></i>
         </span>
-        <app-navbar></app-navbar>
+        <ul nz-menu nzMode="horizontal">
+          <li nz-menu-item nzSelected>Eventos</li>
+          <li nz-menu-item>Programas</li>
+          <li nz-menu-item>Anuncios</li>
+
+          <app-navbar></app-navbar>
+        </ul>
       </nav>
     </nz-header>
     <nz-content>

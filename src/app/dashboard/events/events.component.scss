@@ -11,6 +11,10 @@
   @extend .shadow_box;
 }
 
+:host ::ng-deep .event-uploader {
+  display: flex;
+}
+
 :host ::ng-deep .ant-list-split .ant-list-item {
   cursor: pointer;
   padding: 10px 15px;
@@ -18,9 +22,7 @@
     background-color: rgba($color: blanchedalmond, $alpha: 0.8);
   }
 }
-:host ::ng-deep .event-uploader {
-  display: flex;
-}
+
 .upload_placeholder {
   display: flex;
   //  justify-content:;

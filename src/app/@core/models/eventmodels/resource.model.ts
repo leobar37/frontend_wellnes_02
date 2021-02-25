@@ -1,3 +1,4 @@
+export type TypeInstance = 'LOCAL' | 'S3';
 export interface IResource {
   id?: number;
   updateResource?: Date;
@@ -6,4 +7,5 @@ export interface IResource {
   type?: string;
   acces?: string;
   bucket?: string;
+  instace?: TypeInstance;
 }

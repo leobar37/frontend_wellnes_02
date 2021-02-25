@@ -23,6 +23,11 @@ const childrenRoutes: Routes = [
     path: 'apps',
     loadChildren: () => import('./apps/apps.module').then((m) => m.AppsModule),
   },
+  {
+    path: 'categorie',
+    loadChildren: () =>
+      import('./categorie/categorie.module').then((m) => m.CategorieModule),
+  },
 ];
 
 const routes: Routes = [

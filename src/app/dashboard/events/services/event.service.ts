@@ -9,8 +9,9 @@ import { Injectable } from '@angular/core';
 import { gql, Apollo } from 'apollo-angular';
 import { Observable, of } from 'rxjs';
 import { FRAGMENTSESION } from './sesion.service';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, pluck } from 'rxjs/operators';
 import { EVENTFRAGMENT } from '@fragments/event.fragment';
+import { CATEGORIE_FRAGMENT } from '@fragments/categorie';
 
 const CREATEEVENT = gql`
   ${EVENTFRAGMENT}
@@ -24,6 +25,14 @@ const CREATEEVENT = gql`
         code
         message
       }
+    }
+  }
+`;
+const ALL_CATEGORIEE = gql`
+  ${CATEGORIE_FRAGMENT}
+  query getCategorie {
+    categories {
+      ...categorieFragment
     }
   }
 `;
@@ -145,10 +154,21 @@ export class EventService {
             includeVideo: event.includeVideo,
             modeEvent: event.modeEvent,
             id_user: user.id,
+            category_id: event.category_id,
           },
         },
       })
       .pipe(tap(console.log));
+  }
+
+  public getCategories() {
+    return this.apollo.query({ query: ALL_CATEGORIEE }).pipe(
+      tap((res) => {
+        console.log('this categories');
+        console.log(res);
+      }),
+      pluck('data', 'categories')
+    );
   }
 
   /*=============================================
@@ -227,6 +247,7 @@ export class EventService {
           cloudinarySource: event.cloudinarySource,
           includeVideo: event.includeVideo,
           modeEvent: event.modeEvent,
+          category_id: event.category_id,
         },
         id: Number(id),
       },

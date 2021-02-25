@@ -36,10 +36,12 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 /*
    Embed video in html : 
    NPM :  https://www.npmjs.com/package/ngx-embed-video
 
+   
 /**
  *
  * control space in inputs
@@ -59,6 +61,7 @@ const zorro = [
   NzListModule,
   NzCardModule,
   NzCheckboxModule,
+  NzAutocompleteModule,
   NzFormModule,
   NzSwitchModule,
   NzDatePickerModule,
@@ -81,6 +84,7 @@ const zorro = [
   imports: [
     FlexLayoutModule,
     StorageModule,
+    FormsModule,
     FormsModule,
     ReactiveFormsModule,
     DateFnsModule.forRoot(),

@@ -17,5 +17,6 @@ export const EVENTFRAGMENT = gql`
       url
     }
     modeEvent
+    category_id
   }
 `;
