@@ -34,7 +34,14 @@ import {
     >
       <img [src]="thumbnail" />
       <div class="icon">
-        <i class="fas fa-play"></i>
+        <ng-container *ngIf="loading">
+          <ng-template #indicatorloading>
+            <i nz-icon [nzType]="'sync'" [nzSpin]="true"></i>
+          </ng-template>
+          <nz-spin nzSimple [nzIndicator]="indicatorloading"></nz-spin>
+        </ng-container>
+
+        <i *ngIf="!loading" class="fas fa-play"></i>
       </div>
     </div>
   </div>`,
@@ -44,12 +51,11 @@ export class ThumbnailComponent implements OnInit, OnDestroy {
   @Input() vgFor: string;
   /** thumnail  preview in pause  */
   @Input() thumbnail: string;
-
   elem: HTMLElement;
   target: any;
+  loading = true;
   isNativeFullscreen = false;
   areControlsHidden = false;
-
   subscriptions: Subscription[] = [];
 
   @HostBinding('class.is-buffering') isBuffering = false;
@@ -74,6 +80,9 @@ export class ThumbnailComponent implements OnInit, OnDestroy {
 
   onPlayerReady() {
     this.target = this.API.getMediaById(this.vgFor);
+    this.API.getMediaById(this.vgFor).subscriptions.canPlay.subscribe((el) => {
+      this.loading = false;
+    });
     this.subscriptions.push(
       this.fsAPI.onChangeFullscreen.subscribe(
         this.onChangeFullscreen.bind(this)

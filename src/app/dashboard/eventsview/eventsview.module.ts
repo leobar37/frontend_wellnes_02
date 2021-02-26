@@ -33,6 +33,8 @@ import { RowShowComponent } from './pages/listevents/components/row-show.compone
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { SwiperModule } from 'ngx-swiper-wrapper';
 import { DisplayCategorieComponent } from './pages/listevents/components/display-categorie/display-categorie.component';
+import { ResolveUrlPipeModule } from '@core/pipes/resolve-url.pipe';
+import { NzListModule } from 'ng-zorro-antd/list';
 
 const zorro = [
   NzButtonModule,
@@ -40,6 +42,7 @@ const zorro = [
   NzSpaceModule,
   NzCardModule,
   NzSpinModule,
+  NzListModule,
 ];
 
 @NgModule({
@@ -58,11 +61,12 @@ const zorro = [
     EventsviewRoutingModule,
     ...zorro,
     ...material,
+    ResolveUrlPipeModule,
     CommentsModule,
     FlexLayoutModule,
     PipeShortParagraphModule,
     NgxMasonryModule,
-    PlayerModule,
+    PlayerModule.forRoot(),
     SwiperModule,
   ],
   providers: [EventServiceModule, EventService, PrincipalSesionService],

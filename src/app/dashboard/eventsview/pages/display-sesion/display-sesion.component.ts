@@ -31,11 +31,7 @@ export class DisplaySesionComponent implements OnInit {
       this.sesionServiceex
         .getSesion(params.sesion)
         .valueChanges.subscribe((resp) => {
-          console.log(resp);
-
           const sesion = resp.data.sesion;
-          console.log(sesion);
-
           if (sesion) {
             this.currentSesion = {
               ...resp.data.sesion,

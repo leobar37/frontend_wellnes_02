@@ -11,11 +11,11 @@ import { JwtService } from '@services/jwt.service';
 import { EventService as DisplayEventService } from '../../services/event.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { QueryRef } from 'apollo-angular';
-
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
   styleUrls: ['../styles.scss'],
+  providers: [],
 })
 export class DisplayeventComponent implements OnInit, OnDestroy {
   currentEvent: IEvent;
@@ -31,7 +31,6 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
     private modal: NzModalService,
     private router: Router
   ) {}
-
   /*=============================================
    =           Lfe Cicle            =
    =============================================*/

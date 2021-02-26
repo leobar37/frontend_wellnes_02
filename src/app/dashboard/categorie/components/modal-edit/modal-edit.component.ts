@@ -14,6 +14,5 @@ export class ModalEditComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: { tpl: TemplateRef<{ $implicit: boolean }>; context: any }
   ) {}
-
   ngOnInit(): void {}
 }

@@ -1,3 +1,4 @@
+$backgound-color-list: white;
 .item_sesion {
   width: 750px;
   .side_right {
@@ -7,4 +8,10 @@
       font-size: 1.2rem;
     }
   }
+}
+.container_sesion_item {
+  border: 2px solid black;
+  background: $backgound-color-list;
+  width: 750px;
+  height: 250px;
 }

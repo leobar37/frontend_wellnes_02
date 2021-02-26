@@ -56,13 +56,15 @@
       <h2 style="margin-bottom: 2rem" class="title text-left w-100">
         Sesiones:
       </h2>
-      <nz-space nzDirection="vertical" nzAlign="center" nzSize="large">
+      <nz-list>
         <nz-space-item *ngFor="let sesion of currentEvent.sesions">
           <app-item-sesion
             (selectItem)="navigateSesion($event)"
             [sesion]="sesion"
           ></app-item-sesion>
         </nz-space-item>
+      </nz-list>
+      <nz-space nzDirection="vertical" nzAlign="center" nzSize="large">
       </nz-space>
     </section>
   </nz-card>

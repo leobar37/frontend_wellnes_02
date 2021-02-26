@@ -1,5 +1,7 @@
 :host {
   display: block;
+  width: var(--width);
+  height: var(--heigth);
 }
 vg-overlay-play .vg-overlay-play {
   background: red !important;

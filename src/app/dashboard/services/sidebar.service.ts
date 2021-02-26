@@ -46,16 +46,6 @@ export class SidebarService {
       ],
     },
     {
-      name: 'Eventos',
-      icon: 'profile',
-      items: [
-        {
-          name: 'Eventos',
-          route: 'view/explorer',
-        },
-      ],
-    },
-    {
       name: 'Categorias',
       icon: 'bars',
       route: 'categorie',
