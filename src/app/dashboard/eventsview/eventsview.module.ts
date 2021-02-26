@@ -17,7 +17,7 @@ import { DisplaySesionComponent } from './pages/display-sesion/display-sesion.co
 import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzCardModule } from 'ng-zorro-antd/card';
-const zorro = [NzButtonModule, NzModalModule, NzSpaceModule, NzCardModule];
+
 const material = [MatCardModule];
 
 import { PlayerModule } from '@core/modules/player/player.module';
@@ -28,6 +28,19 @@ import { PlayerModule } from '@core/modules/player/player.module';
 import { NgxMasonryModule } from 'ngx-masonry';
 import { ItemSesionComponent } from './components/item-sesion/item-sesion.component';
 import { CommentsModule } from '@core/modules/comments/comments.module';
+import { CardComponent } from './pages/listevents/components/card.component';
+import { RowShowComponent } from './pages/listevents/components/row-show.component';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { SwiperModule } from 'ngx-swiper-wrapper';
+import { DisplayCategorieComponent } from './pages/listevents/components/display-categorie/display-categorie.component';
+
+const zorro = [
+  NzButtonModule,
+  NzModalModule,
+  NzSpaceModule,
+  NzCardModule,
+  NzSpinModule,
+];
 
 @NgModule({
   declarations: [
@@ -36,6 +49,9 @@ import { CommentsModule } from '@core/modules/comments/comments.module';
     DisplayeventComponent,
     DisplaySesionComponent,
     ItemSesionComponent,
+    CardComponent,
+    RowShowComponent,
+    DisplayCategorieComponent,
   ],
   imports: [
     CommonModule,
@@ -47,6 +63,7 @@ import { CommentsModule } from '@core/modules/comments/comments.module';
     PipeShortParagraphModule,
     NgxMasonryModule,
     PlayerModule,
+    SwiperModule,
   ],
   providers: [EventServiceModule, EventService, PrincipalSesionService],
 })

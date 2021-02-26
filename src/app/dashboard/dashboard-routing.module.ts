@@ -28,6 +28,11 @@ const childrenRoutes: Routes = [
     loadChildren: () =>
       import('./categorie/categorie.module').then((m) => m.CategorieModule),
   },
+  {
+    path: '**',
+    pathMatch: 'full',
+    redirectTo: 'view/explorer?type=events',
+  },
 ];
 
 const routes: Routes = [

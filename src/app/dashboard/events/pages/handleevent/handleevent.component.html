@@ -53,14 +53,10 @@
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
-      <nz-form-control
-        class="control_form_le"
-        nzErrorTip="Este campo es obligatorio"
-      >
+      <nz-form-control class="control_form_le" [nzErrorTip]="errorCategorie">
         <nz-form-label>Categoria </nz-form-label>
         <input
           formControlName="categorie"
-          (input)="(event.target?.value)"
           placeholder="Escoja su categoria"
           nz-input
           [nzAutocomplete]="auto"
@@ -74,6 +70,15 @@
             {{ item.name }}
           </nz-auto-option>
         </nz-autocomplete>
+        <ng-template #errorCategorie let-control>
+          <ng-container *ngIf="control.errors['required']">
+            Este campo es obligatorio
+          </ng-container>
+
+          <ng-container *ngIf="control.hasError('notFoundInArray')">
+            {{ control.getError("notFoundInArray") }}
+          </ng-container>
+        </ng-template>
       </nz-form-control>
     </nz-form-item>
 

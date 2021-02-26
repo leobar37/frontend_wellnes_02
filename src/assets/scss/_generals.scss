@@ -2,6 +2,11 @@
   font-size: 16px;
   font-weight: 300;
 }
+.paragraph.normal {
+  font-weight: 500;
+  opacity: 1;
+  color: rgba($color: black, $alpha: 0.9);
+}
 .window_dashboard {
   max-width: 900px;
   width: 900px;
@@ -34,7 +39,7 @@
 }
 // general size viewport
 .contain {
-  width: 800px !important;
+  width: 900px;
   min-height: 100vh;
 }
 
@@ -43,7 +48,7 @@
 =============================================*/
 
 .subtitle {
-  font-weight: 700;
-  font-size: 15px;
-  margin: 10px 0;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 5px 0 default;
 }

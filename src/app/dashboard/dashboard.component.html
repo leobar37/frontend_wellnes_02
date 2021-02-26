@@ -59,10 +59,22 @@
           ></i>
         </span>
         <ul nz-menu nzMode="horizontal">
-          <li nz-menu-item nzSelected>Eventos</li>
-          <li nz-menu-item>Programas</li>
-          <li nz-menu-item>Anuncios</li>
-
+          <li
+            nz-menu-item
+            nzSelected
+            routerLink="view/explorer"
+            [queryParams]="{ type: 'events' }"
+          >
+            Eventos
+          </li>
+          <li
+            nz-menu-item
+            routerLink="view/explorer"
+            [queryParams]="{ type: 'programs' }"
+          >
+            Programas
+          </li>
+          <!-- <li nz-menu-item>Anuncios</li> -->
           <app-navbar></app-navbar>
         </ul>
       </nav>

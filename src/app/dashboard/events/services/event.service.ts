@@ -13,6 +13,9 @@ import { tap, catchError, pluck } from 'rxjs/operators';
 import { EVENTFRAGMENT } from '@fragments/event.fragment';
 import { CATEGORIE_FRAGMENT } from '@fragments/categorie';
 
+import { ActionService } from '@services/action.service';
+import { Icategorie } from '../../categorie/model.categorie';
+
 const CREATEEVENT = gql`
   ${EVENTFRAGMENT}
   mutation createEvent($eventInput: InputEvent!) {
@@ -30,8 +33,8 @@ const CREATEEVENT = gql`
 `;
 const ALL_CATEGORIEE = gql`
   ${CATEGORIE_FRAGMENT}
-  query getCategorie {
-    categories {
+  query getCategorie($idCategorie: ID) {
+    categories(idCategorie: $idCategorie) {
       ...categorieFragment
     }
   }
@@ -124,7 +127,12 @@ const GETEVENTSOFUSER = gql`
 
 @Injectable()
 export class EventService {
-  constructor(private apollo: Apollo, private jwtService: JwtService) {}
+  constructor(
+    private apollo: Apollo,
+    private jwtService: JwtService,
+    private actionService: ActionService
+  ) {}
+
   public addEvent(
     event: IEvent
   ): Observable<FetchResult<{ createEvent: EventResponse }>> {
@@ -158,17 +166,23 @@ export class EventService {
           },
         },
       })
-      .pipe(tap(console.log));
+      .pipe(
+        tap(() => {
+          /// emit add event in components
+          this.actionService.emitEventHandler('ADDEVENT');
+        })
+      );
   }
 
-  public getCategories() {
-    return this.apollo.query({ query: ALL_CATEGORIEE }).pipe(
-      tap((res) => {
-        console.log('this categories');
-        console.log(res);
-      }),
-      pluck('data', 'categories')
-    );
+  public getCategories(idCategorie?: number): Observable<Icategorie[]> {
+    return this.apollo
+      .query({
+        query: ALL_CATEGORIEE,
+        variables: {
+          idCategorie,
+        },
+      })
+      .pipe(pluck('data', 'categories'));
   }
 
   /*=============================================

@@ -32,6 +32,30 @@ export class MyCustomValidators {
       }
     };
   }
+  /**
+   *
+   * verifica que existe el valor en el arrar en base a un criterio
+   * @param criteria
+   * @param value
+   * @param array
+   */
+  static verifyCriteriaInArray(
+    criteria: string,
+    array: any[],
+    message?: string
+  ) {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!isNaN(Number(value))) {
+        return null;
+      }
+      const val = array.find((obj) => obj[criteria] === value);
+      if (!val) {
+        const msg = `${value} : no esta disponible` || message;
+        return { notFoundInArray: msg };
+      }
+    };
+  }
   static identStrings(cads: [string, string], form: string): ValidatorFn {
     return (groupForm: FormGroup): ValidationErrors | null => {
       try {

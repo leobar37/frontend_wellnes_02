@@ -1,5 +1,4 @@
 import { UtilsService } from '@services/utils.service';
-
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 

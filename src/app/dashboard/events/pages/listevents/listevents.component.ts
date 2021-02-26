@@ -83,7 +83,6 @@ export class ListeventsComponent implements OnInit, OnDestroy {
         this.profileService
           .getUser(data.type, 'eventscreated')
           .pipe(
-            tap(console.log),
             pluck('data', 'getUser', 'user', 'eventsCreated'),
             map(buildData)
           )

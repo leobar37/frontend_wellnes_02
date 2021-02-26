@@ -1,11 +1,12 @@
-import { tap, pluck } from 'rxjs/operators';
-import { Icategorie, IcategorieView } from './model.categorie';
-import { Injectable } from '@angular/core';
+import { tap, pluck, takeUntil } from 'rxjs/operators';
+import { Icategorie } from './model.categorie';
+import { Injectable, OnDestroy } from '@angular/core';
 
 import { gql, Apollo, QueryRef } from 'apollo-angular';
 import { CATEGORIE_FRAGMENT } from '@fragments/categorie';
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { ActionService } from '@services/action.service';
 const CREATE_CATEGORIE = gql`
   ${CATEGORIE_FRAGMENT}
   mutation createCategorie($categorie: InputCategorie!) {
@@ -34,12 +35,23 @@ const ALL_CATEGORIEE = gql`
 `;
 
 @Injectable()
-export class CategorieService {
+export class CategorieService implements OnDestroy {
+  private unsuscribe$: Subject<void> = new Subject<void>();
   private refCategories: QueryRef<{ categories: Icategorie[] }>;
-  constructor(private apollo: Apollo) {
-    console.log('initialize service');
-
+  constructor(private apollo: Apollo, private actionService: ActionService) {
     this.refCategories = this.apollo.watchQuery({ query: ALL_CATEGORIEE });
+    this.actionService
+      .suscribeEvents('ADDEVENT')
+      .pipe(takeUntil(this.unsuscribe$))
+      .subscribe({
+        next: () => {
+          this.refetchCategories();
+        },
+      });
+  }
+  ngOnDestroy(): void {
+    this.unsuscribe$.next();
+    this.unsuscribe$.complete();
   }
 
   public getCategories() {

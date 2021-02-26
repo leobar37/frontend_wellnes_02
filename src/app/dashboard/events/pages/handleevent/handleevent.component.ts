@@ -1,3 +1,4 @@
+import { MyCustomValidators } from './../../../../helpers/Validators';
 import { IconfigAction } from './../../config';
 import { ResourceService } from '@services/resource.service';
 import { StorageService } from '@core/modules/storage/storage.service';
@@ -366,7 +367,7 @@ export class HandleeventComponent implements OnInit {
           ({ id }) => id == resp.data.event.category_id
         );
 
-        this.eventForm.patchValue({ categorie: categorie.name });
+        this.eventForm.patchValue({ categorie: categorie.id });
 
         this.setValuesOnFormEvent(resp.data.event);
         this.currentEvent = resp.data.event;
@@ -445,7 +446,10 @@ export class HandleeventComponent implements OnInit {
     this.eventForm = this.fb.group({
       title: this.fb.control('', [Validators.required]),
       description: this.fb.control(null, [Validators.required]),
-      categorie: this.fb.control(null, [Validators.required]),
+      categorie: this.fb.control(null, [
+        Validators.required,
+        MyCustomValidators.verifyCriteriaInArray('name', this.categories),
+      ]),
     });
   }
 
@@ -488,6 +492,7 @@ export class HandleeventComponent implements OnInit {
     }
     return of(null);
   };
+
   // upload image on server
   private uploadImage(id: any) {
     if (this.fileForUpload) {
