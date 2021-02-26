@@ -15,3 +15,13 @@
   text-align: center;
   width: 1000px;
 }
+.row_galery {
+  .swiper-slide {
+    // background-color: red;
+    margin: 10px 10px;
+    overflow: hidden;
+  }
+}
+app-card {
+  overflow: hidden !important;
+}

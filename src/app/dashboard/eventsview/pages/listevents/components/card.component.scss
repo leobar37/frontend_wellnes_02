@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  margin: 10px 10px !important;
+  overflow: hidden;
+  .swiper-slide {
+    overflow: hidden;
+  }
+}
+
+.viewcardevent {
+  overflow: hidden;
+  width: 300px;
+  margin: 10px 10px;
+  cursor: pointer;
+  text-align: left;
+  h3 {
+    text-transform: capitalize;
+  }
+}

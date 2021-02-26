@@ -1,12 +1,14 @@
-import { mergeMap, pluck, map, tap } from 'rxjs/operators';
-import { from, of, Subscription } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { mergeMap, pluck, map, tap, takeUntil } from 'rxjs/operators';
+import { of, Subscription, Subject, from } from 'rxjs';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { UtilsService } from '@services/utils.service';
 import { EventService } from './../../../events/services/event.service';
-import { IEvent } from '@core/models/eventmodels/event.model';
+import { IEvent, MODEEVENT } from '@core/models/eventmodels/event.model';
 import { Component, OnInit } from '@angular/core';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { AlertService } from '@core/modules/alert/alert.service';
+import { eventsCategoryOperations } from '../../services/events.operation';
+import { Icategorie } from 'src/app/dashboard/categorie/model.categorie';
 
 @Component({
   selector: 'app-listevents',
@@ -19,13 +21,22 @@ export class ListeventsComponent implements OnInit {
     gutter: 20,
     horizontalOrder: true,
   };
+
+  informationArgs: {
+    label: string;
+    showButton?: boolean;
+    args: eventsCategoryOperations;
+  }[] = [];
+
   private recolectorSubs: Subscription[] = [];
   programs: IEvent[] = [];
   events: IEvent[] = [];
+  typeEvent: MODEEVENT;
 
-  // styles: CSSStyleDeclaration = {
-  //   width: '100%',
-  // };
+  private unsuscribeEvents: Subject<void> = new Subject<void>();
+
+  public currentCategorie: Icategorie;
+
   constructor(
     private eventService: EventService,
     private utilsService: UtilsService,
@@ -39,49 +50,100 @@ export class ListeventsComponent implements OnInit {
   public redirectEvent(id: number) {
     this.route.navigateByUrl(`/dashboard/view/event/${id}`);
   }
+
   ngOnInit(): void {
-    this.prepareLists();
+    // this.prepareLists();
+    this.routerListens();
   }
 
   /*=============================================
+   =            LISTENS            =
+   =============================================*/
+  private routerListens() {
+    this.activateRouter.queryParams
+      .pipe(takeUntil(this.unsuscribeEvents))
+      .subscribe((params: Params) => {
+        console.log();
+        const isEmpty = Object.keys(params).length == 0;
+        if (isEmpty) {
+          this.route.navigate([], { queryParams: { type: 'events' } });
+        }
+        if (params?.type) {
+          const isEvent = params?.type === 'events';
+          if (isEvent) {
+            this.typeEvent = 'EVENT';
+          } else {
+            this.typeEvent = 'PROGRAM';
+          }
+          this.prepareCategories();
+        } else if (params?.category) {
+          const categoryid = Number(params.category);
+          this.prepareRowsForCategory(categoryid);
+        }
+      });
+  }
+
+  prepareRowsForCategory(idCategory: number) {
+    this.eventService
+      .getCategories(idCategory)
+      .pipe(
+        tap((categorie) => {
+          this.currentCategorie = categorie[0];
+          this.informationArgs = [];
+          // recents events
+          this.informationArgs.push({
+            label: 'Eventos',
+            showButton: false,
+            args: {
+              idCategory: idCategory,
+              modeEvent: 'EVENT',
+              recents: true,
+            },
+          });
+          // recents programs
+          this.informationArgs.push({
+            label: 'Programas',
+            showButton: false,
+            args: {
+              idCategory: idCategory,
+              modeEvent: 'PROGRAM',
+              recents: true,
+            },
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  prepareCategories() {
+    this.currentCategorie = null;
+    this.informationArgs = [];
+    this.informationArgs.push({
+      label: 'Recientes',
+      args: { idCategory: -1, modeEvent: this.typeEvent, recents: true },
+    });
+    this.prepareLists();
+  }
+  /*=============================================
   =            METHODS            =
   =============================================*/
-
   private prepareLists() {
-    const prepareEvent = (event: IEvent) => ({
-      ...event,
-      eventCover: this.utilsService.resolvePathImage(
-        event.eventCover as string
-      ) as string,
-    });
-    const fillLists = (event: IEvent) => {
-      const isEvent = event.modeEvent == 'EVENT';
-      if (isEvent) {
-        this.events.push(event);
-      } else {
-        this.programs.push(event);
-      }
-    };
-    const resetLists = (_) => {
-      this.events = [];
-      this.programs = [];
-    };
-    this.recolectorSubs.push(
-      this.eventService
-        .getEvents()
-        .pipe(
-          tap(resetLists),
-          pluck('data', 'getEvents'),
-          mergeMap((items) => from(items)),
-          map(prepareEvent),
-          tap(fillLists)
-        )
-        .subscribe({
-          complete: () => {
-            console.log(this.programs);
-            console.log(this.events);
-          },
+    this.eventService
+      .getCategories()
+      .pipe(
+        takeUntil(this.unsuscribeEvents),
+        mergeMap(from),
+        tap((categorie: Icategorie) => {
+          this.informationArgs.push({
+            label: categorie.name,
+            args: {
+              idCategory: categorie.id,
+              modeEvent: this.typeEvent,
+              recents: false,
+            },
+          });
         })
-    );
+      )
+      .subscribe();
   }
 }

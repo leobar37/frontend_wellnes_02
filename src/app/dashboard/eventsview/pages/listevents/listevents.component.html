@@ -1,54 +1,15 @@
 <div class="contain">
-  <h1 class="title line_addon">Eventos</h1>
-  <ngx-masonry [options]="options" class="masonry">
-    <mat-card ngxMasonryItem class="viewcardevent" *ngFor="let item of events">
-      <img mat-card-image [src]="item.eventCover" alt="" />
-      <mat-card-content>
-        <h3>
-          {{ item.name }}
-        </h3>
-        <p>
-          {{ item.description | shortParagraph }}
-        </p>
-      </mat-card-content>
-      <mat-card-footer>
-        <button
-          nz-button
-          (click)="redirectEvent(item.id)"
-          class="m-3"
-          nzType="primary"
-        >
-          ver
-        </button>
-      </mat-card-footer>
-    </mat-card>
-  </ngx-masonry>
-  <h1 class="title line_addon">Programas</h1>
-  <ngx-masonry [options]="options" class="masonry">
-    <mat-card
-      ngxMasonryItem
-      class="viewcardevent"
-      *ngFor="let item of programs"
-    >
-      <img mat-card-image [src]="item.eventCover" alt="" />
-      <mat-card-content>
-        <h3>
-          {{ item.name }}
-        </h3>
-        <p>
-          {{ item.description | shortParagraph }}
-        </p>
-      </mat-card-content>
-      <mat-card-footer>
-        <button
-          nz-button
-          (click)="redirectEvent(item.id)"
-          class="m-3"
-          nzType="primary"
-        >
-          ver
-        </button>
-      </mat-card-footer>
-    </mat-card>
-  </ngx-masonry>
+  <ng-container *ngIf="currentCategorie">
+    <app-display-categorie
+      [categorie]="currentCategorie"
+    ></app-display-categorie>
+  </ng-container>
+
+  <app-row-show
+    [showButton]="item.showButton"
+    *ngFor="let item of informationArgs"
+    [items]="programs"
+    [args]="item.args"
+    [label]="item.label"
+  ></app-row-show>
 </div>
