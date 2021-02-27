@@ -18,7 +18,10 @@ import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzCardModule } from 'ng-zorro-antd/card';
 
-const material = [MatCardModule];
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
+const material = [MatCardModule, ScrollingModule];
 
 import { PlayerModule } from '@core/modules/player/player.module';
 
@@ -35,15 +38,21 @@ import { SwiperModule } from 'ngx-swiper-wrapper';
 import { DisplayCategorieComponent } from './pages/listevents/components/display-categorie/display-categorie.component';
 import { ResolveUrlPipeModule } from '@core/pipes/resolve-url.pipe';
 import { NzListModule } from 'ng-zorro-antd/list';
-
+// me
+import { ViewMoreModule } from '@core/directives/view-more.module';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 const zorro = [
   NzButtonModule,
   NzModalModule,
+  NzEmptyModule,
   NzSpaceModule,
   NzCardModule,
   NzSpinModule,
   NzListModule,
+  NzImageModule,
 ];
+
+const me = [ViewMoreModule];
 
 @NgModule({
   declarations: [
@@ -61,6 +70,7 @@ const zorro = [
     EventsviewRoutingModule,
     ...zorro,
     ...material,
+    ...me,
     ResolveUrlPipeModule,
     CommentsModule,
     FlexLayoutModule,

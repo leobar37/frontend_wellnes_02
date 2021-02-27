@@ -6,7 +6,7 @@
 >
   <!-- MEDIA PREVIEW -->
   <nz-card>
-    <h1 class="title text-center">{{ currentEvent.name }}</h1>
+    <h1 class="title line_addon">{{ currentEvent.name }}</h1>
     <div class="media">
       <img
         class="media__image"
@@ -26,8 +26,18 @@
   <nz-space class="information">
     <nz-card style="background: white" class="box">
       <div class="item">
-        <th>Sesiones</th>
+        <th class="subtittle">Sesiones</th>
         <td>{{ currentEvent.sesions.length }}</td>
+      </div>
+      <div class="item right">
+        <button
+          nz-button
+          nzType="primary"
+          [disabled]="isRegister"
+          (click)="registerEvent()"
+        >
+          {{ isRegister ? "Registrado" : "Registrarse" }}
+        </button>
       </div>
     </nz-card>
   </nz-space>
@@ -36,36 +46,34 @@
   <nz-card class="description">
     <h3 class="title">Descripción</h3>
     <div class="cotent_text">
-      <p class="paragraph">
+      <p class="paragraph" *viewMore="{ sizeCLose: 100, sizeShow: 200 }">
         {{ currentEvent.description }}
       </p>
     </div>
-    <button
-      nz-button
-      nzType="primary"
-      [disabled]="isRegister"
-      (click)="registerEvent()"
-    >
-      {{ isRegister ? "Registrado" : "Registrarse" }}
-    </button>
   </nz-card>
-
   <!--  sesiones-->
   <nz-card class="w-100 my-4">
     <section class="contianer_sesions">
       <h2 style="margin-bottom: 2rem" class="title text-left w-100">
         Sesiones:
       </h2>
-      <nz-list>
-        <nz-space-item *ngFor="let sesion of currentEvent.sesions">
+      <ng-template #notFoundSesions>
+        <nz-empty nzNotFoundContent="No se ha gregado sesiones todavía">
+        </nz-empty>
+      </ng-template>
+      <cdk-virtual-scroll-viewport
+        itemSize="10"
+        *ngIf="currentEvent.sesions.length > 0; else notFoundSesions"
+        class="display"
+        [ngStyle]="{ height: sizeDisplay }"
+      >
+        <nz-space-item *cdkVirtualFor="let sesion of currentEvent.sesions">
           <app-item-sesion
             (selectItem)="navigateSesion($event)"
             [sesion]="sesion"
           ></app-item-sesion>
         </nz-space-item>
-      </nz-list>
-      <nz-space nzDirection="vertical" nzAlign="center" nzSize="large">
-      </nz-space>
+      </cdk-virtual-scroll-viewport>
     </section>
   </nz-card>
   <!-- comments -->

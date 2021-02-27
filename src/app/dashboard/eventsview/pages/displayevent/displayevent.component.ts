@@ -22,6 +22,7 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
   public isRegister: boolean = false;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
   private recolectSubs: Subscription[] = [];
+  sizeDisplay = '500px';
   constructor(
     private activateRoute: ActivatedRoute,
     private eventService: EventService,
@@ -41,7 +42,6 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.recolectSubs.forEach((sub) => sub.unsubscribe());
   }
-
   /*=============================================
   =            gets             =
   ============================================= */

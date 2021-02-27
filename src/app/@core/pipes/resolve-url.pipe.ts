@@ -8,7 +8,6 @@ export class ResolveUrlPipe implements PipeTransform {
   constructor(private utils: UtilsService) {}
   transform(value: string): SafeUrl {
     console.log('resolve url', value);
-
     return this.utils.resolvePathImage(value);
   }
 }

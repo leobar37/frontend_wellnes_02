@@ -6,7 +6,7 @@
 >
   <!-- MEDIA PREVIEW -->
   <nz-card>
-    <h1 class="title text-center">{{ currentSesion.nameSesion }}</h1>
+    <h1 class="title line_addon">{{ currentSesion.nameSesion }}</h1>
     <div class="media">
       <img
         class="media__image"
@@ -22,10 +22,15 @@
     </div>
   </nz-card>
   <nz-space class="information">
-    <nz-card style="background: white" class="box">
+    <nz-card style="background: #ffffff" class="box">
       <div class="item">
         <th>Inicio</th>
         <td>{{ currentSesion.startSesion | date: "medium" }}</td>
+      </div>
+      <div class="item right">
+        <button nz-button nzType="primary" (click)="registerSesion()">
+          Ingresar
+        </button>
       </div>
     </nz-card>
   </nz-space>
@@ -33,18 +38,16 @@
   <!-- content -->
   <nz-card class="description">
     <h3 class="title">Descripción</h3>
-    <div class="cotent_text">
+    <div class="cotent_text" *viewMore="{ sizeCLose: 100, sizeShow: 200 }">
       <p class="paragraph">
         {{ currentSesion.description }}
       </p>
     </div>
-    <button nz-button nzType="primary" (click)="registerSesion()">
-      <!-- {{ isRegister ? "Registrado" : "Registrarse" }} -->
-      Ingresar
-    </button>
+
     <!-- comments -->
     <ng-container *ngIf="currentSesion.includeComments">
       <app-comments
+        class="my-4"
         [idBootrapComment]="currentSesion.id_comment"
       ></app-comments>
     </ng-container>

@@ -1,38 +1,41 @@
+import { UtilsService } from 'src/app/services/utils.service';
 import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-// <mat-card
-// fxLayout
-// *ngIf="sesion?.sesionCover"
-// class="item_sesion"
-// >
-// <div fxFlex="70%">
-//   <img [src]="sesion.sesionCover | resolveUrl" />
-//   <h3 class="title  text-capitalize">
-//     {{ sesion.nameSesion }}
-//   </h3>
-//   <p class="paragraph">
-//     {{ sesion.description | shortParagraph: 80 }}
-//   </p>
-//   <button nz-button nzType="primary" (click)="clickItem()">ver</button>
-// </div>
-// <div class="side_right" fxFlex="15%" fxLayout fxLayoutAlign="end center">
-//   <span> {{ sesion.startSesion | date }} </span>
-// </div>
-// </mat-card>
+
 @Component({
   selector: 'app-item-sesion',
   template: `
-    <div fxLayout class="container_sesion_item">
-      <img [alt]="" [src]="sesion.sesionCover | resolveUrl" />
-    </div>
+    <nz-card nzHoverable>
+      <div fxLayout fxLayoutGap="15px" class="container_sesion_item">
+        <div class="image" fxFlex="40%">
+          <img [src]="sesion.sesionCover" />
+        </div>
+        <div class="detail" fxFlex="60%">
+          <h2 class="title font-italic">
+            {{ sesion.nameSesion }}
+          </h2>
+          <p class="paragraph my-2">
+            {{ sesion.description | shortParagraph: 150 }}
+          </p>
+          <span class="text-mute font-italic">
+            {{ sesion.createdSesion | date: 'short' }}
+          </span>
+        </div>
+      </div>
+    </nz-card>
   `,
   styleUrls: ['./item-sesion.component.scss'],
+  host: {
+    '(click)': 'clickItem()',
+  },
 })
 export class ItemSesionComponent implements OnInit {
   private source: Isesion;
   @Input('sesion') set sesion(ev: Isesion) {
-    console.log(ev.sesionCover);
-    ev.nameSesion;
+    ev = {
+      ...ev,
+      sesionCover: this.utilService.resolveNormalPathImage(ev.sesionCover),
+    };
     this.source = ev;
   }
   get sesion() {
@@ -40,7 +43,7 @@ export class ItemSesionComponent implements OnInit {
   }
 
   @Output() readonly selectItem = new EventEmitter<Isesion>();
-  constructor() {
+  constructor(private utilService: UtilsService) {
     // this.sesion.sesionCover;
   }
   ngOnInit(): void {}

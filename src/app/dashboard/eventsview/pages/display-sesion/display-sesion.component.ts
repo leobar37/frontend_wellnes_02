@@ -26,8 +26,6 @@ export class DisplaySesionComponent implements OnInit {
   =============================================*/
   private listenRoutes() {
     this.activatRoute.params.subscribe((params: Params) => {
-      console.log(params);
-
       this.sesionServiceex
         .getSesion(params.sesion)
         .valueChanges.subscribe((resp) => {

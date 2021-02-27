@@ -1,4 +1,11 @@
 $backgound-color-list: white;
+$size-width-list: 700px;
+$width-image-space: 300px;
+$top-paddding-detail: 0px;
+:host {
+  display: block;
+  margin: 15px 0;
+}
 .item_sesion {
   width: 750px;
   .side_right {
@@ -10,8 +17,24 @@ $backgound-color-list: white;
   }
 }
 .container_sesion_item {
-  border: 2px solid black;
   background: $backgound-color-list;
-  width: 750px;
-  height: 250px;
+  .image {
+    overflow: hidden;
+    width: $width-image-space;
+    img {
+      object-fit: cover;
+      width: 100%;
+    }
+  }
+  .detail {
+    padding-top: $top-paddding-detail;
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    .title {
+      margin: 5px 0;
+      padding: 0;
+    }
+  }
 }

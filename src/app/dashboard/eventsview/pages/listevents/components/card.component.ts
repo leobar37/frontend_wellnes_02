@@ -25,7 +25,7 @@ import { Router } from '@angular/router';
 
       <ng-template #description>
         <p class="paragraph normal">
-          {{ item.description | shortParagraph: 200 }}
+          {{ item.description | shortParagraph: 150 }}
         </p>
       </ng-template>
     </nz-card>

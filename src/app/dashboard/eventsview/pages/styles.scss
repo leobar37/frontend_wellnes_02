@@ -1,3 +1,6 @@
+.display {
+  width: 100%;
+}
 .singleEvent {
   display: flex;
 }
@@ -26,15 +29,20 @@
 .information {
   padding: 15px 0;
   width: 100%;
+
   .box {
     width: 100%;
     .item {
       margin: 0 15px;
       float: left;
-      font-size: 1.2rem;
+      font-size: 1rem;
+
       th::after {
         content: ":";
         padding-right: 10px;
+      }
+      &.right {
+        float: right;
       }
     }
   }

@@ -101,7 +101,6 @@ Documentation : https://videogular.github.io/ngx-videogular/docs/getting-started
 
   ngOnInit(): void {}
   ondPlayerReady(api: VgApiService) {
-    console.log('player works');
     this.apiVideo = api;
     this.apiVideo.getDefaultMedia().subscriptions.canPlay.subscribe((el) => {});
   }
