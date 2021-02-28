@@ -117,30 +117,50 @@
 </ng-template>
 
 <!-- layout -->
+<ng-template #profileTemplate>
+  <div
+    gdAreas="photo photo | detail detail | description description"
+    gdColumn="2"
+    gdRow="2"
+    *ngIf="user"
+  >
+    <div
+      gdArea="photo"
+      class="my-4"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+    >
+      <ng-container [ngTemplateOutlet]="upload"> </ng-container>
+    </div>
+    <div gdArea="detail" class="my-4">
+      <ng-container *ngIf="!user.comfirmed">
+        <h2 class="title line_addon">Pendiente</h2>
+        <ng-container [ngTemplateOutlet]="pendenting"></ng-container>
+      </ng-container>
 
-<section
-  class="contain"
-  gdAreas="photo photo | detail detail | description description"
-  gdColumn="2"
-  gdRow="2"
-  *ngIf="user"
->
-  <div gdArea="photo" class="my-4" fxLayout="row" fxLayoutAlign="center center">
-    <ng-container [ngTemplateOutlet]="upload"> </ng-container>
+      <h2 class="title line_addon">Datos de Perfil</h2>
+      <ng-container [ngTemplateOutlet]="detailprofile"></ng-container>
+    </div>
+    <div gdArea="description">
+      <ng-container [ngTemplateOutlet]="description"></ng-container>
+    </div>
+    <button nz-button nzType="primary" (click)="editProfile()">
+      {{ edit ? "guardar" : "editar" }}
+    </button>
   </div>
-  <div gdArea="detail" class="my-4">
-    <ng-container *ngIf="!user.comfirmed">
-      <h2 class="title line_addon">Pendiente</h2>
-      <ng-container [ngTemplateOutlet]="pendenting"></ng-container>
-    </ng-container>
+</ng-template>
 
-    <h2 class="title line_addon">Datos de Perfil</h2>
-    <ng-container [ngTemplateOutlet]="detailprofile"></ng-container>
-  </div>
-  <div gdArea="description">
-    <ng-container [ngTemplateOutlet]="description"></ng-container>
-  </div>
-  <button nz-button nzType="primary" (click)="editProfile()">
-    {{ edit ? "guardar" : "editar" }}
-  </button>
+<ng-template #Credits> </ng-template>
+
+<!-- navigate -->
+
+<section class="contain">
+  <nz-tabset nzType="card" nzSelectedIndex="2">
+    <nz-tab nzTitle="perfil">
+      <ng-container *ngTemplateOutlet="profileTemplate"></ng-container>
+    </nz-tab>
+    <nz-tab nzTitle="Creditos">
+      <app-handle-credits></app-handle-credits>
+    </nz-tab>
+  </nz-tabset>
 </section>

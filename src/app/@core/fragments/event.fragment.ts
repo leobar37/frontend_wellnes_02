@@ -16,6 +16,7 @@ export const EVENTFRAGMENT = gql`
     video {
       url
     }
+    credits
     modeEvent
     category_id
   }

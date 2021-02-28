@@ -142,9 +142,7 @@ export class EventService {
     } catch (error) {
       publishDate = null;
     }
-
     const user = this.jwtService.getUserOfToken();
-
     return this.apollo
       .mutate<{ createEvent: EventResponse }>({
         mutation: CREATEEVENT,
@@ -163,6 +161,7 @@ export class EventService {
             modeEvent: event.modeEvent,
             id_user: user.id,
             category_id: event.category_id,
+            credits: event.credits,
           },
         },
       })
@@ -170,6 +169,7 @@ export class EventService {
         tap(() => {
           /// emit add event in components
           this.actionService.emitEventHandler('ADDEVENT');
+          this.actionService.emitEventHandler('REFETCHEVENTS');
         })
       );
   }
@@ -217,14 +217,12 @@ export class EventService {
     id: number,
     includeSesions?: boolean
   ): Observable<ApolloQueryResult<{ event: IEvent }>> {
-    return this.apollo
-      .query<{ event: IEvent }>({
-        query: includeSesions ? GETEVENTWITHSESION : GETEVENT,
-        variables: {
-          id: id,
-        },
-      })
-      .pipe(tap((data) => {}));
+    return this.apollo.query<{ event: IEvent }>({
+      query: includeSesions ? GETEVENTWITHSESION : GETEVENT,
+      variables: {
+        id: id,
+      },
+    });
   }
   // get events
 
@@ -245,26 +243,33 @@ export class EventService {
     } catch (error) {
       publishDate = null;
     }
-    return this.apollo.mutate<{ editEvent: EventResponse }>({
-      mutation: EDITEVENT,
-      variables: {
-        event: {
-          name: event.name,
-          capacityAssistant: event.capacityAssistant,
-          published:
-            typeof event.published == 'number'
-              ? EventState[event.published]
-              : event.published,
-          description: event.description,
-          publishedDate: publishDate,
-          includeComments: event.includeComments,
-          cloudinarySource: event.cloudinarySource,
-          includeVideo: event.includeVideo,
-          modeEvent: event.modeEvent,
-          category_id: event.category_id,
+    return this.apollo
+      .mutate<{ editEvent: EventResponse }>({
+        mutation: EDITEVENT,
+        variables: {
+          event: {
+            name: event.name,
+            capacityAssistant: event.capacityAssistant,
+            published:
+              typeof event.published == 'number'
+                ? EventState[event.published]
+                : event.published,
+            description: event.description,
+            publishedDate: publishDate,
+            includeComments: event.includeComments,
+            cloudinarySource: event.cloudinarySource,
+            includeVideo: event.includeVideo,
+            modeEvent: event.modeEvent,
+            category_id: event.category_id,
+            credits: event.credits,
+          },
+          id: Number(id),
         },
-        id: Number(id),
-      },
-    });
+      })
+      .pipe(
+        tap((el) => {
+          this.actionService.emitEventHandler('REFETCHEVENTS');
+        })
+      );
   }
 }

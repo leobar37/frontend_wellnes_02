@@ -1,6 +1,6 @@
 import { PROFILECONFIG, ProfileConfig } from '../../config';
 import { ProfileService } from '../../services/profile.service';
-import { examplesUser, IUser } from '@core/models/User';
+import { IUser } from '@core/models/User';
 import {
   Component,
   OnInit,

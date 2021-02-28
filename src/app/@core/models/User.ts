@@ -1,3 +1,4 @@
+import { ICredit } from './credits.model';
 import { IEvent } from '@core/models/eventmodels/event.model';
 export interface IUser {
   id?: number;
@@ -16,18 +17,5 @@ export interface IUser {
   sponsor?: string;
   create?: Date;
   comfirmed?: boolean;
+  credit?: ICredit;
 }
-
-export const examplesUser: IUser[] = [
-  {
-    id: 1,
-    email: 'usatloqueando@gmail.com',
-    password: 'holawenas',
-    code: '564asas',
-    phone: '96008206',
-    name: 'Elmer Joselito',
-    lastName: 'León Barboza',
-    birth: new Date(),
-    image: 'assets/img/profileexample.jpg',
-  },
-];

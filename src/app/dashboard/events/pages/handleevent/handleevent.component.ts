@@ -30,6 +30,7 @@ interface IEventForm {
   title: string;
   description: string;
   categorie: any;
+  credits: number;
 }
 interface IconfigValueForm {
   includeComment: boolean;
@@ -199,9 +200,6 @@ export class HandleeventComponent implements OnInit {
     }
     // value event
     const eventFormValue = this.eventForm.value as IEventForm;
-
-    console.log(eventFormValue);
-
     const title = eventFormValue.title;
     const description = eventFormValue.description;
     // value config
@@ -229,6 +227,7 @@ export class HandleeventComponent implements OnInit {
       includeComments: configValue.includeComment,
       modeEvent: this.config.type,
       category_id: eventFormValue.categorie,
+      credits: Number(eventFormValue.credits),
     } as IEvent;
   }
   /*=============================================
@@ -309,6 +308,8 @@ export class HandleeventComponent implements OnInit {
           // event.id_resource = resource.id;
         } catch (error) {}
       }
+      console.log(event);
+
       if (!this.editMode) {
         this.messageSpinner = 'Cargando' + this.config.action;
         this.saveEvent(event);
@@ -337,6 +338,8 @@ export class HandleeventComponent implements OnInit {
   private saveEvent(event: IEvent): void {
     const subSaveEvent = this.eventService.addEvent(event).subscribe(
       (res) => {
+        console.log(res);
+
         if (res.data.createEvent.resp) {
           const evenResp = res.data.createEvent.event;
           this.setValuesOnFormEvent(evenResp);
@@ -390,7 +393,6 @@ export class HandleeventComponent implements OnInit {
   //  patch value in form
   private setValuesOnFormEvent(event: IEvent) {
     const urlVideo = event.video?.url;
-
     ///  reset values published
     this.optionsPublished = this.optionsPublished.map((el) =>
       el.value == Number(EventState[event.published])
@@ -406,6 +408,7 @@ export class HandleeventComponent implements OnInit {
     this.eventForm.patchValue({
       title: event.name,
       description: event.description,
+      credits: event.credits,
     });
 
     this.configForm.patchValue({
@@ -450,9 +453,9 @@ export class HandleeventComponent implements OnInit {
         Validators.required,
         MyCustomValidators.verifyCriteriaInArray('name', this.categories),
       ]),
+      credits: this.fb.control(0, [Validators.required]),
     });
   }
-
   /*=============================================
  =           vaidate image             
  =============================================*/

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ar } from 'date-fns/locale';
 import { Subject, Observable, Observer, Subscriber } from 'rxjs';
 
-type typesEvents = 'ADDEVENT' | 'EDITEVENT';
+type typesEvents = 'ADDEVENT' | 'EDITEVENT' | 'REFETCHEVENTS';
 
 interface Action<T> {
   type: typesEvents;
@@ -31,13 +31,17 @@ export class ActionService {
   public emitEventHandler(event: typesEvents) {
     // this.handleEvent.next(event);
     const handler = this.registerObs.get(event);
+    console.log(handler);
+    if (handler) {
+      handler.forEach((index) => {
+        const observer = this.handleEvent.observers[index];
+        if (observer) {
+          observer.next(event);
+        }
+      });
+    }
 
-    handler.forEach((index) => {
-      const observer = this.handleEvent.observers[index];
-      if (observer) {
-        observer.next(event);
-      }
-    });
+    return;
   }
 
   public suscribeEvents(typeAction?: typesEvents): Observable<typesEvents> {

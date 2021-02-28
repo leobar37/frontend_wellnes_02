@@ -52,6 +52,7 @@
         />
       </nz-form-control>
     </nz-form-item>
+    <!-- categorie and autocomplete -->
     <nz-form-item>
       <nz-form-control class="control_form_le" [nzErrorTip]="errorCategorie">
         <nz-form-label>Categoria </nz-form-label>
@@ -80,6 +81,20 @@
           </ng-container>
         </ng-template>
       </nz-form-control>
+    </nz-form-item>
+    <!-- cost credits -->
+    <nz-form-item>
+      <div fxLayout="row" class="w-100">
+        <span fxFlex="70%" class="subtitle font-weight-bold font-italic"
+          >creditos</span
+        >
+        <nz-input-number
+          formControlName="credits"
+          fxFlex="30%"
+          [nzStep]="1"
+          [nzMin]="0"
+        ></nz-input-number>
+      </div>
     </nz-form-item>
 
     <nz-form-item>

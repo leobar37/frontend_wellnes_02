@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 })
 export class JwtService {
   constructor(private _jwt: JwtHelperService, private router: Router) {}
-
   getUserOfToken(): IUser {
     if (!localStorage.getItem('token')) {
       this.router.navigateByUrl('/login');

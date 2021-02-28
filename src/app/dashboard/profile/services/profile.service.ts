@@ -5,13 +5,15 @@ import { Injectable, Injector } from '@angular/core';
 import { ApolloQueryResult, FetchResult } from '@apollo/client/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, pluck } from 'rxjs/operators';
 import { UserResponse } from 'src/app/@core/models/reponses/profile.response';
 import { EVENTFRAGMENT } from '@fragments/event.fragment';
+import { CREDIT_FRAGMENT } from '@fragments/credit';
 /*=============================================
        =            queries             =
 =============================================*/
 const USERFRAGMENT = gql`
+  ${CREDIT_FRAGMENT}
   fragment userprofile on User {
     name
     lastName
@@ -23,6 +25,9 @@ const USERFRAGMENT = gql`
     create
     phone
     comfirmed
+    credit {
+      ...credit
+    }
   }
 `;
 
@@ -112,9 +117,12 @@ const EDITPROFILE = gql`
     }
   }
 `;
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ProfileService {
   jwtService: JwtService;
+  private user: IUser;
   constructor(private apollo: Apollo, private injector: Injector) {}
   public uploadFile(
     file: File,
@@ -132,6 +140,17 @@ export class ProfileService {
         },
       })
       .pipe(catchError((err) => throwError(err)));
+  }
+
+  public async onlyUser() {
+    if (this.user) {
+      this.user;
+    } else {
+      this.user = await this.getUser(null, 'only')
+        .pipe(pluck('data', 'getUser', 'user'))
+        .toPromise();
+    }
+    return this.user;
   }
   public getUser(
     mode?: string,
@@ -156,13 +175,15 @@ export class ProfileService {
         }
       }
 
-    return this.apollo.query<{ getUser: UserResponse }>({
-      query: query,
-      variables: {
-        id: user.id,
-        mode: mode || 'EVENT',
-      },
-    });
+    return this.apollo
+      .query<{ getUser: UserResponse }>({
+        query: query,
+        variables: {
+          id: user.id,
+          mode: mode || 'EVENT',
+        },
+      })
+      .pipe(tap((res) => (this.user = res.data.getUser.user)));
   }
 
   public editUser(

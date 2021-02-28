@@ -1,3 +1,4 @@
+import { ActionService } from '@services/action.service';
 import { mergeMap, pluck, map, tap, takeUntil } from 'rxjs/operators';
 import { of, Subscription, Subject, from } from 'rxjs';
 import { Router, ActivatedRoute, Params } from '@angular/router';
@@ -42,7 +43,8 @@ export class ListeventsComponent implements OnInit {
     private utilsService: UtilsService,
     private route: Router,
     private activateRouter: ActivatedRoute,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private actionService: ActionService
   ) {}
   /*=============================================
  =            events DOM            =
@@ -60,29 +62,37 @@ export class ListeventsComponent implements OnInit {
    =            LISTENS            =
    =============================================*/
   private routerListens() {
+    this.actionService.suscribeEvents('REFETCHEVENTS').subscribe((_) => {
+      const params = this.activateRouter.snapshot.queryParams;
+      console.log('ne fetch');
+
+      this.prepareALlLists(params);
+    });
     this.activateRouter.queryParams
       .pipe(takeUntil(this.unsuscribeEvents))
       .subscribe((params: Params) => {
-        console.log();
-        const isEmpty = Object.keys(params).length == 0;
-        if (isEmpty) {
-          this.route.navigate([], { queryParams: { type: 'events' } });
-        }
-        if (params?.type) {
-          const isEvent = params?.type === 'events';
-          if (isEvent) {
-            this.typeEvent = 'EVENT';
-          } else {
-            this.typeEvent = 'PROGRAM';
-          }
-          this.prepareCategories();
-        } else if (params?.category) {
-          const categoryid = Number(params.category);
-          this.prepareRowsForCategory(categoryid);
-        }
+        this.prepareALlLists(params);
       });
   }
-
+  private prepareALlLists(params: Params) {
+    console.log('I prepare all list baby :)');
+    const isEmpty = Object.keys(params).length == 0;
+    if (isEmpty) {
+      this.route.navigate([], { queryParams: { type: 'events' } });
+    }
+    if (params?.type) {
+      const isEvent = params?.type === 'events';
+      if (isEvent) {
+        this.typeEvent = 'EVENT';
+      } else {
+        this.typeEvent = 'PROGRAM';
+      }
+      this.prepareCategories();
+    } else if (params?.category) {
+      const categoryid = Number(params.category);
+      this.prepareRowsForCategory(categoryid);
+    }
+  }
   prepareRowsForCategory(idCategory: number) {
     this.eventService
       .getCategories(idCategory)

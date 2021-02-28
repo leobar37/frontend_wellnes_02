@@ -30,8 +30,14 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { ChangueEmailComponent } from './components/changue-email.component';
 import { NzFormModule } from 'ng-zorro-antd/form';
-
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { HandleCreditsComponent } from './components/handle-credits/handle-credits.component';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { StateRequestsPipe } from './components/handle-credits/state-requests.pipe';
 const zorro = [
+  NzTabsModule,
   NzButtonModule,
   NzCardModule,
   NzInputModule,
@@ -41,6 +47,9 @@ const zorro = [
   NzTableModule,
   NzCollapseModule,
   NzFormModule,
+  NzDescriptionsModule,
+  NzModalModule,
+  NzInputNumberModule,
 ];
 const material = [MatFormFieldModule, MatInputModule];
 @NgModule({
@@ -50,6 +59,8 @@ const material = [MatFormFieldModule, MatInputModule];
     ReferrealsComponent,
     ProfilePageComponent,
     ChangueEmailComponent,
+    HandleCreditsComponent,
+    StateRequestsPipe,
   ],
   imports: [
     CommonModule,

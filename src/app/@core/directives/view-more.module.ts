@@ -116,7 +116,6 @@ export class ViewMoreDirective implements OnInit {
       componentFactory
     );
     intanceComponent.instance.tpl = this.el;
-    console.log(this.viewMore);
 
     intanceComponent.instance.config = this.viewMore;
   }

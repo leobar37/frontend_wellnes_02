@@ -139,6 +139,8 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
   public sendPrincipalComment(content: string): void {
     const resolvePromises = async () => {
       const user = this.jwtService.getUserOfToken();
+      console.log(user);
+
       await this.commentsService
         .addComment({
           id_user: user.id,

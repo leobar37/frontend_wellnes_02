@@ -1,16 +1,23 @@
-import { Isesion } from './../../../../@core/models/eventmodels/sesion.model';
+import { ProfileService } from './../../../profile/services/profile.service';
+import { IUser } from '@core/models/User';
+import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { IDetailResponse } from '@core/models/eventmodels/event.response';
 import { UtilsService } from 'src/app/services/utils.service';
 import { EventService } from './../../../events/services/event.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { IEvent } from '@core/models/eventmodels/event.model';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Type } from '@angular/core';
 import { switchMap } from 'rxjs/operators';
 import { of, Subscription } from 'rxjs';
 import { JwtService } from '@services/jwt.service';
 import { EventService as DisplayEventService } from '../../services/event.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { QueryRef } from 'apollo-angular';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  IModalData,
+  ModalConfirmInscriptionComponent,
+} from '../../components/modal-confirm-inscription/modal-confirm-inscription.component';
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
@@ -20,6 +27,7 @@ import { QueryRef } from 'apollo-angular';
 export class DisplayeventComponent implements OnInit, OnDestroy {
   currentEvent: IEvent;
   public isRegister: boolean = false;
+  private modalConfirmRegister: Type<ModalConfirmInscriptionComponent>;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
   private recolectSubs: Subscription[] = [];
   sizeDisplay = '500px';
@@ -30,7 +38,9 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
     private jwtService: JwtService,
     private serviceDisplayEvent: DisplayEventService,
     private modal: NzModalService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private userService: ProfileService
   ) {}
   /*=============================================
    =           Lfe Cicle            =
@@ -61,8 +71,6 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
             this.recolectSubs.push(
               // recolect sub
               this.eventService.getEvent(params.id, true).subscribe((el) => {
-                console.log('resp of event');
-                console.log(el);
                 this.currentEvent = {
                   ...el.data.event,
                   eventCover: this.utils.resolvePathImage(
@@ -96,13 +104,27 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
       this.isRegister = resp.data.isRegisterEvent.resp;
     });
   }
+
   /*=============================================
-  =            DOM EVENTs            =
+  =            GETS LOCAL            =
   =============================================*/
-  registerEvent() {
-    const user = this.jwtService.getUserOfToken();
+
+  private componentConfirmCredits(callback: () => void) {
+    if (this.modalConfirmRegister) {
+      callback();
+    } else {
+      const components = import(
+        '../../components/modal-confirm-inscription/modal-confirm-inscription.component'
+      ).then((component) => {
+        this.modalConfirmRegister = component.ModalConfirmInscriptionComponent;
+        callback();
+      });
+    }
+  }
+
+  private requestRegisterEvent(user: IUser) {
     this.serviceDisplayEvent
-      .registerEvent(user.id, Number(this.currentEvent.id))
+      .registerEvent(Number(user.id), Number(this.currentEvent.id))
       .subscribe(({ data }) => {
         const resp = data.attendEvent.resp;
         if (resp) {
@@ -114,6 +136,45 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
           });
         }
       });
+  }
+
+  /*=============================================
+  =            DOM EVENTs            =
+  =============================================*/
+  public async registerEvent() {
+    const user = await this.userService.onlyUser();
+    console.log(user);
+    const haveCredits = user.credit.currentCredits >= this.currentEvent.credits;
+    if (!haveCredits) {
+      this.modal.error({
+        nzTitle: 'Creditos insuficientes',
+        nzContent: 'No dispone de los creditso necesarios para este programa',
+        nzOkText: 'Recargar',
+        nzCancelText: 'cancelar',
+      });
+      return;
+    }
+    this.componentConfirmCredits(() => {
+      const type =
+        this.currentEvent.modeEvent == 'EVENT' ? 'Evento' : 'Programa';
+      const text = ``;
+      const ref = this.dialog.open(this.modalConfirmRegister, {
+        data: {
+          nameEvent: this.currentEvent.name,
+          prefix: type,
+          costCredits: this.currentEvent.credits,
+          type: this.currentEvent.modeEvent,
+          text: text,
+          userCredits: user.credit?.currentCredits,
+        } as IModalData,
+      });
+      ref.afterClosed().subscribe((resp) => {
+        // register in event
+        if (resp) {
+          this.requestRegisterEvent(user);
+        }
+      });
+    });
   }
   // navigate sesion sesion
   navigateSesion(sesion: Isesion) {

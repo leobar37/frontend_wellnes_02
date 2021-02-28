@@ -22,6 +22,7 @@ export interface IEvent {
   modeEvent?: MODEEVENT;
   id_user?: number;
   category_id?: number;
+  credits?: number;
 }
 
 export type MODEEVENT = 'EVENT' | 'PROGRAM';

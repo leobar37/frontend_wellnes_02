@@ -21,12 +21,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-const material = [MatCardModule, ScrollingModule];
-
 import { PlayerModule } from '@core/modules/player/player.module';
 
 /* Masonry Library 
-  documentation : https://github.com/wynfred/ngx-masonry/
+documentation : https://github.com/wynfred/ngx-masonry/
 */
 import { NgxMasonryModule } from 'ngx-masonry';
 import { ItemSesionComponent } from './components/item-sesion/item-sesion.component';
@@ -41,6 +39,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
 // me
 import { ViewMoreModule } from '@core/directives/view-more.module';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { MatDialogModule } from '@angular/material/dialog';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 const zorro = [
   NzButtonModule,
   NzModalModule,
@@ -50,8 +50,10 @@ const zorro = [
   NzSpinModule,
   NzListModule,
   NzImageModule,
+  NzDescriptionsModule,
 ];
 
+const material = [MatCardModule, ScrollingModule, MatDialogModule];
 const me = [ViewMoreModule];
 
 @NgModule({

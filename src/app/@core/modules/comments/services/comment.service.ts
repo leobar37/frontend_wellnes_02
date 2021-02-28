@@ -53,6 +53,7 @@ const ADD_COMMENT = gql`
 export class CommentService {
   constructor(private http: HttpClient, private apollo: Apollo) {}
   addComment(comment: IComment) {
+    console.log(comment);
     return this.apollo
       .mutate<{ addComment: Comment }>({
         mutation: ADD_COMMENT,

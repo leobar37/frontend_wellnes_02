@@ -50,6 +50,7 @@ import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { StorageModule } from '@core/modules/storage/storage.module';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 const zorro = [
   NzSpaceModule,
   NzSliderModule,
@@ -71,6 +72,7 @@ const zorro = [
   NzTableModule,
   NzBadgeModule,
   NzDividerModule,
+  NzInputNumberModule,
 ];
 
 @NgModule({
