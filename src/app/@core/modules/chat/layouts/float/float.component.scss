@@ -1,0 +1,17 @@
+@import "src/sass/mixins.scss";
+@import "src/sass/variables.scss";
+
+:host {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+}
+.chat_button {
+  @include resetButton {
+    @include createCircle(80px);
+    @include centerContent();
+    background-color: $button-color-chat;
+    color: $icon-color-chat;
+    font-size: $size-icon-chat;
+  }
+}
