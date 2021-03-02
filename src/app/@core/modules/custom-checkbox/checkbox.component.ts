@@ -5,7 +5,7 @@ import {
   ChangeDetectorRef,
   forwardRef,
   ChangeDetectionStrategy,
-  AfterViewInit,
+  AfterViewInit
 } from '@angular/core';
 import { CheckBoxInterface } from './mode';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
@@ -31,11 +31,11 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => CheckboxComponent),
-      multi: true,
-    },
+      multi: true
+    }
   ],
   styles: [],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 /** este componente le da una funcion más a los checkbox de la libreria ng desing ant

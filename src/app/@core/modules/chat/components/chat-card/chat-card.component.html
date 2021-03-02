@@ -6,17 +6,19 @@
   <span class="subtitle"> Asesores activos </span>
   <!--avatar list -->
   <app-chat-lists-avatar>
-    <app-chat-avatar></app-chat-avatar>
-    <app-chat-avatar></app-chat-avatar>
-    <app-chat-avatar></app-chat-avatar>
+    <app-chat-avatar
+      class="swiper-slide"
+      [avatar]="'assets/img/jean.jpg'"
+      [name]="'Alfonso'"
+      active
+    ></app-chat-avatar>
+    <app-chat-avatar class="swiper-slide"></app-chat-avatar>
+    <app-chat-avatar class="swiper-slide"></app-chat-avatar>
   </app-chat-lists-avatar>
 
   <span class="subtitle"> Conversaciones recientes </span>
   <!-- lists chats container -->
-
-  <app-chat-list-messages>
+  <app-chat-list-messages [items]="test" (clickEvent)="clickItem($event)">
     <!--  list chat item -->
-    <app-chat-list-message-item> </app-chat-list-message-item>
-    <app-chat-list-message-item> </app-chat-list-message-item>
   </app-chat-list-messages>
 </div>

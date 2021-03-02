@@ -25,11 +25,16 @@
         background-color: $base-color-chat;
       }
     }
-    img {
+    .img {
       width: 100%;
       position: absolute;
       object-fit: cover;
       @include createCircle($width-avatar - 12px);
+      @include centerContent;
+      &.not_image {
+        color: $white-color;
+        background-color: $base-color-chat;
+      }
     }
     &_user {
       position: absolute;
@@ -57,11 +62,15 @@
 
 @mixin list-chat {
   .list_chats {
-    // @include hover;
+    height: 250px;
+    width: 100%;
+
+    @include generateScroll();
     margin: 10px 0;
     &_item {
       display: grid;
-      grid-template-columns: 25% 63% 10%;
+
+      grid-template-columns: 15% 63% 10%;
       grid-template-rows: 1;
       padding: 0 !important;
       * {
@@ -69,7 +78,7 @@
         padding: 0;
       }
       margin: $margin-item-chat;
-      padding: 10px 0 !important;
+      padding: 10px 5px !important;
       place-content: end start;
       @include hover-with-color($secondary-color) {
         border-radius: 10px;

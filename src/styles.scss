@@ -3,6 +3,12 @@
 // frontend\node_modules\bootstrap-4-grid\scss\grid.scss
 @import "~bootstrap-4-grid/scss/grid.scss";
 @import "~@ctrl/ngx-emoji-mart/picker";
+
+// owl caraousel
+
+@import "~ngx-owl-carousel-o/lib/styles/scss/owl.carousel";
+@import "~ngx-owl-carousel-o/lib/styles/scss/owl.theme.default";
+
 // swiper
 
 @import "~swiper/swiper-bundle";

@@ -1,27 +1,43 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { IlistMessageItem } from './../../model';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+  EventEmitter,
+  Output
+} from '@angular/core';
 
 @Component({
   selector: 'app-chat-list-message-item',
   template: `
     <div class="list_chats_item">
       <!-- avatar -->
-      <app-chat-avatar></app-chat-avatar>
+      <app-chat-avatar
+        [active]="item.avatar.active"
+        [count]="item.avatar.notifications"
+        [avatar]="item.avatar.avatar"
+      ></app-chat-avatar>
       <div class="list_chats_item_text">
-        <h3 class="subtitle">Martin Jimenenez</h3>
+        <h3 class="subtitle">{{ item.name }}</h3>
         <p class="paragraph">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda
+          {{ item.message }}
         </p>
       </div>
       <div class="list_chats_item_actions">
-        <span> 16:04 </span>
+        <span> {{ item.time | date: 'mm:ss' }}</span>
       </div>
     </div>
   `,
   styles: [],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatListMessageItemComponent implements OnInit {
   constructor() {}
+
+  @Input() item: IlistMessageItem;
 
   ngOnInit(): void {}
 }

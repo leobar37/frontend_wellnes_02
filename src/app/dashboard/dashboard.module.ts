@@ -20,6 +20,10 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
+// chat module
+
+import { ChatModule } from '@core/modules/chat/chat.module';
+
 const zorro = [
   NzMenuModule,
   NzDropDownModule,
@@ -32,6 +36,8 @@ const zorro = [
   NzIconModule,
 ];
 
+const me = [ChatModule];
+
 @NgModule({
   declarations: [DashboardComponent, NavbarComponent],
   imports: [
@@ -39,6 +45,7 @@ const zorro = [
     FlexLayoutModule,
     CommonModule,
     zorro,
+    ...me,
     NotificationsModule,
     DashboardRoutingModule,
   ],

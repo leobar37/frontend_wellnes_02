@@ -5,14 +5,14 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
-  ViewContainerRef,
+  ViewContainerRef
 } from '@angular/core';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ChatCardComponent } from '../../components/chat-card/chat-card.component';
 @Component({
   selector: 'app-float',
   templateUrl: './float.component.html',
-  styleUrls: ['./float.component.scss'],
+  styleUrls: ['./float.component.scss']
 })
 export class FloatComponent implements OnInit {
   open = false;
@@ -25,10 +25,18 @@ export class FloatComponent implements OnInit {
       this.portal = new ComponentPortal(ChatCardComponent);
     }
   }
-  ngOnInit(): void {
+
+  openPortal() {
     if (!this.portal) {
-      this.portal = new ComponentPortal(ChatCardComponent);
+      import('../../components/chat-card/chat-card.component').then(
+        ({ ChatCardComponent }) => {
+          this.portal = new ComponentPortal(ChatCardComponent);
+        }
+      );
     }
+  }
+  ngOnInit(): void {
+    this.openPortal();
     this.open = true;
   }
 }
