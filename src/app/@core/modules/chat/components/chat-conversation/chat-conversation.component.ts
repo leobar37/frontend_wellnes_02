@@ -1,3 +1,4 @@
+import { IConversationItem } from './../../model';
 import {
   Component,
   OnInit,
@@ -13,8 +14,8 @@ import {
       class="chat-card_list_conversation"
     >
       <app-chat-message
-        [reverse]="eve"
-        *cdkVirtualFor="let item of [1, 2, 3, 4, 5, 6]; let eve = even"
+        [item]="item"
+        *cdkVirtualFor="let item of items"
       ></app-chat-message>
     </cdk-virtual-scroll-viewport>
   `,
@@ -30,6 +31,62 @@ import {
 })
 export class ChatConversationComponent implements OnInit {
   constructor() {}
+  items: IConversationItem[] = [
+    {
+      reverse: false,
+      name: 'Jorge',
+      message: 'Hello Bro',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    },
+    {
+      reverse: true,
+      name: 'Jorge',
+      message: 'Hola wenas necesito informacion de los planes',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    },
+    {
+      reverse: false,
+      name: 'Jorge',
+      message: 'Claro mi bro, ¿Cuentame cual es tu objetivo?',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    },
+    {
+      reverse: true,
+      name: 'Jorge',
+      message: 'Perder grasa bro',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    },
+    {
+      reverse: false,
+      name: 'Jorge',
+      message: 'Ahora te comunico con un asesor',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    },
+    {
+      reverse: true,
+      name: 'Jorge',
+      message: 'Gracias bro',
+      avatar: {
+        avatar: 'assets/img/jean.jpg'
+      },
+      time: new Date()
+    }
+  ];
 
   ngOnInit(): void {}
 }

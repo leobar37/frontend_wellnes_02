@@ -1,9 +1,11 @@
+import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import {
   ApplicationRef,
   ComponentFactoryResolver,
   Inject,
   Injectable,
-  Injector,
+  Injector
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
@@ -11,11 +13,11 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 @Injectable()
 export class ChatuiService {
   private portal: DomPortalOutlet;
+  private animation$ = new Subject<string>();
   constructor(
     private appRef: ApplicationRef,
     private injector: Injector,
     private factory: ComponentFactoryResolver,
-
     @Inject(DOCUMENT) private document: Document
   ) {}
   get hostPortal() {
@@ -31,6 +33,16 @@ export class ChatuiService {
       return this.portal;
     }
   }
+  actionAnimation(animation: string) {
+    this.animation$.next(animation);
+  }
+  suscribeAnimations() {
+    return this.animation$.asObservable();
+  }
+  suscribeAnimationWithName(animation: string) {
+    return this.animation$.asObservable().pipe(filter((a) => a == animation));
+  }
+
   buildFloatComponent() {
     if (!this.hostPortal.hasAttached()) {
       import('../layouts/float/float.component').then(({ FloatComponent }) => {

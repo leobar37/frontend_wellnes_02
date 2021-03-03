@@ -68,7 +68,6 @@
     margin: 10px 0;
     &_item {
       display: grid;
-
       grid-template-columns: 15% 63% 10%;
       grid-template-rows: 1;
       padding: 0 !important;
@@ -155,7 +154,9 @@
       &.reverse {
         width: 100%;
         display: flex;
+        justify-content: flex-end;
         .context {
+          text-align: right;
           margin-left: 50px;
           p {
             background-color: $base-color-chat;

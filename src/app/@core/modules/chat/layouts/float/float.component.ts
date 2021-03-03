@@ -1,3 +1,4 @@
+import { ChatuiService } from './../../services/chatui.service';
 import { Portal } from '@angular/cdk/portal';
 import {
   Component,
@@ -8,24 +9,26 @@ import {
   ViewContainerRef
 } from '@angular/core';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { ChatCardComponent } from '../../components/chat-card/chat-card.component';
+
 @Component({
   selector: 'app-float',
   templateUrl: './float.component.html',
-  styleUrls: ['./float.component.scss']
+  styleUrls: ['./float.component.scss'],
+  animations: []
 })
 export class FloatComponent implements OnInit {
   open = false;
   portal: Portal<any>;
-  constructor() {}
+  constructor(private uiChatService: ChatuiService) {}
   @ViewChild('vc', { read: ViewContainerRef, static: false })
   vc: ViewContainerRef;
-  openEvent() {
-    if (!this.portal) {
-      this.portal = new ComponentPortal(ChatCardComponent);
-    }
+  public openEvent() {
+    this.open = true;
+    this.uiChatService.actionAnimation('card:open');
   }
-
+  public closeEvent() {
+    this.uiChatService.actionAnimation('card:close');
+  }
   openPortal() {
     if (!this.portal) {
       import('../../components/chat-card/chat-card.component').then(
@@ -37,6 +40,5 @@ export class FloatComponent implements OnInit {
   }
   ngOnInit(): void {
     this.openPortal();
-    this.open = true;
   }
 }

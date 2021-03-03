@@ -14,3 +14,11 @@ export interface IlistMessageItem {
   time?: Date;
   avatar: ChatAvatar;
 }
+
+export interface IConversationItem {
+  reverse: boolean;
+  name: string;
+  message: string;
+  time: Date;
+  avatar: ChatAvatar;
+}

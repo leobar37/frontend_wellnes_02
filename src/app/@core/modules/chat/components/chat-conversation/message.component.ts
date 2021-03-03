@@ -1,3 +1,4 @@
+import { IConversationItem } from './../../model';
 import {
   Component,
   OnInit,
@@ -11,19 +12,19 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
   template: `
     <li
       class="chat-card_list_conversation_item"
-      [ngClass]="{ reverse: reverse }"
+      [ngClass]="{ reverse: item.reverse }"
     >
       <app-chat-avatar
-        *ngIf="!reverse"
+        *ngIf="!item.reverse"
         class="avatar"
-        [avatar]="'assets/img/jean.jpg'"
+        [avatar]="item?.avatar?.avatar"
       ></app-chat-avatar>
       <div class="context">
-        <h3 *ngIf="!reverse" class="subtitle">Martinez</h3>
+        <h3 *ngIf="!item.reverse" class="subtitle">{{ item.name }}</h3>
         <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sint, dicta.
+          {{ item.message }}
         </p>
-        <span> 14:09 </span>
+        <span> {{ item.time | date: 'mm:ss' }} </span>
       </div>
     </li>
   `,
@@ -38,10 +39,8 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessageComponent implements OnInit {
-  @Input() @InputBoolean() reverse: boolean;
+  @Input() item: IConversationItem;
   constructor() {}
 
-  ngOnInit(): void {
-    console.log(this.reverse);
-  }
+  ngOnInit(): void {}
 }

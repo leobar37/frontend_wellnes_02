@@ -1,3 +1,4 @@
+import { ChatuiService } from './../../services/chatui.service';
 import { Portal, TemplatePortal } from '@angular/cdk/portal';
 import { typID } from '@core/models/types';
 import { IlistMessageItem } from './../../model';
@@ -9,15 +10,19 @@ import {
   SimpleChanges,
   ViewEncapsulation,
   TemplateRef,
-  ViewContainerRef
+  ViewContainerRef,
+  ElementRef
 } from '@angular/core';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
-
+import { gsap } from 'gsap';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 @Component({
   selector: 'app-chat-card',
   templateUrl: './chat-card.component.html',
   styleUrls: ['../styles.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations: []
 })
 export class ChatCardComponent implements OnInit, OnChanges {
   config: SwiperConfigInterface = {
@@ -57,6 +62,9 @@ export class ChatCardComponent implements OnInit, OnChanges {
       time: new Date()
     }
   ] as IlistMessageItem[];
+  // subject for destroy susscriptions
+
+  private $destroy = new Subject<void>();
 
   currentScreen: Portal<any>;
   // templates
@@ -65,11 +73,16 @@ export class ChatCardComponent implements OnInit, OnChanges {
   @ViewChild('messagges', { read: TemplateRef, static: true })
   messagesTpl: TemplateRef<any>;
 
+  // reference to card container chat
+  @ViewChild('card') cardElement: ElementRef<HTMLDivElement>;
   // portals
   principalScreenTemplate: TemplatePortal<any>;
   messageScreenTemplate: TemplatePortal<{ id: typID }>;
 
-  constructor(private viewRef: ViewContainerRef) {}
+  constructor(
+    private viewRef: ViewContainerRef,
+    private chatUiService: ChatuiService
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {}
   ngOnInit(): void {
     this.principalScreenTemplate = new TemplatePortal(
@@ -78,6 +91,23 @@ export class ChatCardComponent implements OnInit, OnChanges {
     );
     // this.currentScreen = this.principalScreenTemplate;
     this.currentScreen = this.getMessageTemplate({ id: 5 });
+    this.animationsCard();
+  }
+
+  private animationsCard() {
+    this.chatUiService
+      .suscribeAnimationWithName('card:open')
+      .pipe(takeUntil(this.$destroy))
+      .subscribe((_) => {
+        gsap.fromTo(
+          this.cardElement.nativeElement,
+          { opacity: 0, scale: 0.8 },
+          {
+            opacity: 1,
+            scale: 1
+          }
+        );
+      });
   }
 
   // reverse  principal
@@ -104,8 +134,6 @@ export class ChatCardComponent implements OnInit, OnChanges {
 
   clickItem(ctx: { id: typID }) {
     if (this.currentScreen.isAttached) {
-      console.log('attached');
-
       this.currentScreen.detach();
     }
     this.currentScreen = this.getMessageTemplate(ctx);
