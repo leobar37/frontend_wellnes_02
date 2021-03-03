@@ -14,9 +14,9 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
         margin: 0;
         padding: 0;
       }
-    `,
+    `
   ],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class ChatHeaderComponent implements OnInit {
   constructor() {}

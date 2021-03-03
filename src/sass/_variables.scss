@@ -1,9 +1,12 @@
 $secondary-color: #4849ff;
-
+$black-color: #000000;
 // scroll
 $default-size-scroll: 5px;
 
 // chat variabels
+
+$size-height-container-chat: 630px;
+$opacity-default: rgba($black-color, 0.6);
 $chat-color-container: #ffffff;
 $base-size-font: 16px;
 $base-color-chat: $secondary-color;
@@ -20,3 +23,6 @@ $chat-card-avatar-margin: 10px 20px 35px 15px;
 // item chat
 
 $margin-item-chat: 10px 0;
+
+// conversation chat
+$remitent-bg-container: #f8f4f4;

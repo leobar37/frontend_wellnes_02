@@ -33,6 +33,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 // services
 import { ListMessageService } from './services/list-message.service';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { ChatConversationComponent } from './components/chat-conversation/chat-conversation.component';
+import { MessageComponent } from './components/chat-conversation/message.component';
+import { ChatCardFormComponent } from './components/chat-conversation/chat-card-form.component';
+import { BtnreverseDirective } from './directives/btnreverse.directive';
+import { DelimiterDirective } from './directives/delimiter.directive';
 const material = [
   PortalModule,
   OverlayModule,
@@ -47,7 +53,8 @@ const zorro = [
   NzIconModule,
   NzCardModule,
   NzImageModule,
-  NzAvatarModule
+  NzAvatarModule,
+  NzInputModule
 ];
 const me = [OverlayHoverModule];
 
@@ -66,7 +73,12 @@ const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
     ChatAvatarComponent,
     ChatListMessagesComponent,
     ChatListMessageItemComponent,
-    AvatarSlideDirective
+    AvatarSlideDirective,
+    ChatConversationComponent,
+    MessageComponent,
+    ChatCardFormComponent,
+    BtnreverseDirective,
+    DelimiterDirective
   ],
   imports: [
     CommonModule,

@@ -43,15 +43,13 @@ import { fromEvent, Subject } from 'rxjs';
 })
 export class OverlayComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() origin: CdkOverlayOrigin;
-  isOpen: boolean = false;
+  isOpen: boolean = true;
   @ViewChild('parent', { static: false }) dialog: ElementRef;
   @Output() $open = new EventEmitter<void>();
   @Output() $close = new EventEmitter<void>();
   private sensibility = 100;
   private $destroy = new Subject<void>();
-
   @Input() position: { x?: number; y?: number };
-
   @Input() classParent: string = '';
 
   constructor(private changueDetection: ChangeDetectorRef) {}

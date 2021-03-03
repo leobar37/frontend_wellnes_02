@@ -1,3 +1,4 @@
+import { Portal, TemplatePortal } from '@angular/cdk/portal';
 import { typID } from '@core/models/types';
 import { IlistMessageItem } from './../../model';
 import {
@@ -6,7 +7,9 @@ import {
   ViewChild,
   OnChanges,
   SimpleChanges,
-  ViewEncapsulation
+  ViewEncapsulation,
+  TemplateRef,
+  ViewContainerRef
 } from '@angular/core';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 
@@ -17,6 +20,11 @@ import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
   encapsulation: ViewEncapsulation.None
 })
 export class ChatCardComponent implements OnInit, OnChanges {
+  config: SwiperConfigInterface = {
+    slidesPerView: 3,
+    spaceBetween: 10,
+    mousewheel: true
+  };
   test = [
     {
       id: 1,
@@ -50,11 +58,56 @@ export class ChatCardComponent implements OnInit, OnChanges {
     }
   ] as IlistMessageItem[];
 
-  constructor() {}
-  ngOnChanges(changes: SimpleChanges): void {}
+  currentScreen: Portal<any>;
+  // templates
+  @ViewChild('principal', { read: TemplateRef, static: true })
+  principalTpl: TemplateRef<any>;
+  @ViewChild('messagges', { read: TemplateRef, static: true })
+  messagesTpl: TemplateRef<any>;
 
-  ngOnInit(): void {}
-  clickItem({ id }: { id: typID }) {
-    console.log('hello click', id);
+  // portals
+  principalScreenTemplate: TemplatePortal<any>;
+  messageScreenTemplate: TemplatePortal<{ id: typID }>;
+
+  constructor(private viewRef: ViewContainerRef) {}
+  ngOnChanges(changes: SimpleChanges): void {}
+  ngOnInit(): void {
+    this.principalScreenTemplate = new TemplatePortal(
+      this.principalTpl,
+      this.viewRef
+    );
+    // this.currentScreen = this.principalScreenTemplate;
+    this.currentScreen = this.getMessageTemplate({ id: 5 });
+  }
+
+  // reverse  principal
+  backPrincipal() {
+    if (this.principalScreenTemplate) {
+      this.currentScreen = this.principalScreenTemplate;
+    }
+  }
+
+  // build messages in template
+  getMessageTemplate(ctx: { id: typID }) {
+    if (this.messageScreenTemplate) {
+      this.messageScreenTemplate.context = ctx;
+      return this.messageScreenTemplate;
+    } else {
+      this.messageScreenTemplate = new TemplatePortal(
+        this.messagesTpl,
+        this.viewRef,
+        ctx
+      );
+      return this.messageScreenTemplate;
+    }
+  }
+
+  clickItem(ctx: { id: typID }) {
+    if (this.currentScreen.isAttached) {
+      console.log('attached');
+
+      this.currentScreen.detach();
+    }
+    this.currentScreen = this.getMessageTemplate(ctx);
   }
 }

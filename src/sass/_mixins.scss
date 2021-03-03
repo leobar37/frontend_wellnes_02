@@ -51,7 +51,13 @@
   font-weight: 400;
 }
 
-@mixin generateScroll($size: null) {
+@mixin generateScroll($size: null, $color: null) {
+  $color-scroll: null;
+  @if $color == null {
+    $color-scroll: $secondary-color;
+  } @else {
+    $color-scroll: $color;
+  }
   &::-webkit-scrollbar {
     //general scroll bar
     @if $size == null {
@@ -70,12 +76,17 @@
   /* Handle */
   &::-webkit-scrollbar-thumb {
     //las esquinas del scroll bar
-    background: lighten($color: $secondary-color, $amount: 20);
+    background: lighten($color: $color-scroll, $amount: 20);
   }
 
   /* Handle on hover */
   &::-webkit-scrollbar-thumb:hover {
     cursor: pointer !important;
-    background: blue;
+
+    background: $color-scroll;
   }
+}
+
+%reset_list {
+  list-style: none;
 }

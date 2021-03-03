@@ -3,7 +3,6 @@
 :host {
   display: block;
 }
-
 @mixin chat-card-avatar {
   .chat_card_avatar {
     overflow: visible;
@@ -136,17 +135,121 @@
   }
 }
 
+@mixin list_messages {
+  &_button_reverse {
+    @include resetButton();
+    color: $white-color;
+    margin: 0 10px;
+    border-radius: 8px;
+    background: $base-color-chat;
+  }
+  &_list_conversation {
+    width: 100%;
+    @include generateScroll(2px);
+    height: $size-height-container-chat - 200px;
+    @extend %reset_list;
+    margin: 0;
+    &_item {
+      display: grid;
+      grid-template-columns: 23% 60%;
+      &.reverse {
+        width: 100%;
+        display: flex;
+        .context {
+          margin-left: 50px;
+          p {
+            background-color: $base-color-chat;
+            color: $white-color;
+          }
+          span {
+            text-align: left;
+          }
+        }
+      }
+      width: 100%;
+      .avatar {
+        align-self: end;
+        transform: scale(0.9);
+      }
+      .context {
+        display: flex;
+        flex-direction: column;
+
+        .subtitle {
+          font-size: 0.9rem;
+          margin: 0;
+          padding: 0;
+        }
+        p {
+          font-size: 0.9rem;
+          background-color: $remitent-bg-container;
+          padding: 10px 9px;
+          border-radius: 10px;
+          margin: 0 !important;
+        }
+        span {
+          width: 100%;
+          text-align: end;
+          margin: 0;
+          padding: 0;
+          font-style: italic;
+          @extend %text-mute;
+        }
+      }
+    }
+  }
+}
+
+@mixin form_send {
+  &_form {
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 2px solid $base-color-chat;
+    .input {
+      max-height: 50px;
+      display: grid;
+      grid-template-columns: 90% 10%;
+      .box {
+        max-height: 40px;
+        @include generateScroll(2px, $black-color);
+      }
+      .send_button {
+        @include resetButton();
+        i {
+          color: $base-color-chat;
+          font-size: 1.5rem;
+        }
+      }
+    }
+    &_actions {
+      button {
+        @include resetButton();
+        i {
+          color: $opacity-default;
+          font-size: 1.5rem;
+        }
+        &:hover {
+          i {
+            color: $black-color;
+          }
+        }
+      }
+    }
+  }
+}
 .chat-card {
   width: 380px;
-  height: 600px;
+  height: $size-height-container-chat;
   font-size: $base-size-font;
   border-radius: 25px;
   background-color: $chat-color-container;
   padding: $padding-container-chat;
-
+  font-size: 16px;
   @include subtitle();
   @include list-avatars();
   @include search-component();
   @include chat-card-avatar();
   @include list-chat();
+  @include list_messages();
+  @include form_send();
 }

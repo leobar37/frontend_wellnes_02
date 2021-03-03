@@ -1,24 +1,38 @@
 <div class="chat-card shadow-lg">
-  <app-chat-header> Principal </app-chat-header>
-  <!-- search component -->
-  <app-chat-search></app-chat-search>
-  <!-- active asesor -->
-  <span class="subtitle"> Asesores activos </span>
-  <!--avatar list -->
-  <app-chat-lists-avatar>
-    <app-chat-avatar
-      class="swiper-slide"
-      [avatar]="'assets/img/jean.jpg'"
-      [name]="'Alfonso'"
-      active
-    ></app-chat-avatar>
-    <app-chat-avatar class="swiper-slide"></app-chat-avatar>
-    <app-chat-avatar class="swiper-slide"></app-chat-avatar>
-  </app-chat-lists-avatar>
+  <ng-template #principal>
+    <app-chat-header> Principal </app-chat-header>
+    <!-- search component -->
+    <app-chat-search></app-chat-search>
+    <!-- active asesor -->
+    <span class="subtitle"> Asesores activos </span>
+    <!--avatar list -->
+    <app-chat-lists-avatar>
+      <app-chat-avatar
+        class="swiper-slide"
+        [avatar]="'assets/img/jean.jpg'"
+        [name]="'Alfonso'"
+        active
+      ></app-chat-avatar>
+      <app-chat-avatar class="swiper-slide"></app-chat-avatar>
+      <app-chat-avatar class="swiper-slide"></app-chat-avatar>
+    </app-chat-lists-avatar>
+    <span class="subtitle"> Conversaciones recientes </span>
+    <app-chat-list-messages [items]="test" (clickEvent)="clickItem($event)">
+    </app-chat-list-messages>
+  </ng-template>
+  <ng-template #messagges let-id="id">
+    <app-chat-header>
+      <button chatBtnreverse (click)="backPrincipal()">
+        <i nz-icon nzType="left" nzTheme="outline"></i>
+      </button>
+      Martinez Sosa
+    </app-chat-header>
+    <!-- render conversation. -->
+    <app-chat-conversation> </app-chat-conversation>
 
-  <span class="subtitle"> Conversaciones recientes </span>
-  <!-- lists chats container -->
-  <app-chat-list-messages [items]="test" (clickEvent)="clickItem($event)">
-    <!--  list chat item -->
-  </app-chat-list-messages>
+    <app-chat-card-form></app-chat-card-form>
+  </ng-template>
+
+  <!-- render dinaicly screens -->
+  <ng-template [cdkPortalOutlet]="currentScreen"> </ng-template>
 </div>

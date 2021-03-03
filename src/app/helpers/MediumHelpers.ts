@@ -7,3 +7,13 @@ export const generateRandomColor = () => {
 export const removeSpaces = (str: string) => {
   return str.replace(/\s+/g, '');
 };
+
+export const sanitizeValueString = (
+  value: string
+): [resp: boolean, value: string] => {
+  value = value.trim();
+  if (removeSpaces(value).length > 0) {
+    return [true, value];
+  }
+  return [false, value];
+};
