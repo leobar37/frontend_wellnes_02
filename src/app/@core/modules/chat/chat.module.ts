@@ -30,8 +30,6 @@ import { NzOutletModule } from 'ng-zorro-antd/core/outlet';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { ReactiveFormsModule } from '@angular/forms';
 
-// services
-import { ListMessageService } from './services/list-message.service';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ChatConversationComponent } from './components/chat-conversation/chat-conversation.component';
@@ -39,6 +37,13 @@ import { MessageComponent } from './components/chat-conversation/message.compone
 import { ChatCardFormComponent } from './components/chat-conversation/chat-card-form.component';
 import { BtnreverseDirective } from './directives/btnreverse.directive';
 import { DelimiterDirective } from './directives/delimiter.directive';
+
+// services
+import { ListMessageService } from './services/list-message.service';
+import { ChatDataService } from './services/chat-data.service';
+
+// pipes
+import { PipeShortParagraphModule } from '@core/pipes/short-paragraph.pipe';
 const material = [
   PortalModule,
   OverlayModule,
@@ -56,7 +61,7 @@ const zorro = [
   NzAvatarModule,
   NzInputModule
 ];
-const me = [OverlayHoverModule];
+const me = [OverlayHoverModule, PipeShortParagraphModule];
 
 const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
   slidesPerView: 3,
@@ -92,6 +97,7 @@ const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
   providers: [
     ChatuiService,
     ListMessageService,
+    ChatDataService,
     { provide: SWIPER_CONFIG, useValue: SWIPER_CONFIG_DEFAULT }
   ]
 })

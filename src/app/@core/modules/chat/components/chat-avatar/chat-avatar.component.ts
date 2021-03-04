@@ -25,7 +25,7 @@ import { InputBoolean, InputNumber } from 'ng-zorro-antd/core/util';
       ></nz-avatar>
       <span class="chat_card_avatar_user" *ngIf="name">
         <ng-container *nzStringTemplateOutlet="name">
-          {{ name }}
+          {{ name | shortParagraph: 6 }}
         </ng-container>
       </span>
     </div>
@@ -51,7 +51,7 @@ export class ChatAvatarComponent implements OnInit, OnChanges {
 
   constructor() {}
   ngOnChanges(changes: SimpleChanges): void {
-    this.hasAvatar = isValidValue(this.avatar.length);
+    this.hasAvatar = isValidValue(this.avatar?.length);
   }
   ngOnInit(): void {
     console.log(this.count);

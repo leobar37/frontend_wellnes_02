@@ -1,3 +1,4 @@
+import { IUserChat } from './../../model';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import {
   ChangeDetectionStrategy,
@@ -6,7 +7,8 @@ import {
   ViewChild,
   ViewEncapsulation,
   ChangeDetectorRef,
-  ElementRef
+  ElementRef,
+  Input
 } from '@angular/core';
 
 import { SwiperComponent } from 'swiper/angular';
@@ -23,6 +25,8 @@ import { SwiperComponent } from 'swiper/angular';
 })
 export class ChatListsAvatarComponent implements OnInit {
   @ViewChild('swiper', { static: false }) directiveRef?: SwiperComponent;
+
+  @Input() users: IUserChat[];
   config: SwiperConfigInterface = {
     slidesPerView: 3,
     direction: 'horizontal'

@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
   name: 'shortParagraph'
 })
 export class ShortParagraphPipe implements PipeTransform {
-  transform(value: string, count: number): string {
+  transform(value: string, count: number, includePoints: boolean): string {
     let points = true;
     let paragraphCount = 150;
     if (count) {

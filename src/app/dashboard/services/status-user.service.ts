@@ -12,7 +12,6 @@ const ONLINE = gql`
 export class StatusUserService {
   public sub: Subscription;
   constructor(private jwtService: JwtHelperService, private apollo: Apollo) {
-    console.log('init service');
     this.emitOnlineStatus();
   }
 

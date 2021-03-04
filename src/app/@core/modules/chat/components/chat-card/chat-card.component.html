@@ -8,16 +8,20 @@
     <!--avatar list -->
     <app-chat-lists-avatar>
       <app-chat-avatar
+        *ngFor="let item of activeUsers | async"
         class="swiper-slide"
-        [avatar]="'assets/img/jean.jpg'"
-        [name]="'Alfonso'"
-        active
+        [avatar]="item.name"
+        [name]="item.name"
+        [active]="item.online"
+        (click)="enterChat(item.id)"
       ></app-chat-avatar>
-      <app-chat-avatar class="swiper-slide"></app-chat-avatar>
-      <app-chat-avatar class="swiper-slide"></app-chat-avatar>
     </app-chat-lists-avatar>
     <span class="subtitle"> Conversaciones recientes </span>
-    <app-chat-list-messages [items]="test" (clickEvent)="clickItem($event)">
+    <!-- rencents messages -->
+    <app-chat-list-messages
+      [items]="recentsMessages | async"
+      (clickEvent)="clickItem($event)"
+    >
     </app-chat-list-messages>
   </ng-template>
   <ng-template #messagges let-id="id">
@@ -28,7 +32,7 @@
       Martinez Sosa
     </app-chat-header>
     <!-- render conversation. -->
-    <app-chat-conversation> </app-chat-conversation>
+    <app-chat-conversation [items]="messages$ | async"> </app-chat-conversation>
 
     <app-chat-card-form></app-chat-card-form>
   </ng-template>

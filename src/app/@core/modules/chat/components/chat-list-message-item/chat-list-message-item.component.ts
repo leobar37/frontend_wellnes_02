@@ -1,4 +1,4 @@
-import { IlistMessageItem } from './../../model';
+import { IlistMessageItem, IRecentMessages } from './../../model';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,18 +15,18 @@ import {
     <div class="list_chats_item">
       <!-- avatar -->
       <app-chat-avatar
-        [active]="item.avatar.active"
-        [count]="item.avatar.notifications"
-        [avatar]="item.avatar.avatar"
+        [active]="true"
+        [count]="item.unread_message"
+        [avatar]="item.avatar"
       ></app-chat-avatar>
       <div class="list_chats_item_text">
         <h3 class="subtitle">{{ item.name }}</h3>
         <p class="paragraph">
-          {{ item.message }}
+          {{ item.last_message }}
         </p>
       </div>
       <div class="list_chats_item_actions">
-        <span> {{ item.time | date: 'mm:ss' }}</span>
+        <span> {{ item.time_message | date: 'mm:ss' }}</span>
       </div>
     </div>
   `,
@@ -37,7 +37,7 @@ import {
 export class ChatListMessageItemComponent implements OnInit {
   constructor() {}
 
-  @Input() item: IlistMessageItem;
+  @Input() item: IRecentMessages;
 
   ngOnInit(): void {}
 }

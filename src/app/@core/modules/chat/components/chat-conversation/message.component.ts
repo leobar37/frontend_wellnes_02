@@ -1,4 +1,4 @@
-import { IConversationItem } from './../../model';
+import { IConversationItem, IMessage } from './../../model';
 import {
   Component,
   OnInit,
@@ -17,14 +17,14 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
       <app-chat-avatar
         *ngIf="!item.reverse"
         class="avatar"
-        [avatar]="item?.avatar?.avatar"
+        [avatar]="item?.avatar"
       ></app-chat-avatar>
       <div class="context">
         <h3 *ngIf="!item.reverse" class="subtitle">{{ item.name }}</h3>
         <p>
           {{ item.message }}
         </p>
-        <span> {{ item.time | date: 'mm:ss' }} </span>
+        <span> {{ item.created | date: 'mm:ss' }} </span>
       </div>
     </li>
   `,
@@ -39,7 +39,7 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessageComponent implements OnInit {
-  @Input() item: IConversationItem;
+  @Input() item: IMessage;
   constructor() {}
 
   ngOnInit(): void {}

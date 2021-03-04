@@ -1,7 +1,12 @@
 import { ChatuiService } from './../../services/chatui.service';
 import { Portal, TemplatePortal } from '@angular/cdk/portal';
 import { typID } from '@core/models/types';
-import { IlistMessageItem } from './../../model';
+import {
+  IlistMessageItem,
+  IRecentMessages,
+  IUserChat,
+  IMessage
+} from './../../model';
 import {
   Component,
   OnInit,
@@ -16,7 +21,8 @@ import {
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { gsap } from 'gsap';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, of, Observable } from 'rxjs';
+import { ChatDataService } from '../../services/chat-data.service';
 @Component({
   selector: 'app-chat-card',
   templateUrl: './chat-card.component.html',
@@ -30,40 +36,11 @@ export class ChatCardComponent implements OnInit, OnChanges {
     spaceBetween: 10,
     mousewheel: true
   };
-  test = [
-    {
-      id: 1,
-      name: 'Joselito',
-      message: 'Lorem ipsum dolor sit amet',
-      avatar: {
-        active: true,
-        notifications: 5
-      },
-      time: new Date()
-    },
-    {
-      id: 2,
-      name: 'Joselito',
-      message: 'Lorem ipsum dolor sit amet',
-      avatar: {
-        active: true,
-        notifications: 5
-      },
-      time: new Date()
-    },
-    {
-      id: 3,
-      name: 'Joselito',
-      message: 'Lorem ipsum dolor sit amet',
-      avatar: {
-        active: true,
-        notifications: 5
-      },
-      time: new Date()
-    }
-  ] as IlistMessageItem[];
-  // subject for destroy susscriptions
 
+  // subject for destroy susscriptions
+  recentsMessages: Observable<IRecentMessages[]> = of([]);
+  activeUsers: Observable<IUserChat[]> = of([]);
+  messages$: Observable<IMessage[]> = of([]);
   private $destroy = new Subject<void>();
 
   currentScreen: Portal<any>;
@@ -81,7 +58,8 @@ export class ChatCardComponent implements OnInit, OnChanges {
 
   constructor(
     private viewRef: ViewContainerRef,
-    private chatUiService: ChatuiService
+    private chatUiService: ChatuiService,
+    private dataService: ChatDataService
   ) {}
   ngOnChanges(changes: SimpleChanges): void {}
   ngOnInit(): void {
@@ -89,9 +67,13 @@ export class ChatCardComponent implements OnInit, OnChanges {
       this.principalTpl,
       this.viewRef
     );
-    // this.currentScreen = this.principalScreenTemplate;
-    this.currentScreen = this.getMessageTemplate({ id: 5 });
+    this.currentScreen = this.principalScreenTemplate;
+    // this.currentScreen = this.getMessageTemplate({ id: 5 });
     this.animationsCard();
+    this.dataService.init();
+    this.recentsMessages = this.dataService.recentMessages$;
+    this.activeUsers = this.dataService.activeUsers$;
+    this.messages$ = this.dataService.messages$;
   }
 
   private animationsCard() {
@@ -116,6 +98,15 @@ export class ChatCardComponent implements OnInit, OnChanges {
       this.currentScreen = this.principalScreenTemplate;
     }
   }
+  // click in avatar
+  enterChat(id: number) {
+    const sub = this.dataService
+      .createConversation(Number(id))
+      .subscribe((conver) => {
+        this.currentScreen = this.getMessageTemplate({ id: conver.id });
+        sub.unsubscribe();
+      });
+  }
 
   // build messages in template
   getMessageTemplate(ctx: { id: typID }) {
@@ -133,9 +124,13 @@ export class ChatCardComponent implements OnInit, OnChanges {
   }
 
   clickItem(ctx: { id: typID }) {
-    if (this.currentScreen.isAttached) {
-      this.currentScreen.detach();
-    }
-    this.currentScreen = this.getMessageTemplate(ctx);
+    // if (this.currentScreen.isAttached) {
+    //   this.currentScreen.detach();
+    // }
+    this.dataService.getConversation(Number(ctx.id)).subscribe((conver) => {
+      console.log(conver);
+
+      this.currentScreen = this.getMessageTemplate({ id: conver.id });
+    });
   }
 }

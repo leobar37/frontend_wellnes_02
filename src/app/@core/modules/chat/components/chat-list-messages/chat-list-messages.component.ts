@@ -1,5 +1,5 @@
 import { typID } from '@core/models/types';
-import { IlistMessageItem } from './../../model';
+import { IlistMessageItem, IRecentMessages } from './../../model';
 import {
   Component,
   EventEmitter,
@@ -14,7 +14,7 @@ import {
     <app-chat-list-message-item
       [item]="item"
       *cdkVirtualFor="let item of items"
-      (click)="eventClick(item.id)"
+      (click)="eventClick(item.id_conversation)"
     >
     </app-chat-list-message-item>
   </cdk-virtual-scroll-viewport>`,
@@ -28,7 +28,7 @@ import {
   encapsulation: ViewEncapsulation.None
 })
 export class ChatListMessagesComponent implements OnInit {
-  @Input() items: IlistMessageItem[];
+  @Input() items: IRecentMessages[];
   @Output() clickEvent = new EventEmitter<{ id: typID }>();
   constructor() {}
   ngOnInit(): void {

@@ -1,4 +1,5 @@
 import { typID } from '@core/models/types';
+import { IUser } from '@core/models/User';
 export type typeRender = 'FLOAT' | 'COMPLETE' | 'MOBILE';
 export type ChatAvatar = {
   active?: boolean;
@@ -21,4 +22,44 @@ export interface IConversationItem {
   message: string;
   time: Date;
   avatar: ChatAvatar;
+}
+
+export interface IRecentMessages {
+  id_user: number;
+  avatar: string;
+  name: string;
+  id_conversation: number;
+  count_messages: number;
+  last_message: string;
+  time_message: Date;
+  unread_message: number;
+}
+
+export interface IUserChat {
+  id: number;
+  name: string;
+  lastName: string;
+  online: boolean;
+  description?: string;
+  image?: string;
+  code?: string;
+}
+
+export interface IConversation {
+  id: number;
+  created: Date;
+  messages?: IMessage[];
+}
+
+export interface IMessage {
+  id: number;
+  created: Date;
+  reverse?: boolean;
+  read: boolean;
+  message: string;
+  avatar: string;
+  name: string;
+  id_conversation?: number;
+  creator?: IUser;
+  id_creator?: number;
 }

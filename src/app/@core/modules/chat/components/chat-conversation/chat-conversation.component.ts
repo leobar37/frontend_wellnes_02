@@ -1,9 +1,10 @@
-import { IConversationItem } from './../../model';
+import { IConversationItem, IMessage } from './../../model';
 import {
   Component,
   OnInit,
   ViewEncapsulation,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  Input
 } from '@angular/core';
 
 @Component({
@@ -31,62 +32,7 @@ import {
 })
 export class ChatConversationComponent implements OnInit {
   constructor() {}
-  items: IConversationItem[] = [
-    {
-      reverse: false,
-      name: 'Jorge',
-      message: 'Hello Bro',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    },
-    {
-      reverse: true,
-      name: 'Jorge',
-      message: 'Hola wenas necesito informacion de los planes',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    },
-    {
-      reverse: false,
-      name: 'Jorge',
-      message: 'Claro mi bro, ¿Cuentame cual es tu objetivo?',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    },
-    {
-      reverse: true,
-      name: 'Jorge',
-      message: 'Perder grasa bro',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    },
-    {
-      reverse: false,
-      name: 'Jorge',
-      message: 'Ahora te comunico con un asesor',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    },
-    {
-      reverse: true,
-      name: 'Jorge',
-      message: 'Gracias bro',
-      avatar: {
-        avatar: 'assets/img/jean.jpg'
-      },
-      time: new Date()
-    }
-  ];
+  @Input() items: IMessage[] = [];
 
   ngOnInit(): void {}
 }
