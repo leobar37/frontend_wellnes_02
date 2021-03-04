@@ -1,3 +1,4 @@
+import { StatusUserService } from './services/status-user.service';
 import { JwtService } from './../services/jwt.service';
 import { SidebarService, Imenu } from './services/sidebar.service';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  providers: [ConfirmEmailService],
+  providers: [ConfirmEmailService]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   collapsableWidth = 0;
@@ -27,11 +28,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private jwtService: JwtService,
     private activateRoute: ActivatedRoute,
     private emailService: ConfirmEmailService,
-    private router: Router
+    private router: Router,
+    private statusUser: StatusUserService
   ) {
     this.menu = sidebarSesvice.getSidebar;
   }
 
+  unsuscribe() {
+    console.log('unsuscribe');
+
+    this.statusUser.sub.unsubscribe();
+  }
   ngOnInit(): void {
     this.sidebarChangue();
     this.prepareDashboardAlerts();
@@ -50,7 +57,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           type: 'warning',
           icon: true,
           closable: true,
-          id: 'emailconfirm',
+          id: 'emailconfirm'
         });
       }
     };
@@ -68,10 +75,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 type: 'success',
                 message: 'Su email ha sido confirmado',
                 closable: true,
-                icon: true,
+                icon: true
               });
               this.router.navigate([]);
-            },
+            }
           });
         }
       });

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ar } from 'date-fns/locale';
 import { Subject, Observable, Observer, Subscriber } from 'rxjs';
 
 type typesEvents = 'ADDEVENT' | 'EDITEVENT' | 'REFETCHEVENTS';
@@ -10,7 +9,7 @@ interface Action<T> {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ActionService {
   private count: number = 0;
@@ -51,8 +50,6 @@ export class ActionService {
       arr = [...eventType];
     }
     arr.push(this.handleEvent.observers.length);
-    console.log('indexs');
-    console.log(arr);
     this.registerObs.set(typeAction, arr);
     const obs = this.handleEvent.asObservable();
     return obs;

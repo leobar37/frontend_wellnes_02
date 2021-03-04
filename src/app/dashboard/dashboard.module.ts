@@ -33,9 +33,9 @@ const zorro = [
   NzBadgeModule,
   NzCardModule,
   NzAvatarModule,
-  NzIconModule,
+  NzIconModule
 ];
-
+import { StatusUserService } from './services/status-user.service';
 const me = [ChatModule];
 
 @NgModule({
@@ -47,8 +47,8 @@ const me = [ChatModule];
     zorro,
     ...me,
     NotificationsModule,
-    DashboardRoutingModule,
+    DashboardRoutingModule
   ],
-  providers: [SidebarService],
+  providers: [SidebarService, StatusUserService]
 })
 export class DashboardModule {}
