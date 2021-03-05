@@ -11,7 +11,6 @@ import {
   ControlValueAccessor,
   FormControl
 } from '@angular/forms';
-import { ChatSearchComponent } from '../chat-search/chat-search.component';
 import { sanitizeValueString } from '@helpers/MediumHelpers';
 @Component({
   selector: 'app-chat-card-form',
@@ -53,7 +52,7 @@ import { sanitizeValueString } from '@helpers/MediumHelpers';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ChatSearchComponent),
+      useExisting: forwardRef(() => ChatCardFormComponent),
       multi: true
     }
   ],
@@ -77,8 +76,6 @@ export class ChatCardFormComponent implements OnInit, ControlValueAccessor {
     const [resp, value] = sanitizeValueString(this.text.value);
     this.text.setValue('');
     if (resp) {
-      console.log(value);
-
       this.onChangue(value);
     }
   }

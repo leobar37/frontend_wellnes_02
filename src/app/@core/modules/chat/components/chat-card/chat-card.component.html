@@ -29,12 +29,11 @@
       <button chatBtnreverse (click)="backPrincipal()">
         <i nz-icon nzType="left" nzTheme="outline"></i>
       </button>
-      Martinez Sosa
     </app-chat-header>
     <!-- render conversation. -->
     <app-chat-conversation [items]="messages$ | async"> </app-chat-conversation>
 
-    <app-chat-card-form></app-chat-card-form>
+    <app-chat-card-form [formControl]="messageControl"></app-chat-card-form>
   </ng-template>
 
   <!-- render dinaicly screens -->

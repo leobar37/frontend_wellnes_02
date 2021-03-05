@@ -32,7 +32,7 @@ export interface IRecentMessages {
   count_messages: number;
   last_message: string;
   time_message: Date;
-  unread_message: number;
+  unread_messages: number;
 }
 
 export interface IUserChat {
@@ -52,13 +52,13 @@ export interface IConversation {
 }
 
 export interface IMessage {
-  id: number;
-  created: Date;
+  id?: number;
+  created?: Date;
   reverse?: boolean;
-  read: boolean;
+  read?: boolean;
   message: string;
-  avatar: string;
-  name: string;
+  avatar?: string;
+  name?: string;
   id_conversation?: number;
   creator?: IUser;
   id_creator?: number;

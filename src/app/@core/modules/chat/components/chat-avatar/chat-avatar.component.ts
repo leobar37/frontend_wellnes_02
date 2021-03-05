@@ -41,8 +41,6 @@ export class ChatAvatarComponent implements OnInit, OnChanges {
 
   @Input('name') name: string;
 
-  @Input('badge') badge: number;
-
   @Input('count') @InputNumber(0) count: number;
 
   @Input('active') @InputBoolean() active: boolean;
@@ -53,7 +51,5 @@ export class ChatAvatarComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.hasAvatar = isValidValue(this.avatar?.length);
   }
-  ngOnInit(): void {
-    console.log(this.count);
-  }
+  ngOnInit(): void {}
 }

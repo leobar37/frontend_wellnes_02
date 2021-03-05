@@ -42,7 +42,7 @@
     }
     &_badge {
       position: absolute;
-      @include createCircle(22px);
+      @include createCircle(28px);
       @include centerContent();
       color: white;
       background-color: $base-color-chat;
@@ -51,7 +51,7 @@
       z-index: 5;
       border: 2px solid $white-color;
       &_text {
-        font-size: 0.8rem;
+        font-size: 0.3rem;
       }
     }
 

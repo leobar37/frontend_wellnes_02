@@ -16,7 +16,7 @@ import {
       <!-- avatar -->
       <app-chat-avatar
         [active]="true"
-        [count]="item.unread_message"
+        [count]="item.unread_messages"
         [avatar]="item.avatar"
       ></app-chat-avatar>
       <div class="list_chats_item_text">

@@ -28,7 +28,7 @@ import { ChatListMessageItemComponent } from './components/chat-list-message-ite
 import { AvatarSlideDirective } from './directives/avatar-slide.directive';
 import { NzOutletModule } from 'ng-zorro-antd/core/outlet';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -89,6 +89,7 @@ const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
     CommonModule,
     SwiperModule,
     ReactiveFormsModule,
+    FormsModule,
     ...material,
     ...zorro,
     ...me

@@ -17,15 +17,12 @@ export class StatusUserService {
 
   private emitOnlineStatus() {
     this.sub = interval(3000).subscribe(async (_) => {
-      console.log('online status');
       const user = this.jwtService.decodeToken<IUser>();
       if (user) {
         await this.apollo
           .mutate({ mutation: ONLINE, variables: { id: user.id } })
           .toPromise();
       } else {
-        console.log('not toekn');
-
         this.sub.unsubscribe();
       }
     });

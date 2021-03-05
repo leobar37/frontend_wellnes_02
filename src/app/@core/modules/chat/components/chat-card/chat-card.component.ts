@@ -1,3 +1,4 @@
+import { FormControl, Validators } from '@angular/forms';
 import { ChatuiService } from './../../services/chatui.service';
 import { Portal, TemplatePortal } from '@angular/cdk/portal';
 import { typID } from '@core/models/types';
@@ -20,7 +21,7 @@ import {
 } from '@angular/core';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { gsap } from 'gsap';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 import { Subject, of, Observable } from 'rxjs';
 import { ChatDataService } from '../../services/chat-data.service';
 @Component({
@@ -37,10 +38,13 @@ export class ChatCardComponent implements OnInit, OnChanges {
     mousewheel: true
   };
 
-  // subject for destroy susscriptions
+  // message
+  messageControl: FormControl = new FormControl('', [Validators.required]);
+
   recentsMessages: Observable<IRecentMessages[]> = of([]);
   activeUsers: Observable<IUserChat[]> = of([]);
   messages$: Observable<IMessage[]> = of([]);
+  // subject for destroy susscriptions
   private $destroy = new Subject<void>();
 
   currentScreen: Portal<any>;
@@ -56,6 +60,10 @@ export class ChatCardComponent implements OnInit, OnChanges {
   principalScreenTemplate: TemplatePortal<any>;
   messageScreenTemplate: TemplatePortal<{ id: typID }>;
 
+  // variables in view
+  nameRemitent: Observable<string> = of('');
+
+  // variables manipule state
   constructor(
     private viewRef: ViewContainerRef,
     private chatUiService: ChatuiService,
@@ -68,12 +76,30 @@ export class ChatCardComponent implements OnInit, OnChanges {
       this.viewRef
     );
     this.currentScreen = this.principalScreenTemplate;
-    // this.currentScreen = this.getMessageTemplate({ id: 5 });
     this.animationsCard();
+    this.setupObservable();
+    this.listenChanguesForm();
+  }
+  private listenChanguesForm() {
+    this.messageControl.valueChanges.subscribe(async (value) => {
+      //  addd message
+      await this.dataService
+        .createMessage({
+          id_conversation: this.currentConversation,
+          message: value
+        })
+        .toPromise();
+    });
+  }
+
+  private setupObservable(): void {
     this.dataService.init();
+    // fill observables
     this.recentsMessages = this.dataService.recentMessages$;
     this.activeUsers = this.dataService.activeUsers$;
     this.messages$ = this.dataService.messages$;
+
+    // this.nameRemitent =  this.dataService.messages$.pipe(map( els => els.find(el => !el.reverse).name))
   }
 
   private animationsCard() {
@@ -92,9 +118,23 @@ export class ChatCardComponent implements OnInit, OnChanges {
       });
   }
 
+  get currentConversation() {
+    const id = localStorage.getItem('conver');
+    if (id) {
+      return Number(id);
+    }
+    return undefined;
+  }
+  set currentConversation(id: number) {
+    localStorage.setItem('conver', String(id));
+  }
+
   // reverse  principal
   backPrincipal() {
     if (this.principalScreenTemplate) {
+      localStorage.removeItem('conver');
+      // destroy
+      this.dataService.destroyOnNewMessage();
       this.currentScreen = this.principalScreenTemplate;
     }
   }
@@ -110,6 +150,8 @@ export class ChatCardComponent implements OnInit, OnChanges {
 
   // build messages in template
   getMessageTemplate(ctx: { id: typID }) {
+    this.dataService.suscribeOnNewMessage({ idConversation: Number(ctx.id) });
+    this.currentConversation = Number(ctx.id);
     if (this.messageScreenTemplate) {
       this.messageScreenTemplate.context = ctx;
       return this.messageScreenTemplate;
@@ -124,12 +166,9 @@ export class ChatCardComponent implements OnInit, OnChanges {
   }
 
   clickItem(ctx: { id: typID }) {
-    // if (this.currentScreen.isAttached) {
-    //   this.currentScreen.detach();
-    // }
-    this.dataService.getConversation(Number(ctx.id)).subscribe((conver) => {
-      console.log(conver);
+    // set currrent conversation id
 
+    this.dataService.getConversation(Number(ctx.id)).subscribe((conver) => {
       this.currentScreen = this.getMessageTemplate({ id: conver.id });
     });
   }
