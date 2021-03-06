@@ -3,12 +3,12 @@ import {
   Component,
   OnInit,
   Input,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import {
   EventsOperationService,
-  eventsCategoryOperations,
+  eventsCategoryOperations
 } from '../../../services/events.operation';
 import { Observable } from 'rxjs';
 @Component({
@@ -47,7 +47,7 @@ import { Observable } from 'rxjs';
   `,
   styleUrls: ['../listevents.component.scss'],
   providers: [EventsOperationService],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RowShowComponent implements OnInit {
   @Input() label: string;
@@ -62,6 +62,7 @@ export class RowShowComponent implements OnInit {
     direction: 'horizontal',
     autoplay: true,
     speed: 300,
+    loop: true
   };
   constructor(private eventsOperationService: EventsOperationService) {}
   ngOnInit(): void {

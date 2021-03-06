@@ -24,7 +24,7 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
         <p>
           {{ item.message }}
         </p>
-        <span> {{ item.created | date: 'mm:ss' }} </span>
+        <span> {{ item.created | date: 'hh:mm' }} </span>
       </div>
     </li>
   `,

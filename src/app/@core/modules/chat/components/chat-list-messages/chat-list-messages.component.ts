@@ -12,10 +12,9 @@ import {
   SimpleChanges,
   ChangeDetectionStrategy
 } from '@angular/core';
-import { CdkScrollable } from '@angular/cdk/overlay';
+
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { interval } from 'rxjs';
-import { take } from 'rxjs/operators';
+
 @Component({
   selector: 'app-chat-list-messages',
   template: ` <cdk-virtual-scroll-viewport

@@ -35,8 +35,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   unsuscribe() {
-    console.log('unsuscribe');
-
     this.statusUser.sub.unsubscribe();
   }
   ngOnInit(): void {
@@ -48,7 +46,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private prepareDashboardAlerts(): void {
     const confirmEmail = () => {
       const user = this.jwtService.getUserOfToken();
-
       if (!user.comfirmed) {
         this.alertService.addAlert({
           message: 'Su email todavía no esta confirmado',
@@ -101,6 +98,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
   ngOnDestroy(): void {
-    this.mediaObserbable.unsubscribe();
+    if (this.mediaObserbable) {
+      this.mediaObserbable.unsubscribe();
+    }
+    // this.mediaObserbable.unsubscribe();
   }
 }

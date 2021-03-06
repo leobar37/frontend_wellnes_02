@@ -33,6 +33,7 @@ export interface IRecentMessages {
   last_message: string;
   time_message: Date;
   unread_messages: number;
+  active_user?: number;
 }
 
 export interface IUserChat {
@@ -45,10 +46,17 @@ export interface IUserChat {
   code?: string;
 }
 
+export interface statusChatResponse {
+  event: 'CONNECT' | 'DISCONNECT';
+  id: number;
+  user: IUserChat;
+}
+
 export interface IConversation {
   id: number;
   created: Date;
   messages?: IMessage[];
+  members?: IUserChat[];
 }
 
 export interface IMessage {
@@ -63,3 +71,7 @@ export interface IMessage {
   creator?: IUser;
   id_creator?: number;
 }
+
+// types
+
+export type typeOnlineEvent = 'CONNECT' | 'DISCONNECT';

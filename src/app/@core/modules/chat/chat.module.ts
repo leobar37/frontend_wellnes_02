@@ -25,7 +25,6 @@ import { ChatListsAvatarComponent } from './components/chat-lists-avatar/chat-li
 import { ChatAvatarComponent } from './components/chat-avatar/chat-avatar.component';
 import { ChatListMessagesComponent } from './components/chat-list-messages/chat-list-messages.component';
 import { ChatListMessageItemComponent } from './components/chat-list-message-item/chat-list-message-item.component';
-import { AvatarSlideDirective } from './directives/avatar-slide.directive';
 import { NzOutletModule } from 'ng-zorro-antd/core/outlet';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -61,8 +60,8 @@ const zorro = [
   NzAvatarModule,
   NzInputModule
 ];
-const me = [OverlayHoverModule, PipeShortParagraphModule];
-
+import { ResolveUrlPipeModule } from '@core/pipes/resolve-url.pipe';
+const me = [OverlayHoverModule, ResolveUrlPipeModule, PipeShortParagraphModule];
 const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
   slidesPerView: 3,
   direction: 'horizontal'
@@ -78,7 +77,6 @@ const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
     ChatAvatarComponent,
     ChatListMessagesComponent,
     ChatListMessageItemComponent,
-    AvatarSlideDirective,
     ChatConversationComponent,
     MessageComponent,
     ChatCardFormComponent,

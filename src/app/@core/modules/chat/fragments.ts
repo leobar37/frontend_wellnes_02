@@ -12,3 +12,14 @@ export const MESSAGE_VIEW = gql`
     id_creator
   }
 `;
+
+export const CHAT_USER = gql`
+  fragment userChatFragment on UserChat {
+    id
+    name
+    lastName
+    online
+    description
+    image
+  }
+`;

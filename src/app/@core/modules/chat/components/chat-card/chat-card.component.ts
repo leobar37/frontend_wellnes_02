@@ -1,6 +1,12 @@
 import { FormControl, Validators } from '@angular/forms';
 import { ChatuiService } from './../../services/chatui.service';
-import { Portal, TemplatePortal } from '@angular/cdk/portal';
+import {
+  CdkPortalOutlet,
+  CdkPortalOutletAttachedRef,
+  Portal,
+  PortalOutlet,
+  TemplatePortal
+} from '@angular/cdk/portal';
 import { typID } from '@core/models/types';
 import {
   IlistMessageItem,
@@ -17,13 +23,16 @@ import {
   ViewEncapsulation,
   TemplateRef,
   ViewContainerRef,
-  ElementRef
+  ElementRef,
+  OnDestroy,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { gsap } from 'gsap';
 import { takeUntil, map } from 'rxjs/operators';
 import { Subject, of, Observable } from 'rxjs';
 import { ChatDataService } from '../../services/chat-data.service';
+import _ from 'lodash';
 @Component({
   selector: 'app-chat-card',
   templateUrl: './chat-card.component.html',
@@ -31,7 +40,7 @@ import { ChatDataService } from '../../services/chat-data.service';
   encapsulation: ViewEncapsulation.None,
   animations: []
 })
-export class ChatCardComponent implements OnInit, OnChanges {
+export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
   config: SwiperConfigInterface = {
     slidesPerView: 3,
     spaceBetween: 10,
@@ -47,21 +56,25 @@ export class ChatCardComponent implements OnInit, OnChanges {
   // subject for destroy susscriptions
   private $destroy = new Subject<void>();
 
+  @ViewChild(CdkPortalOutlet) host: PortalOutlet;
   currentScreen: Portal<any>;
   // templates
   @ViewChild('principal', { read: TemplateRef, static: true })
   principalTpl: TemplateRef<any>;
+
   @ViewChild('messagges', { read: TemplateRef, static: true })
   messagesTpl: TemplateRef<any>;
 
   // reference to card container chat
   @ViewChild('card') cardElement: ElementRef<HTMLDivElement>;
   // portals
-  principalScreenTemplate: TemplatePortal<any>;
+  _principalScreenTemplate: TemplatePortal<any>;
   messageScreenTemplate: TemplatePortal<{ id: typID }>;
 
   // variables in view
   nameRemitent: Observable<string> = of('');
+
+  // name of participant
 
   // variables manipule state
   constructor(
@@ -69,17 +82,42 @@ export class ChatCardComponent implements OnInit, OnChanges {
     private chatUiService: ChatuiService,
     private dataService: ChatDataService
   ) {}
+  ngOnDestroy(): void {
+    this.dataService.detroyEvent();
+  }
   ngOnChanges(changes: SimpleChanges): void {}
   ngOnInit(): void {
-    this.principalScreenTemplate = new TemplatePortal(
-      this.principalTpl,
-      this.viewRef
-    );
-    this.currentScreen = this.principalScreenTemplate;
+    // this.renderScreen();
     this.animationsCard();
     this.setupObservable();
     this.listenChanguesForm();
+    this.renderScreen();
+
+    this.nameRemitent = this.dataService.nameUser;
   }
+
+  attached($event: CdkPortalOutletAttachedRef) {}
+  getPrincipalTemplate() {
+    if (this._principalScreenTemplate) {
+      return this._principalScreenTemplate;
+    } else {
+      this._principalScreenTemplate = new TemplatePortal(
+        this.principalTpl,
+        this.viewRef
+      );
+
+      return this._principalScreenTemplate;
+    }
+  }
+  /**
+   * si existe la conversacion
+   */
+
+  private renderScreen() {
+    this.currentScreen = this.getPrincipalTemplate();
+    // this.currentScreen = this.getMessageTemplate({ id: 9 });
+  }
+
   private listenChanguesForm() {
     this.messageControl.valueChanges.subscribe(async (value) => {
       //  addd message
@@ -98,8 +136,6 @@ export class ChatCardComponent implements OnInit, OnChanges {
     this.recentsMessages = this.dataService.recentMessages$;
     this.activeUsers = this.dataService.activeUsers$;
     this.messages$ = this.dataService.messages$;
-
-    // this.nameRemitent =  this.dataService.messages$.pipe(map( els => els.find(el => !el.reverse).name))
   }
 
   private animationsCard() {
@@ -131,20 +167,18 @@ export class ChatCardComponent implements OnInit, OnChanges {
 
   // reverse  principal
   backPrincipal() {
-    if (this.principalScreenTemplate) {
-      localStorage.removeItem('conver');
-      // destroy
-      this.dataService.destroyOnNewMessage();
-      this.currentScreen = this.principalScreenTemplate;
-    }
+    localStorage.removeItem('conver');
+    // destroy
+    this.dataService.destroyOnNewMessage();
+    this.currentScreen = this.getPrincipalTemplate();
   }
   // click in avatar
   enterChat(id: number) {
     const sub = this.dataService
       .createConversation(Number(id))
       .subscribe((conver) => {
-        this.currentScreen = this.getMessageTemplate({ id: conver.id });
         sub.unsubscribe();
+        this.currentScreen = this.getMessageTemplate({ id: conver.id });
       });
   }
 
@@ -166,10 +200,13 @@ export class ChatCardComponent implements OnInit, OnChanges {
   }
 
   clickItem(ctx: { id: typID }) {
-    // set currrent conversation id
+    console.log('click', ctx);
 
-    this.dataService.getConversation(Number(ctx.id)).subscribe((conver) => {
-      this.currentScreen = this.getMessageTemplate({ id: conver.id });
+    // set currrent conversation id
+    this.dataService.getConversation(Number(ctx.id)).then((res) => {
+      console.log('data');
+
+      this.currentScreen = this.getMessageTemplate({ id: res.id });
     });
   }
 }

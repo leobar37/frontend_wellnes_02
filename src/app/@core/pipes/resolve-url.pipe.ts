@@ -2,12 +2,14 @@ import { SafeUrl } from '@angular/platform-browser';
 import { UtilsService } from './../../services/utils.service';
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
-  name: 'resolveUrl',
+  name: 'resolveUrl'
 })
 export class ResolveUrlPipe implements PipeTransform {
   constructor(private utils: UtilsService) {}
   transform(value: string): SafeUrl {
-    console.log('resolve url', value);
+    if (!value?.length) {
+      return null;
+    }
     return this.utils.resolvePathImage(value);
   }
 }
@@ -16,6 +18,6 @@ import { NgModule } from '@angular/core';
   declarations: [ResolveUrlPipe],
   imports: [],
   exports: [ResolveUrlPipe],
-  providers: [],
+  providers: []
 })
 export class ResolveUrlPipeModule {}

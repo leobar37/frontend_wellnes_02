@@ -21,7 +21,7 @@ import { InputBoolean, InputNumber } from 'ng-zorro-antd/core/util';
         class="img"
         [ngClass]="{ not_image: !hasAvatar }"
         nzIcon="user"
-        [nzSrc]="avatar"
+        [nzSrc]="avatar | resolveUrl"
       ></nz-avatar>
       <span class="chat_card_avatar_user" *ngIf="name">
         <ng-container *nzStringTemplateOutlet="name">

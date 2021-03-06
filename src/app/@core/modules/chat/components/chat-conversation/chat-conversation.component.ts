@@ -1,5 +1,5 @@
-import { interval } from 'rxjs';
-import { IConversationItem, IMessage } from './../../model';
+import { interval, Subject } from 'rxjs';
+import { IMessage } from './../../model';
 import {
   Component,
   OnInit,
@@ -8,10 +8,12 @@ import {
   Input,
   ViewChild,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  OnDestroy,
+  NgZone
 } from '@angular/core';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { take } from 'rxjs/operators';
+import { take, switchMap, tap, share, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-conversation',
@@ -37,26 +39,44 @@ import { take } from 'rxjs/operators';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatConversationComponent implements OnInit, OnChanges {
+export class ChatConversationComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('virtualScroll', { static: true })
   refScroll: CdkVirtualScrollViewport;
-  constructor() {}
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('all changues');
-    console.log(changes);
 
+  scrollHandle$ = new Subject<void>();
+  destroy$ = new Subject<void>();
+  constructor(private zone: NgZone) {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  @Input() items: IMessage[] = [];
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes?.items) {
-      console.log('here');
-      setTimeout(() => {
-        this.refScroll.scrollTo({
-          bottom: 0,
-          behavior: 'auto'
-        });
-      }, 5);
+      this.scrollHandle$.next();
     }
   }
 
-  @Input() items: IMessage[] = [];
-
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.scrollHandle$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((_) =>
+          interval(50).pipe(
+            take(1),
+            tap((_) => {
+              this.zone.runOutsideAngular(() => {
+                this.refScroll.scrollTo({
+                  bottom: 0,
+                  behavior: 'auto'
+                });
+              });
+            })
+          )
+        ),
+        share()
+      )
+      .subscribe();
+    this.scrollHandle$.next();
+  }
 }

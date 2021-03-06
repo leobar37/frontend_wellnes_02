@@ -27,5 +27,6 @@ export class JwtService {
     if (localStorage.getItem('token')) {
       localStorage.removeItem('token');
     }
+    this.router.navigateByUrl('/login');
   }
 }

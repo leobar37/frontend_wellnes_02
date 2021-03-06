@@ -61,14 +61,14 @@
 
 @mixin list-chat {
   .list_chats {
-    height: 250px;
+    height: 350px;
     width: 100%;
-
     @include generateScroll();
     margin: 10px 0;
     &_item {
       display: grid;
-      grid-template-columns: 15% 63% 10%;
+      text-align: left;
+      grid-template-columns: 15% 65% 10%;
       grid-template-rows: 1;
       padding: 0 !important;
       * {
@@ -89,6 +89,7 @@
         }
       }
       &_text {
+        text-align: left;
         margin-top: 10px;
         justify-self: center;
         h3 {
@@ -159,6 +160,7 @@
           text-align: right;
           margin-left: 50px;
           p {
+            width: 100%;
             background-color: $base-color-chat;
             color: $white-color;
           }
@@ -173,21 +175,26 @@
         transform: scale(0.9);
       }
       .context {
+        padding: 0 !important;
         display: flex;
         flex-direction: column;
-
+        align-items: flex-start;
+        justify-content: flex-end;
         .subtitle {
           font-size: 0.9rem;
           margin: 0;
           padding: 0;
         }
+        // body message
         p {
+          width: 100%;
           font-size: 0.9rem;
           background-color: $remitent-bg-container;
           padding: 10px 9px;
           border-radius: 10px;
           margin: 0 !important;
         }
+        // text mute
         span {
           width: 100%;
           text-align: end;

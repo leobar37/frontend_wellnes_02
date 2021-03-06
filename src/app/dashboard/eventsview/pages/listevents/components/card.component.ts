@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
   template: `
     <nz-card
       nzHoverable
-      *ngIf="visible"
       class="viewcardevent"
       [nzLoading]="loading"
       [nzCover]="coverTpl"
@@ -32,8 +31,8 @@ import { Router } from '@angular/router';
   `,
   styleUrls: ['./card.component.scss'],
   host: {
-    '(click)': 'clickCard($event)',
-  },
+    '(click)': 'clickCard($event)'
+  }
 })
 export class CardComponent implements OnInit {
   private source: IEvent;
@@ -54,7 +53,7 @@ export class CardComponent implements OnInit {
     ...event,
     eventCover: this.utilsService.resolvePathImage(
       event.eventCover as string
-    ) as string,
+    ) as string
   });
   ngOnInit(): void {}
   redirectEvent(id: number) {}
