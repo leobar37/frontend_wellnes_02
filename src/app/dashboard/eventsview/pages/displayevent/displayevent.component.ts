@@ -16,13 +16,13 @@ import { QueryRef } from 'apollo-angular';
 import { MatDialog } from '@angular/material/dialog';
 import {
   IModalData,
-  ModalConfirmInscriptionComponent,
+  ModalConfirmInscriptionComponent
 } from '../../components/modal-confirm-inscription/modal-confirm-inscription.component';
 @Component({
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
   styleUrls: ['../styles.scss'],
-  providers: [],
+  providers: []
 })
 export class DisplayeventComponent implements OnInit, OnDestroy {
   currentEvent: IEvent;
@@ -73,11 +73,8 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
               this.eventService.getEvent(params.id, true).subscribe((el) => {
                 this.currentEvent = {
                   ...el.data.event,
-                  eventCover: this.utils.resolvePathImage(
-                    String(el.data.event.eventCover)
-                  ),
+                  eventCover: String(el.data.event.eventCover)
                 };
-
                 this.updateifRegiterInEvent();
                 // enf id register
               })
@@ -132,7 +129,7 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
           this.refQuerieIsRegister.refetch();
           this.modal.success({
             nzTitle: 'Correcto',
-            nzContent: 'Se ha registrado a este evento',
+            nzContent: 'Se ha registrado a este evento'
           });
         }
       });
@@ -148,9 +145,9 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
     if (!haveCredits) {
       this.modal.error({
         nzTitle: 'Creditos insuficientes',
-        nzContent: 'No dispone de los creditso necesarios para este programa',
-        nzOkText: 'Recargar',
-        nzCancelText: 'cancelar',
+        nzContent: 'No dispone de los creditos necesarios para este programa',
+        nzOkText: 'Solicitar',
+        nzCancelText: 'cancelar'
       });
       return;
     }
@@ -165,8 +162,8 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
           costCredits: this.currentEvent.credits,
           type: this.currentEvent.modeEvent,
           text: text,
-          userCredits: user.credit?.currentCredits,
-        } as IModalData,
+          userCredits: user.credit?.currentCredits
+        } as IModalData
       });
       ref.afterClosed().subscribe((resp) => {
         // register in event
@@ -184,7 +181,7 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
       'view',
       'event',
       this.currentEvent.id,
-      sesion.id,
+      sesion.id
     ]);
   }
 }

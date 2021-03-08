@@ -11,16 +11,16 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 const uri = `${environment.apiUrl}/graphql`; // <-- add the URL of the GraphQL server here
 const uriWs = `ws://${environment.hostSubs}/suscriptions`;
-
+import { setContext } from '@apollo/client/link/context';
 export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   const ws = new WebSocketLink({
     uri: uriWs,
     options: {
-      reconnect: true,
-    },
+      reconnect: true
+    }
   });
   const http = httpLink.create({
-    uri: uri,
+    uri: uri
   });
   const link = split(
     // split based on operation type
@@ -36,7 +36,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   );
   return {
     link: link,
-    cache: new InMemoryCache({}),
+    cache: new InMemoryCache()
   };
 }
 
@@ -45,8 +45,8 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     {
       provide: APOLLO_OPTIONS,
       useFactory: createApollo,
-      deps: [HttpLink],
-    },
-  ],
+      deps: [HttpLink]
+    }
+  ]
 })
 export class GraphQLModule {}

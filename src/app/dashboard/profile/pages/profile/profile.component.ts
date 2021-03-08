@@ -6,7 +6,7 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Inject, OnDestroy } from '@angular/core';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['../../profile.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated,
+  encapsulation: ViewEncapsulation.Emulated
 })
 export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   public user: IUser;
@@ -44,12 +44,14 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
       .getUser()
       .subscribe(({ data, loading }) => {
         if (data.getUser.resp) {
+          console.log(data);
+
           this.user = Object.assign({}, data.getUser.user);
           if (!this.user.description) {
             this.user = {
               ...this.user,
               description: this.defaultConfig.defaultDescription,
-              birth: this.user?.birth || new Date(),
+              birth: this.user?.birth || new Date()
             };
           }
         }
@@ -67,7 +69,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
         if (data.addProfilePicture.resp) {
           this.user = {
             ...this.user,
-            image: data.addProfilePicture.path,
+            image: data.addProfilePicture.path
           };
         }
       });
@@ -77,8 +79,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   public editProfile(): void {
     this.edit = !this.edit;
     if (!this.edit) {
-      console.log('edit user');
-
       const subEditUser = this.profileService
         .editUser(this.user.id, this.user)
         .subscribe((res) => {
@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   public changeBirth($event: Date) {
     this.user = {
       ...this.user,
-      birth: $event,
+      birth: $event
     };
   }
 }

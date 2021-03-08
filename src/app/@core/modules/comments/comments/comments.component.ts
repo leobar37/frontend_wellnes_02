@@ -9,7 +9,7 @@ import {
   ViewChild,
   AfterViewInit,
   OnDestroy,
-  Input,
+  Input
 } from '@angular/core';
 import { JwtService } from '@services/jwt.service';
 import { NzConfigService } from 'ng-zorro-antd/core/config';
@@ -21,12 +21,12 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
-  styleUrls: ['./comments.component.scss'],
+  styleUrls: ['./comments.component.scss']
 })
 export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
   user = {
     name: 'Elmer Joselito',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
   };
 
   @Input() private idBootrapComment: number;
@@ -45,11 +45,7 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
   /*=============================================
   =            LIFECYCLE            =
   =============================================*/
-  public ngAfterViewInit(): void {
-    this.configService.set('empty', {
-      nzDefaultEmptyContent: this.customEmptyTpl,
-    });
-  }
+  public ngAfterViewInit(): void {}
 
   public ngOnInit(): void {
     this.commentsRef = this.commentsService.getComments(this.idBootrapComment);
@@ -70,16 +66,16 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.commentsRef.subscribeToMore({
       document: SUB_NEWCOMMENTS,
       variables: {
-        bootstrap: this.idBootrapComment,
+        bootstrap: this.idBootrapComment
       },
       updateQuery: (
         prev,
         {
           subscriptionData: {
             data: {
-              actionComment: { action, comment },
-            },
-          },
+              actionComment: { action, comment }
+            }
+          }
         }
       ) => {
         let comments = prev.getComments;
@@ -94,9 +90,9 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         return {
           ...prev,
-          getComments: comments,
+          getComments: comments
         };
-      },
+      }
     });
   }
 
@@ -114,12 +110,12 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
                     displayTime:
                       'Hace ' +
                       formatDistance(new Date(), new Date(item.createComment), {
-                        locale: es,
+                        locale: es
                       }),
-                    author: item.user.getCompleteName,
+                    author: item.user.name,
                     avatar: this.utilsService.resolveNormalPathImage(
                       item.user.image
-                    ),
+                    )
                     // avatar: this.commentsService.getAvatarOfName(
                     //   item.user.name,
                     //   item.user.lastName
@@ -145,7 +141,7 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
         .addComment({
           id_user: user.id,
           id_bootstrap: this.idBootrapComment,
-          comment: content,
+          comment: content
         } as IComment)
         .toPromise();
     };

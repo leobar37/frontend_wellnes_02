@@ -9,6 +9,5 @@ export const PROFILECONFIG = new InjectionToken<ProfileConfig>(
 );
 
 export const DEFAULTCONFIGPROFILE: ProfileConfig = {
-  defaultDescription:
-    'Todavia no cuentas con una descripción, Describete en pocas lineas',
+  defaultDescription: 'Descripción'
 };

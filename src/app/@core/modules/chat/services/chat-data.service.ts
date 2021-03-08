@@ -256,7 +256,7 @@ export class ChatDataService {
    * els :  lo agrega
    *   */
   private actueSubInAvatars(eventSuscribeUser: statusChatResponse) {
-    let usersActives = this.activeUsersSubject$.value;
+    let usersActives = [...this.activeUsersSubject$.value];
     const usTemp = usersActives.findIndex(
       (el) => el.id == eventSuscribeUser.id
     );
@@ -268,6 +268,7 @@ export class ChatDataService {
       usersActives = [...usersActives, eventSuscribeUser.user];
       this.activeUsersSubject$.next(usersActives);
     }
+    console.log(usersActives);
   }
 
   public createConversation(idResponse: number): Observable<IConversation> {

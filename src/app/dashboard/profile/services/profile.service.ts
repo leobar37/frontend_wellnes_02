@@ -118,7 +118,7 @@ const EDITPROFILE = gql`
   }
 `;
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProfileService {
   jwtService: JwtService;
@@ -133,11 +133,11 @@ export class ProfileService {
         mutation: UPLOADPICTURE,
         variables: {
           picture: file,
-          id: Number(id),
+          id: Number(id)
         },
         context: {
-          useMultipart: true,
-        },
+          useMultipart: true
+        }
       })
       .pipe(catchError((err) => throwError(err)));
   }
@@ -180,8 +180,8 @@ export class ProfileService {
         query: query,
         variables: {
           id: user.id,
-          mode: mode || 'EVENT',
-        },
+          mode: mode || 'EVENT'
+        }
       })
       .pipe(tap((res) => (this.user = res.data.getUser.user)));
   }
@@ -195,7 +195,7 @@ export class ProfileService {
     try {
       time = user.birth.getTime();
     } catch (error) {
-      time = null;
+      time = this.user.birth;
     }
     return this.apollo
       .mutate<{ editUser: UserResponse }>({
@@ -208,10 +208,10 @@ export class ProfileService {
             password: user.password,
             phone: user.phone,
             birth: time,
-            description: user.description || null,
+            description: user.description || null
           },
-          id,
-        },
+          id
+        }
       })
       .pipe(tap(console.log));
   }

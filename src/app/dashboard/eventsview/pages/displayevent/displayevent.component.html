@@ -9,9 +9,10 @@
     <h1 class="title line_addon">{{ currentEvent.name }}</h1>
     <div class="media">
       <img
+        nz-image
         class="media__image"
         *ngIf="!isVideo"
-        [src]="currentEvent.eventCover"
+        [nzSrc]="currentEvent.eventCover | resolveUrl: true"
         alt=""
       />
       <app-videoplayer
@@ -81,7 +82,9 @@
     </section>
   </nz-card>
   <!-- comments -->
-  <ng-container *ngIf="currentEvent.includeComments">
+  <ng-container
+    *ngIf="currentEvent.includeComments && currentEvent?.id_comment"
+  >
     <app-comments [idBootrapComment]="currentEvent.id_comment"></app-comments>
   </ng-container>
 </article>

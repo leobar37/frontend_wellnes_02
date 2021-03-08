@@ -36,6 +36,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { StateRequestsPipe } from './components/handle-credits/state-requests.pipe';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
 const zorro = [
   NzTabsModule,
   NzButtonModule,
@@ -50,6 +51,7 @@ const zorro = [
   NzDescriptionsModule,
   NzModalModule,
   NzInputNumberModule,
+  NzTypographyModule
 ];
 const material = [MatFormFieldModule, MatInputModule];
 @NgModule({
@@ -60,7 +62,7 @@ const material = [MatFormFieldModule, MatInputModule];
     ProfilePageComponent,
     ChangueEmailComponent,
     HandleCreditsComponent,
-    StateRequestsPipe,
+    StateRequestsPipe
   ],
   imports: [
     CommonModule,
@@ -70,12 +72,12 @@ const material = [MatFormFieldModule, MatInputModule];
     FormsModule,
     ...material,
     NzDividerModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     ProfileService,
     JwtService,
-    { provide: PROFILECONFIG, useValue: DEFAULTCONFIGPROFILE },
-  ],
+    { provide: PROFILECONFIG, useValue: DEFAULTCONFIGPROFILE }
+  ]
 })
 export class ProfileModule {}

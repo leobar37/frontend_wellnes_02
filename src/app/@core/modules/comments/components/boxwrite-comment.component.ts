@@ -5,7 +5,7 @@ import {
   Output,
   forwardRef,
   ChangeDetectorRef,
-  EventEmitter,
+  EventEmitter
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 @Component({
@@ -40,18 +40,18 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     </mat-form-field>
     <nz-form-item>
       <button
-        mat-raised-button
+        nz-button
+        nzType="primary"
         (click)="handleSubmit()"
         [hidden]="inputValue.length == 0"
-        color="primary"
       >
         comentar
       </button>
-      <ul class="bars">
+      <!-- <ul class="bars">
         <a (click)="visiblePickerIcon = !visiblePickerIcon">
           <i class="far fa-smile-beam icon"></i>
         </a>
-      </ul>
+      </ul> -->
     </nz-form-item>
   `,
   styles: [``],
@@ -59,9 +59,9 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => BoxwriteCommentComponent),
-      multi: true,
-    },
-  ],
+      multi: true
+    }
+  ]
 })
 export class BoxwriteCommentComponent implements OnInit, ControlValueAccessor {
   inputValue: string = '';

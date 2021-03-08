@@ -6,9 +6,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ResolveUrlPipe implements PipeTransform {
   constructor(private utils: UtilsService) {}
-  transform(value: string): SafeUrl {
+  transform(value: string, normal: boolean): SafeUrl {
     if (!value?.length) {
       return null;
+    }
+    if (normal) {
+      return this.utils.resolveNormalPathImage(value);
     }
     return this.utils.resolvePathImage(value);
   }

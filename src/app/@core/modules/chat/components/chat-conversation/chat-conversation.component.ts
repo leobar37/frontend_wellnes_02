@@ -63,7 +63,7 @@ export class ChatConversationComponent implements OnInit, OnChanges, OnDestroy {
         takeUntil(this.destroy$),
         switchMap((_) =>
           interval(50).pipe(
-            take(1),
+            take(2),
             tap((_) => {
               this.zone.runOutsideAngular(() => {
                 this.refScroll.scrollTo({

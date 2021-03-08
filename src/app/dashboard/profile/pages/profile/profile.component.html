@@ -78,7 +78,9 @@
     <tr>
       <th>codigo</th>
       <td>
-        {{ user.code }}
+        <p nz-typography nzCopyable [nzContent]="user.code">
+          {{ user.code }}
+        </p>
       </td>
     </tr>
 
@@ -138,7 +140,7 @@
         <ng-container [ngTemplateOutlet]="pendenting"></ng-container>
       </ng-container>
 
-      <h2 class="title line_addon">Datos de Perfil</h2>
+      <h2 class="title line_addon my-2">Datos de Perfil</h2>
       <ng-container [ngTemplateOutlet]="detailprofile"></ng-container>
     </div>
     <div gdArea="description">
@@ -155,7 +157,7 @@
 <!-- navigate -->
 
 <section class="contain">
-  <nz-tabset nzType="card" nzSelectedIndex="2">
+  <nz-tabset nzType="card" nzSelectedIndex="0">
     <nz-tab nzTitle="perfil">
       <ng-container *ngTemplateOutlet="profileTemplate"></ng-container>
     </nz-tab>

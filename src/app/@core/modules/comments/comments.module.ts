@@ -27,7 +27,7 @@ const zorro = [
   NzListModule,
   NzButtonModule,
   NzAvatarModule,
-  NzCardModule,
+  NzCardModule
 ];
 const material = [MatInputModule, MatButtonModule];
 
@@ -36,6 +36,6 @@ const nativeModules = [FormsModule, HttpClientModule, PickerModule];
   declarations: [CommentsComponent, CommentComponent, BoxwriteCommentComponent],
   imports: [CommonModule, ...zorro, ...nativeModules, ...material],
   exports: [CommentsComponent],
-  providers: [CommentService],
+  providers: [CommentService]
 })
 export class CommentsModule {}

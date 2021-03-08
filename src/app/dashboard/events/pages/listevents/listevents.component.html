@@ -9,7 +9,13 @@
   </h1>
 
   <nz-card>
-    <nz-table #table [nzData]="viewEventsData">
+    <nz-table
+      #table
+      [nzData]="viewEventsData"
+      [nzNoResult]="
+        'Todavia no has agregadado ningún ' + configAction.action | lowercase
+      "
+    >
       <thead>
         <tr>
           <th>Titúlo</th>
