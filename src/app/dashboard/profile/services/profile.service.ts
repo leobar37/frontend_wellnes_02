@@ -21,6 +21,7 @@ const USERFRAGMENT = gql`
     id
     email
     image
+    rol
     description
     create
     phone
@@ -121,9 +122,12 @@ const EDITPROFILE = gql`
   providedIn: 'root'
 })
 export class ProfileService {
-  jwtService: JwtService;
   private user: IUser;
-  constructor(private apollo: Apollo, private injector: Injector) {}
+  constructor(
+    private apollo: Apollo,
+    private injector: Injector,
+    private jwtService: JwtService
+  ) {}
   public uploadFile(
     file: File,
     id: number
@@ -144,19 +148,24 @@ export class ProfileService {
 
   public async onlyUser() {
     if (this.user) {
-      this.user;
+      return this.user;
     } else {
-      this.user = await this.getUser(null, 'only')
+      const user = this.jwtService.getUserOfToken();
+      this.user = await this.apollo
+        .query({
+          query: GET_USER,
+          variables: { id: user.id },
+          fetchPolicy: 'network-only'
+        })
         .pipe(pluck('data', 'getUser', 'user'))
         .toPromise();
+      return this.user;
     }
-    return this.user;
   }
   public getUser(
     mode?: string,
     relation?: 'eventscreated' | 'referreals' | 'eventasisted' | 'only'
   ): Observable<ApolloQueryResult<{ getUser: UserResponse }>> {
-    this.jwtService = this.injector.get<JwtService>(JwtService);
     const user = this.jwtService.getUserOfToken();
     let query = GET_USER;
     if (relation)

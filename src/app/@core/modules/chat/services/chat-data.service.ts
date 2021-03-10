@@ -268,15 +268,11 @@ export class ChatDataService {
       usersActives = [...usersActives, eventSuscribeUser.user];
       this.activeUsersSubject$.next(usersActives);
     }
-    console.log(usersActives);
   }
 
   public createConversation(idResponse: number): Observable<IConversation> {
     const user = this.user;
-    const usResponse = this.activeUsersSubject$.value.find(
-      (el) => el.id == idResponse
-    );
-    this.nameUser.next(usResponse.name);
+
     return this.apollo
       .mutate({
         mutation: CREATE_CONVERSATION,
@@ -287,10 +283,18 @@ export class ChatDataService {
       })
       .pipe(
         tap((data) => {
+          console.log('data ');
+          console.log(data);
+
           this.membersInconversation = _.get(
             data,
             'data.createConversation.members'
           );
+          const useResponse = this.membersInconversation.find(
+            (el) => el.id == idResponse
+          );
+          this.nameUser.next(useResponse.name);
+
           const messages = _.get(data, 'data.createConversation.messages');
           this.messageConversationSubject$.next(
             this.transformMessage(messages)

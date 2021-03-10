@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
-import { split } from '@apollo/client/core';
+import { split, ApolloLink } from '@apollo/client/core';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
 import { environment } from '../environments/environment';
@@ -12,7 +12,13 @@ import { getMainDefinition } from '@apollo/client/utilities';
 const uri = `${environment.apiUrl}/graphql`; // <-- add the URL of the GraphQL server here
 const uriWs = `ws://${environment.hostSubs}/suscriptions`;
 import { setContext } from '@apollo/client/link/context';
-export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
+import { onError } from '@apollo/client/link/error';
+import { MangeErrors } from './helpers/NetworkError';
+import { NzModalService } from 'ng-zorro-antd/modal';
+export function createApollo(
+  httpLink: HttpLink,
+  manageErrors: MangeErrors
+): ApolloClientOptions<any> {
   const ws = new WebSocketLink({
     uri: uriWs,
     options: {
@@ -34,18 +40,35 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     ws,
     http
   );
+  const errorHandler = onError((errResponse) => {
+    manageErrors.receivedErrors(errResponse);
+  });
+  const tokenContext = setContext((operation, context) => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return null;
+    }
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    };
+  });
   return {
-    link: link,
+    link: ApolloLink.from([errorHandler, tokenContext, link]),
     cache: new InMemoryCache()
   };
 }
 
 @NgModule({
   providers: [
+    NzModalService,
+    MangeErrors,
     {
       provide: APOLLO_OPTIONS,
       useFactory: createApollo,
-      deps: [HttpLink]
+      deps: [HttpLink, MangeErrors]
     }
   ]
 })

@@ -17,7 +17,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-
+import { roleModule } from '@core/directives/rol.directive';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
 // chat module
@@ -36,7 +36,7 @@ const zorro = [
   NzIconModule
 ];
 import { StatusUserService } from './services/status-user.service';
-const me = [ChatModule];
+const me = [ChatModule, roleModule];
 
 @NgModule({
   declarations: [DashboardComponent, NavbarComponent],

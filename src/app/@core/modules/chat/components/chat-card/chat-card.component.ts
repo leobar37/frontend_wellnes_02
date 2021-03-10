@@ -33,6 +33,7 @@ import { takeUntil, map } from 'rxjs/operators';
 import { Subject, of, Observable } from 'rxjs';
 import { ChatDataService } from '../../services/chat-data.service';
 import _ from 'lodash';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'app-chat-card',
   templateUrl: './chat-card.component.html',
@@ -40,6 +41,7 @@ import _ from 'lodash';
   encapsulation: ViewEncapsulation.None,
   animations: []
 })
+@UntilDestroy()
 export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
   config: SwiperConfigInterface = {
     slidesPerView: 3,
@@ -92,10 +94,20 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
     this.setupObservable();
     this.listenChanguesForm();
     this.renderScreen();
-
     this.nameRemitent = this.dataService.nameUser;
+    this.listenOpenChat();
   }
+  // Subscriptor a evento externos de abrir chat
+  private listenOpenChat() {
+    this.chatUiService.observeOpenChat$
+      .pipe(untilDestroyed(this))
+      .subscribe((val) => {
+        console.log('enter chat');
+        console.log(val);
 
+        this.enterChat(val);
+      });
+  }
   attached($event: CdkPortalOutletAttachedRef) {}
   getPrincipalTemplate() {
     if (this._principalScreenTemplate) {
@@ -177,6 +189,9 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
     const sub = this.dataService
       .createConversation(Number(id))
       .subscribe((conver) => {
+        console.log('conversation');
+        console.log(conver);
+
         sub.unsubscribe();
         this.currentScreen = this.getMessageTemplate({ id: conver.id });
       });
@@ -200,8 +215,6 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clickItem(ctx: { id: typID }) {
-    console.log('click', ctx);
-
     // set currrent conversation id
     this.dataService.getConversation(Number(ctx.id)).then((res) => {
       console.log('data');

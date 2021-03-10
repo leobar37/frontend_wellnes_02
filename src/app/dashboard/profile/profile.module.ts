@@ -37,6 +37,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { StateRequestsPipe } from './components/handle-credits/state-requests.pipe';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { roleModule } from '@core/directives/rol.directive';
 const zorro = [
   NzTabsModule,
   NzButtonModule,
@@ -53,6 +54,7 @@ const zorro = [
   NzInputNumberModule,
   NzTypographyModule
 ];
+const me = [roleModule];
 const material = [MatFormFieldModule, MatInputModule];
 @NgModule({
   declarations: [
@@ -68,6 +70,7 @@ const material = [MatFormFieldModule, MatInputModule];
     CommonModule,
     FlexLayoutModule,
     ProfileRoutingModule,
+    ...me,
     ...zorro,
     FormsModule,
     ...material,

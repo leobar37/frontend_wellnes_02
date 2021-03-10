@@ -14,6 +14,14 @@ import { ComponentPortal, DomPortalOutlet } from '@angular/cdk/portal';
 export class ChatuiService {
   private portal: DomPortalOutlet;
   private animation$ = new Subject<string>();
+  private openChat$ = new Subject<number>();
+
+  public observeOpenChat$ = this.openChat$.asObservable();
+
+  private closeChat$ = new Subject<void>();
+
+  public observeCloseChat$ = this.closeChat$.asObservable();
+
   constructor(
     private appRef: ApplicationRef,
     private injector: Injector,
@@ -32,6 +40,12 @@ export class ChatuiService {
       );
       return this.portal;
     }
+  }
+  closeChat() {
+    this.closeChat$.next();
+  }
+  openChatWithUser(idUser: number) {
+    this.openChat$.next(idUser);
   }
   actionAnimation(animation: string) {
     this.animation$.next(animation);

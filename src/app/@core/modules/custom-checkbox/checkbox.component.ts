@@ -41,7 +41,6 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 /** este componente le da una funcion más a los checkbox de la libreria ng desing ant
  *
  * entrega el resultado de un solo checkbox
-
  */
 export class CheckboxComponent
   implements OnInit, ControlValueAccessor, AfterViewInit {
@@ -60,8 +59,6 @@ export class CheckboxComponent
      */
     this.changueDetection.markForCheck();
     if (this.onChangue) {
-      console.log('emit value');
-
       this.onChangue(this.items.find(({ checked }) => checked).value);
     }
   }

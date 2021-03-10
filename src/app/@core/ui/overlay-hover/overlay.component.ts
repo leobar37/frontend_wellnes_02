@@ -46,7 +46,11 @@ import { InputBoolean } from 'ng-zorro-antd/core/util';
 })
 export class OverlayComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() origin: CdkOverlayOrigin;
+
+  @Input()
+  @InputBoolean()
   isOpen: boolean = false;
+
   @ViewChild('parent', { static: false }) dialog: ElementRef;
   @ViewChild('content', { static: false }) content: ElementRef;
   @Output()

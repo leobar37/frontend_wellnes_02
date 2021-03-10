@@ -4,6 +4,8 @@
 <app-overlay
   ($open)="openEvent()"
   ($close)="closeEvent()"
+  fixedOverlay
+  [isOpen]="open"
   [origin]="originOverlay"
   [position]="{ x: -85, y: 50 }"
 >

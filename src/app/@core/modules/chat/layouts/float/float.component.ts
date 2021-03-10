@@ -9,13 +9,14 @@ import {
   ViewContainerRef
 } from '@angular/core';
 import { ComponentPortal } from '@angular/cdk/portal';
-
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'app-float',
   templateUrl: './float.component.html',
   styleUrls: ['./float.component.scss'],
   animations: []
 })
+@UntilDestroy()
 export class FloatComponent implements OnInit {
   open = false;
   portal: Portal<any>;
@@ -39,6 +40,18 @@ export class FloatComponent implements OnInit {
     }
   }
   ngOnInit(): void {
+    // build portal
     this.openPortal();
+    this.uiChatService.observeOpenChat$
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.open = true;
+      });
+
+    this.uiChatService.observeCloseChat$
+      .pipe(untilDestroyed(this))
+      .subscribe((_) => {
+        this.open = false;
+      });
   }
 }

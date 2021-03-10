@@ -15,7 +15,7 @@ import {
   TemplateRef,
   AfterViewInit,
   ComponentFactoryResolver,
-  HostBinding,
+  HostBinding
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -39,7 +39,7 @@ export type IOptionViewMore = {
     <a class="view_btn" (click)="viewMore()"> {{ text }} </a>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./viewmore.component.scss'],
+  styleUrls: ['./viewmore.component.scss']
 })
 export class ViewMoreComponent implements OnInit, AfterViewInit {
   @Input() public tpl: TemplateRef<any>;
@@ -95,7 +95,7 @@ export class ViewMoreComponent implements OnInit, AfterViewInit {
 }
 
 @Directive({
-  selector: '[viewMore]',
+  selector: '[viewMore]'
 })
 export class ViewMoreDirective implements OnInit {
   @Input() viewMore: IOptionViewMore;
@@ -123,6 +123,6 @@ export class ViewMoreDirective implements OnInit {
 @NgModule({
   declarations: [ViewMoreDirective],
   imports: [CommonModule],
-  exports: [ViewMoreDirective],
+  exports: [ViewMoreDirective]
 })
 export class ViewMoreModule {}

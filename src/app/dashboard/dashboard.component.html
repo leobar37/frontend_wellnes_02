@@ -19,30 +19,32 @@
       </ng-container>
       <ng-template #tplmenu let-menu>
         <ng-container *ngFor="let item of menu">
-          <li
-            class="sibebar_item"
-            *ngIf="!item.items"
-            nz-menu-item
-            [routerLink]="item.route"
-          >
-            <i nz-icon [nzType]="item.icon" *ngIf="item.icon"></i>
-            <span>{{ item.name }}</span>
-          </li>
-          <li
-            nz-submenu
-            class="sidebar_item"
-            *ngIf="item.items"
-            [nzTitle]="item.name"
-            nzIcon="{{ item.icon }}"
-          >
-            <ul>
-              <li nz-menu-item *ngFor="let subItem of item.items">
-                <a [routerLink]="subItem.route">
-                  {{ subItem.name }}
-                </a>
-              </li>
-            </ul>
-          </li>
+          <ng-container *visibleRole="item.roles">
+            <li
+              class="sibebar_item"
+              *ngIf="!item.items"
+              nz-menu-item
+              [routerLink]="item.route"
+            >
+              <i nz-icon [nzType]="item.icon" *ngIf="item.icon"></i>
+              <span>{{ item.name }}</span>
+            </li>
+            <li
+              nz-submenu
+              class="sidebar_item"
+              *ngIf="item.items"
+              [nzTitle]="item.name"
+              nzIcon="{{ item.icon }}"
+            >
+              <ul>
+                <li nz-menu-item *ngFor="let subItem of item.items">
+                  <a [routerLink]="subItem.route">
+                    {{ subItem.name }}
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ng-container>
         </ng-container>
       </ng-template>
     </ul>
@@ -86,5 +88,5 @@
     </nz-content>
   </nz-layout>
 </nz-layout>
-
+<!-- chat type float -->
 <app-chat type="FLOAT"></app-chat>

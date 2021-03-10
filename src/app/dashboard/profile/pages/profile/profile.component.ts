@@ -44,8 +44,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
       .getUser()
       .subscribe(({ data, loading }) => {
         if (data.getUser.resp) {
-          console.log(data);
-
           this.user = Object.assign({}, data.getUser.user);
           if (!this.user.description) {
             this.user = {

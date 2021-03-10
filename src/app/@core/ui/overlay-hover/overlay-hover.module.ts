@@ -2,10 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OverlayComponent } from './overlay.component';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { IndexDirective } from './index.directive';
 @NgModule({
-  declarations: [OverlayComponent, IndexDirective],
+  declarations: [OverlayComponent],
   imports: [CommonModule, OverlayModule],
-  exports: [OverlayComponent],
+  exports: [OverlayComponent]
 })
 export class OverlayHoverModule {}
