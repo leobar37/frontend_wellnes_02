@@ -1,3 +1,4 @@
+import { RequestCreditsComponent } from './request-credits/request-credits.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CtrlusersComponent } from './ctrlusers.component';
@@ -11,6 +12,10 @@ const routes: Routes = [
       {
         component: UsersComponent,
         path: 'list'
+      },
+      {
+        component: RequestCreditsComponent,
+        path: 'request'
       }
     ]
   }

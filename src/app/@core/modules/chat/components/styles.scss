@@ -68,7 +68,7 @@
     &_item {
       display: grid;
       text-align: left;
-      grid-template-columns: 15% 65% 10%;
+      grid-template-columns: 80px 65% 10%;
       grid-template-rows: 1;
       padding: 0 !important;
       * {
@@ -89,6 +89,7 @@
         }
       }
       &_text {
+        width: 100%;
         text-align: left;
         margin-top: 10px;
         justify-self: center;

@@ -30,6 +30,8 @@ import { roleModule as RolDirectiveModule } from '@core/directives/rol.directive
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { UsersModalComponent } from './modals/users-modal/users-modal.component';
 import { NzFormModule } from 'ng-zorro-antd/form';
+import { RequestCreditsComponent } from './request-credits/request-credits.component';
+import { CreditsreportService } from './services/creditsreport.service';
 const zorro = [
   NzCheckboxModule,
   NzTableModule,
@@ -61,7 +63,8 @@ const material = [MatChipsModule, MatDialogModule];
     UsersComponent,
     UserModalComponent,
     RoleCheckComponent,
-    UsersModalComponent
+    UsersModalComponent,
+    RequestCreditsComponent
   ],
   imports: [
     CommonModule,
@@ -72,6 +75,6 @@ const material = [MatChipsModule, MatDialogModule];
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [UserService]
+  providers: [UserService, CreditsreportService]
 })
 export class CtrlusersModule {}

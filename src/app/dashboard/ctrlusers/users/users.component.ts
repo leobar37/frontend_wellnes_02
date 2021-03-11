@@ -38,6 +38,7 @@ export class UsersComponent implements OnInit {
     this.checkedAll = this.users.every(({ id }) => this.idsSelect.has(id));
     this.indeterminate =
       this.users.some(({ id }) => this.idsSelect.has(id)) && !this.checkedAll;
+
     if (this.indeterminate || this.checkedAll) {
       this.hideButtonOperations = true;
     } else {
@@ -47,6 +48,7 @@ export class UsersComponent implements OnInit {
 
   onAllChecked(checked: boolean) {
     this.users.forEach(({ id }) => this.updateChecked(id, checked));
+    this.refreshCheckedStatus();
   }
   private updateChecked(id: number, checked: boolean) {
     if (checked) {

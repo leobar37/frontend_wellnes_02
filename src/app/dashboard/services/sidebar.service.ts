@@ -24,8 +24,11 @@ export class SidebarService {
       name: 'Control de usuarios',
       icon: 'user',
       route: 'ctrlus',
-      roles: [ERol.USER],
-      items: [{ name: 'Usuarios', route: 'ctrlus/list' }]
+      roles: [ERol.ADMIN, ERol.ASESOR],
+      items: [
+        { name: 'Usuarios', route: 'ctrlus/list' },
+        { name: 'Solictitudes', route: 'ctrlus/request' }
+      ]
     },
     {
       name: 'apps',
