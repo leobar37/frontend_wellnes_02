@@ -10,12 +10,14 @@ import {
   SimpleChanges,
   ElementRef,
   Renderer2,
-  HostBinding,
+  HostBinding
 } from '@angular/core';
 import { VgOverlayPlayComponent } from '@videogular/ngx-videogular/overlay-play';
 import { VgApiService } from '@videogular/ngx-videogular/core';
 import { CONFIG_PLAYER, IOptionsVideoPlayer } from '../model';
 import _ from 'lodash';
+import { InputCssPixel } from 'ng-zorro-antd/core/util';
+import { coerceCssPixelValue } from '@angular/cdk/coercion';
 @Component({
   selector: 'app-videoplayer',
   template: `
@@ -33,7 +35,12 @@ import _ from 'lodash';
         <vg-mute></vg-mute>
       </vg-controls>
       <!-- custom  overlay play -->
-      <app-overlay-play #overlay class="overlay" [thumbnail]="thumbnail">
+      <app-overlay-play
+        #overlay
+        *ngIf="thumbnail"
+        class="overlay"
+        [thumbnail]="thumbnail | resolveUrl"
+      >
       </app-overlay-play>
       <video
         [vgMedia]="media"
@@ -44,20 +51,19 @@ import _ from 'lodash';
       ></video>
     </vg-player>
   `,
-  styleUrls: [`./stylesplayer.components.scss`],
+  styleUrls: [`./stylesplayer.components.scss`]
 })
 export class VideoplayerComponent implements OnInit, AfterViewInit, OnChanges {
   url: string | SafeUrl;
   apiVideo: VgApiService;
 
   @ViewChild('media') elementvideo: ElementRef<HTMLVideoElement>;
-  @Input()
-  public set src(v: string | SafeUrl) {
+  @Input() set src(v: string | SafeUrl) {
     this.url = v;
   }
   // variables in css
-  @HostBinding('style.--width') widthVideo: string;
-  @HostBinding('style.--heigth') heigthVideo: string;
+  @HostBinding('style.--width') @InputCssPixel() widthVideo: string;
+  @HostBinding('style.--heigth') @InputCssPixel() heigthVideo: string;
 
   @Input() thumbnail: string;
   @ViewChild('overlay') elment: VgOverlayPlayComponent;
@@ -71,8 +77,8 @@ export class VideoplayerComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {}
 
   private initOptions() {
-    this.widthVideo = this.getSizeVariable(this.options.width);
-    this.heigthVideo = this.getSizeVariable(this.options.height);
+    this.widthVideo = coerceCssPixelValue(this.options.width);
+    this.heigthVideo = coerceCssPixelValue(this.options.height);
   }
 
   private getSizeVariable(size: number | string): string {

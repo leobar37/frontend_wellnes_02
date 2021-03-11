@@ -3,7 +3,7 @@
   <!-- search component -->
   <app-chat-search></app-chat-search>
   <!-- active asesor -->
-  <span class="subtitle"> Asesores activos </span>
+  <span class="subtitle"> {{ isUser ? "Asesores" : "Usuarios" }} </span>
   <!--avatar list -->
   <app-chat-lists-avatar>
     <app-chat-avatar

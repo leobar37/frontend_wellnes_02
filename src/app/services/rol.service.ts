@@ -20,12 +20,15 @@ export class RolService {
     return rolesUser.has(rol);
   }
 
+  async isOnlyRol(rol: ERol) {
+    const user = await this.profileService.onlyUser();
+    return user.rol.every((el) => el == rol);
+  }
+
   async checkRoles(roles: ERol[]) {
     const user = await this.profileService.onlyUser();
     const rolesUser = new Set(user.rol);
-
     const matchesRol = roles.filter((rol) => rolesUser.has(rol));
-
     return matchesRol.length > 0;
   }
 }

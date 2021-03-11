@@ -6,7 +6,6 @@ import { fromEvent } from 'rxjs';
 export class DelimiterDirective {
   constructor(private el: ElementRef) {
     fromEvent(el.nativeElement as HTMLInputElement, 'input').subscribe((el) => {
-      console.log();
       const char = (el as any).data;
       const value = (el.target as any).value as string;
       if (value.length == 1) {

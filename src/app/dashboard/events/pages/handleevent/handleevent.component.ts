@@ -13,13 +13,7 @@ import { of, Subscription } from 'rxjs';
 import { getBase64 } from 'src/app/helpers/helpers';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import {
-  Router,
-  ActivatedRoute,
-  Params,
-  Data,
-  NavigationExtras,
-} from '@angular/router';
+import { Router, ActivatedRoute, Params, Data } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import _ from 'lodash';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -47,9 +41,9 @@ interface IconfigValueForm {
     {
       provide: ICONFIG_ACTION,
       useFactory: configResolveFactory,
-      deps: [ActivatedRoute],
-    },
-  ],
+      deps: [ActivatedRoute]
+    }
+  ]
 })
 export class HandleeventComponent implements OnInit {
   /**
@@ -81,16 +75,16 @@ export class HandleeventComponent implements OnInit {
   }[] = [
     {
       label: 'borrador',
-      value: EventState.DRAFT,
+      value: EventState.DRAFT
     },
     {
       label: 'publicar',
-      value: EventState.PUBLIC,
+      value: EventState.PUBLIC
     },
     {
       label: 'programar',
-      value: EventState.PROGRAM,
-    },
+      value: EventState.PROGRAM
+    }
   ];
   constructor(
     private msg: NzMessageService,
@@ -184,7 +178,7 @@ export class HandleeventComponent implements OnInit {
       '/dashboard',
       'events',
       'sesion',
-      this.currentEvent.id,
+      this.currentEvent.id
     ]);
   }
 
@@ -194,7 +188,7 @@ export class HandleeventComponent implements OnInit {
     if (this.eventForm.invalid) {
       this.modal.error({
         nzTitle: 'Error',
-        nzContent: 'Formulario invalido',
+        nzContent: 'Formulario invalido'
       });
       throw new Error();
     }
@@ -208,7 +202,7 @@ export class HandleeventComponent implements OnInit {
       if (configValue.programDate == null || configValue.programTime == null) {
         this.modal.error({
           nzTitle: 'Error',
-          nzContent: 'Por favor proporcione todos los campos',
+          nzContent: 'Por favor proporcione todos los campos'
         });
         throw new Error();
       }
@@ -227,7 +221,7 @@ export class HandleeventComponent implements OnInit {
       includeComments: configValue.includeComment,
       modeEvent: this.config.type,
       category_id: eventFormValue.categorie,
-      credits: Number(eventFormValue.credits),
+      credits: Number(eventFormValue.credits)
     } as IEvent;
   }
   /*=============================================
@@ -251,7 +245,7 @@ export class HandleeventComponent implements OnInit {
     if (!this.previewImage) {
       this.modal.error({
         nzTitle: 'Error',
-        nzContent: `El ${this.config.action} necesita una imagen`,
+        nzContent: `El ${this.config.action} necesita una imagen`
       });
       return;
     }
@@ -273,7 +267,7 @@ export class HandleeventComponent implements OnInit {
           },
           nzOnCancel: () => {
             throw new Error();
-          },
+          }
         });
       }
 
@@ -291,7 +285,7 @@ export class HandleeventComponent implements OnInit {
             const resource = await this.resourceService.createResource({
               key: dataresource.key,
               bucket: dataresource.bucket,
-              type: dataresource.type,
+              type: dataresource.type
             });
             event.id_resource = resource.data.createResource.id;
           } else {
@@ -299,7 +293,7 @@ export class HandleeventComponent implements OnInit {
               {
                 bucket: dataresource.bucket,
                 key: dataresource.key,
-                type: dataresource.type,
+                type: dataresource.type
               },
               this.currentEvent.id_resource
             );
@@ -308,7 +302,6 @@ export class HandleeventComponent implements OnInit {
           // event.id_resource = resource.id;
         } catch (error) {}
       }
-      console.log(event);
 
       if (!this.editMode) {
         this.messageSpinner = 'Cargando' + this.config.action;
@@ -338,8 +331,6 @@ export class HandleeventComponent implements OnInit {
   private saveEvent(event: IEvent): void {
     const subSaveEvent = this.eventService.addEvent(event).subscribe(
       (res) => {
-        console.log(res);
-
         if (res.data.createEvent.resp) {
           const evenResp = res.data.createEvent.event;
           this.setValuesOnFormEvent(evenResp);
@@ -351,8 +342,8 @@ export class HandleeventComponent implements OnInit {
           this.editMode = true;
           this.router.navigate([], {
             queryParams: {
-              edit: res.data.createEvent.event.id,
-            },
+              edit: res.data.createEvent.event.id
+            }
           });
         }
       },
@@ -377,7 +368,7 @@ export class HandleeventComponent implements OnInit {
       } else {
         this.modal.error({
           nzTitle: 'Error',
-          nzContent: `Este ${this.config.action} no ha sido encontrado`,
+          nzContent: `Este ${this.config.action} no ha sido encontrado`
         });
         this.router.navigateByUrl('/dashboard');
       }
@@ -408,7 +399,7 @@ export class HandleeventComponent implements OnInit {
     this.eventForm.patchValue({
       title: event.name,
       description: event.description,
-      credits: event.credits,
+      credits: event.credits
     });
 
     this.configForm.patchValue({
@@ -422,7 +413,7 @@ export class HandleeventComponent implements OnInit {
         statateEvent == EventState.PROGRAM
           ? new Date(event.publishedDate)
           : null,
-      includeVideo: event.includeVideo,
+      includeVideo: event.includeVideo
     });
     if (urlVideo?.length) {
       this.videosrc = this.sanitize.bypassSecurityTrustUrl(urlVideo);
@@ -444,16 +435,16 @@ export class HandleeventComponent implements OnInit {
       programDate: this.fb.control(null),
       programTime: this.fb.control(null),
       includeVideo: this.fb.control(false),
-      optionPublished: this.fb.control(this.optionsPublished),
+      optionPublished: this.fb.control(this.optionsPublished)
     });
     this.eventForm = this.fb.group({
       title: this.fb.control('', [Validators.required]),
       description: this.fb.control(null, [Validators.required]),
       categorie: this.fb.control(null, [
         Validators.required,
-        MyCustomValidators.verifyCriteriaInArray('name', this.categories),
+        MyCustomValidators.verifyCriteriaInArray('name', this.categories)
       ]),
-      credits: this.fb.control(0, [Validators.required]),
+      credits: this.fb.control(0, [Validators.required])
     });
   }
   /*=============================================

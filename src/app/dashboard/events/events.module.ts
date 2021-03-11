@@ -72,7 +72,7 @@ const zorro = [
   NzTableModule,
   NzBadgeModule,
   NzDividerModule,
-  NzInputNumberModule,
+  NzInputNumberModule
 ];
 
 @NgModule({
@@ -81,7 +81,7 @@ const zorro = [
     HandleeventComponent,
     HandlesesionComponent,
     ListSesionsComponent,
-    ListeventsComponent,
+    ListeventsComponent
   ],
   imports: [
     FlexLayoutModule,
@@ -94,10 +94,10 @@ const zorro = [
     NgxSpinnerModule,
     EventsRoutingModule,
     CustomCheckboxModule,
-    PlayerModule,
+    PlayerModule.forRoot(),
     CloudinaryModule,
-    zorro,
+    zorro
   ],
-  providers: [EventService, SesionService],
+  providers: [EventService, SesionService]
 })
 export class EventsModule {}

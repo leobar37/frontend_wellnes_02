@@ -1,3 +1,4 @@
+import { ERol, RolService } from './../../../../../services/rol.service';
 import { FormControl, Validators } from '@angular/forms';
 import { ChatuiService } from './../../services/chatui.service';
 import {
@@ -79,11 +80,20 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
   // name of participant
 
   // variables manipule state
+
+  isUser: boolean;
   constructor(
     private viewRef: ViewContainerRef,
     private chatUiService: ChatuiService,
-    private dataService: ChatDataService
-  ) {}
+    private dataService: ChatDataService,
+    private rolService: RolService
+  ) {
+    this.rolService.isOnlyRol(ERol.USER).then((res) => {
+      if (res) {
+        this.isUser = res;
+      }
+    });
+  }
   ngOnDestroy(): void {
     this.dataService.detroyEvent();
   }
@@ -97,6 +107,7 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
     this.nameRemitent = this.dataService.nameUser;
     this.listenOpenChat();
   }
+
   // Subscriptor a evento externos de abrir chat
   private listenOpenChat() {
     this.chatUiService.observeOpenChat$
@@ -108,7 +119,11 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
         this.enterChat(val);
       });
   }
-  attached($event: CdkPortalOutletAttachedRef) {}
+
+  /*=============================================
+ =            GETS BASICS            =
+ =============================================*/
+
   getPrincipalTemplate() {
     if (this._principalScreenTemplate) {
       return this._principalScreenTemplate;

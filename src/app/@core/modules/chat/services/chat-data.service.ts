@@ -7,12 +7,11 @@ import {
   IMessage,
   statusChatResponse
 } from './../model';
-import { tap, pluck, takeUntil } from 'rxjs/operators';
+import { tap, pluck, takeUntil, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { gql, Apollo, QueryRef } from 'apollo-angular';
 import _ from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { IUser } from '@core/models/User';
 
 const ACTIVE_USERS = gql`
@@ -141,6 +140,7 @@ const READ_MESSAGES = gql`
     readMessages(idUser: $idUser, idConversation: $idConversation)
   }
 `;
+import { orderUserXActive } from './helpers';
 
 @Injectable()
 export class ChatDataService {
@@ -154,7 +154,9 @@ export class ChatDataService {
 
   private _user: IUser;
   // expose
-  public activeUsers$ = this.activeUsersSubject$.asObservable();
+  public activeUsers$ = this.activeUsersSubject$
+    .asObservable()
+    .pipe(map(orderUserXActive));
   public recentMessages$ = this.recentMessagesSubject$.asObservable();
   public messages$ = this.messageConversationSubject$.asObservable();
 
@@ -283,9 +285,6 @@ export class ChatDataService {
       })
       .pipe(
         tap((data) => {
-          console.log('data ');
-          console.log(data);
-
           this.membersInconversation = _.get(
             data,
             'data.createConversation.members'
