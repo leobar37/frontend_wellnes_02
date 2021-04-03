@@ -14,13 +14,13 @@ import { Icategorie } from 'src/app/dashboard/categorie/model.categorie';
 @Component({
   selector: 'app-listevents',
   templateUrl: './listevents.component.html',
-  styleUrls: ['./listevents.component.scss'],
+  styleUrls: ['./listevents.component.scss']
 })
 export class ListeventsComponent implements OnInit {
   public items: IEvent[] = [];
   public options: NgxMasonryOptions = {
     gutter: 20,
-    horizontalOrder: true,
+    horizontalOrder: true
   };
 
   informationArgs: {
@@ -64,8 +64,6 @@ export class ListeventsComponent implements OnInit {
   private routerListens() {
     this.actionService.suscribeEvents('REFETCHEVENTS').subscribe((_) => {
       const params = this.activateRouter.snapshot.queryParams;
-      console.log('ne fetch');
-
       this.prepareALlLists(params);
     });
     this.activateRouter.queryParams
@@ -75,7 +73,6 @@ export class ListeventsComponent implements OnInit {
       });
   }
   private prepareALlLists(params: Params) {
-    console.log('I prepare all list baby :)');
     const isEmpty = Object.keys(params).length == 0;
     if (isEmpty) {
       this.route.navigate([], { queryParams: { type: 'events' } });
@@ -107,8 +104,8 @@ export class ListeventsComponent implements OnInit {
             args: {
               idCategory: idCategory,
               modeEvent: 'EVENT',
-              recents: true,
-            },
+              recents: true
+            }
           });
           // recents programs
           this.informationArgs.push({
@@ -117,8 +114,8 @@ export class ListeventsComponent implements OnInit {
             args: {
               idCategory: idCategory,
               modeEvent: 'PROGRAM',
-              recents: true,
-            },
+              recents: true
+            }
           });
         })
       )
@@ -130,7 +127,7 @@ export class ListeventsComponent implements OnInit {
     this.informationArgs = [];
     this.informationArgs.push({
       label: 'Recientes',
-      args: { idCategory: -1, modeEvent: this.typeEvent, recents: true },
+      args: { idCategory: -1, modeEvent: this.typeEvent, recents: true }
     });
     this.prepareLists();
   }
@@ -149,8 +146,8 @@ export class ListeventsComponent implements OnInit {
             args: {
               idCategory: categorie.id,
               modeEvent: this.typeEvent,
-              recents: false,
-            },
+              recents: false
+            }
           });
         })
       )

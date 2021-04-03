@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
       [nzCover]="coverTpl"
     >
       <ng-template #coverTpl>
-        <img [src]="item.eventCover" alt="" />
+        <img [src]="item.eventCover" [alt]="item.name" />
       </ng-template>
       <nz-card-meta [nzTitle]="title" [nzDescription]="description">
       </nz-card-meta>
@@ -23,8 +23,11 @@ import { Router } from '@angular/router';
       </ng-template>
 
       <ng-template #description>
-        <p class="paragraph normal">
-          {{ item.description | shortParagraph: 150 }}
+        <!-- <p class="paragraph normal">
+          {{ item.description | shortParagraph: 120 }}
+        </p> -->
+        <p>
+          {{ item.createEvent | date: 'short' }}
         </p>
       </ng-template>
     </nz-card>

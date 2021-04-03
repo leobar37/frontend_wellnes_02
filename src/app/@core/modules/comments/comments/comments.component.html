@@ -6,7 +6,6 @@
     <p>Se el primero en comentar</p>
   </div>
 </ng-template>
-
 <!-- list template -->
 <ng-template #listComments>
   <nz-card>
@@ -35,6 +34,7 @@
   <h3 class="title line_addon">Comentarios</h3>
   <nz-card>
     <ng-container *ngTemplateOutlet="writeComment"></ng-container>
-    <ng-container *ngTemplateOutlet="listComments"></ng-container>
+    <!-- <ng-container *ngTemplateOutlet="listComments"></ng-container> -->
+    <box-comments [comments]="comments$ | async"></box-comments>
   </nz-card>
 </div>

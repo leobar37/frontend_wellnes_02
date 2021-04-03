@@ -141,6 +141,7 @@ const READ_MESSAGES = gql`
   }
 `;
 import { orderUserXActive } from './helpers';
+import { ConversationService } from './conversation.service';
 
 @Injectable()
 export class ChatDataService {
@@ -174,7 +175,11 @@ export class ChatDataService {
 
   membersInconversation: IUserChat[] = [];
 
-  constructor(private apollo: Apollo, private jwtService: JwtService) {}
+  constructor(
+    private apollo: Apollo,
+    private jwtService: JwtService,
+    private conversationService: ConversationService
+  ) {}
 
   public init() {
     this.getViewPrincipal(this.user.id);
@@ -317,6 +322,7 @@ export class ChatDataService {
           this.messageConversationSubject$.next(
             this.transformMessage(messages)
           );
+
           this.membersInconversation = _.get(data, 'data.conversation.members');
           this.getName(this.membersInconversation);
         }),
@@ -376,10 +382,9 @@ export class ChatDataService {
       }
     }
     msg.reverse = msg.id_creator == this.user.id;
-    msgs = [...msgs, msg];
-
-    this.messageConversationSubject$.next(msgs);
-
+    this.conversationService.newMessage(msg);
+    // msgs = [...msgs, msg];
+    // this.messageConversationSubject$.next(msgs);
     // refetch recent messages
     this.queryRefRecentMessage.refetch();
   }

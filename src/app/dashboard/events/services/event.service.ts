@@ -161,9 +161,9 @@ export class EventService {
             modeEvent: event.modeEvent,
             id_user: user.id,
             category_id: event.category_id,
-            credits: event.credits,
-          },
-        },
+            credits: event.credits
+          }
+        }
       })
       .pipe(
         tap(() => {
@@ -179,8 +179,8 @@ export class EventService {
       .query({
         query: ALL_CATEGORIEE,
         variables: {
-          idCategorie,
-        },
+          idCategorie
+        }
       })
       .pipe(pluck('data', 'categories'));
   }
@@ -193,8 +193,8 @@ export class EventService {
     return this.apollo.watchQuery<{ getEventsOfUser: DetailEventAllResponse }>({
       query: GETEVENTSOFUSER,
       variables: {
-        idUser,
-      },
+        idUser
+      }
     });
   }
   public uploadFile(
@@ -205,11 +205,11 @@ export class EventService {
       mutation: UPLOADCOVEREVENT,
       variables: {
         picture: file,
-        idEvent: Number(id),
+        idEvent: Number(id)
       },
       context: {
-        useMultipart: true,
-      },
+        useMultipart: true
+      }
     });
   }
 
@@ -220,15 +220,15 @@ export class EventService {
     return this.apollo.query<{ event: IEvent }>({
       query: includeSesions ? GETEVENTWITHSESION : GETEVENT,
       variables: {
-        id: id,
-      },
+        id: id
+      }
     });
   }
   // get events
 
   public getEvents() {
     return this.apollo.query<{ getEvents: IEvent[] }>({
-      query: GETEVENTS,
+      query: GETEVENTS
     });
   }
 
@@ -261,10 +261,10 @@ export class EventService {
             includeVideo: event.includeVideo,
             modeEvent: event.modeEvent,
             category_id: event.category_id,
-            credits: event.credits,
+            credits: event.credits
           },
-          id: Number(id),
-        },
+          id: Number(id)
+        }
       })
       .pipe(
         tap((el) => {

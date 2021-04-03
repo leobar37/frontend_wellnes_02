@@ -1,9 +1,15 @@
+import { UiEventsService } from './ui-events.service';
+import { isValidValue } from './../../../../helpers/helpers';
+import { BoxCommentsService } from './box-comments.service';
+import { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { IComment, CRUD_ACTION } from './../model';
+import { tap, map, pluck } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { generateRandomColor } from '@helpers/MediumHelpers';
-import { tap } from 'rxjs/operators';
-import { gql, Apollo } from 'apollo-angular';
-import { IComment } from '../model';
+import { gql, Apollo, QueryRef } from 'apollo-angular';
+import { Comment } from '../models/comment.class';
+
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 const FRAGMENTCOMMENT = gql`
   fragment fragmentComment on Comment {
     id
@@ -12,22 +18,33 @@ const FRAGMENTCOMMENT = gql`
       image
       lastName
       getCompleteName
+      name
     }
+
     comment
-    likes
     id_bootstrap
     createComment
     updateComment
+    interaction {
+      id
+      id_user
+      id_comment
+      typeInteraction
+    }
+    id_comment
   }
 `;
 
 export const SUB_NEWCOMMENTS = gql`
   ${FRAGMENTCOMMENT}
-  subscription actionComment($bootstrap: Int!) {
-    actionComment(bootstrap: $bootstrap) {
+  subscription actionComment($bootstrap: Int, $idComment: ID) {
+    actionComment(bootstrap: $bootstrap, idComment: $idComment) {
       action
       comment {
         ...fragmentComment
+        replies {
+          ...fragmentComment
+        }
       }
     }
   }
@@ -38,6 +55,9 @@ const GET_COMMENTS = gql`
   query getComments($bootstrap: Int) {
     getComments(bootstrap: $bootstrap) {
       ...fragmentComment
+      replies {
+        ...fragmentComment
+      }
     }
   }
 `;
@@ -49,37 +69,160 @@ const ADD_COMMENT = gql`
     }
   }
 `;
+
+type PayloadActionInComment = { action: CRUD_ACTION; comment: Comment };
+
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
 @Injectable()
+@UntilDestroy()
 export class CommentService {
-  constructor(private http: HttpClient, private apollo: Apollo) {}
-  addComment(comment: IComment) {
-    console.log(comment);
+  //  local variables
+
+  private idBootstrap: number;
+
+  //  subjects
+
+  private commentSubject = new Subject<Comment[]>();
+
+  // expose public  subjects
+
+  public comments$ = this.commentSubject.asObservable();
+
+  // ref apollo queries
+
+  private _refComments: QueryRef<NzSafeAny>;
+
+  constructor(
+    private uiEventsService: UiEventsService,
+    private apollo: Apollo,
+    private boxCommentsService: BoxCommentsService
+  ) {}
+
+  public addComment(comment: IComment, isReply: boolean = false) {
     return this.apollo
       .mutate<{ addComment: Comment }>({
         mutation: ADD_COMMENT,
         variables: {
-          inputComment: { ...comment },
-        },
+          inputComment: { ...comment }
+        }
       })
       .pipe(
+        pluck('data', 'addComment'),
         tap((el) => {
-          console.log('comment added');
-          console.log(el);
+          if (!isReply) {
+            this.boxCommentsService.emitEvent('ADD', Comment.instance(el));
+          } else {
+            this.boxCommentsService.emitEvent(
+              'ADD:REPLY',
+              Comment.instance(el)
+            );
+          }
         })
       );
   }
-  getComments(bootstrap?: number) {
-    let variables: { [key: string]: any } = {};
-    if (bootstrap) {
-      variables.bootstrap = bootstrap;
-    }
-    return this.apollo.watchQuery<{ getComments: IComment[] }>({
-      query: GET_COMMENTS,
-      variables,
-    });
+
+  public init(id_bootstrap: number) {
+    this.idBootstrap = id_bootstrap;
+    // initialize ref with new id bootstrap
+    this.refComments;
+    this.commentsChangues();
+    this.subscribeActionComments({ bootstrap: id_bootstrap });
   }
 
-  getAvatarOfName(name: string, lastName: string) {
-    return `https://ui-avatars.com/api/?background=${generateRandomColor()}&color=fff&name=${name}+${lastName}`;
+  // subs
+  public subscribeActionComments(variables: {
+    bootstrap?: number;
+    idComment?: string;
+  }) {
+    const actionCreate = (data: PayloadActionInComment) => {
+      if (!isInReply) {
+        this.boxCommentsService.emitEvent('ADD', data.comment);
+      } else {
+        this.boxCommentsService.emitEvent('ADD:REPLY', data.comment);
+      }
+    };
+
+    const actionUpdate = (data: PayloadActionInComment) => {
+      this.uiEventsService.emitEventInComment({
+        action: data.action,
+        comment: data.comment
+      });
+    };
+
+    // suscribe action comments
+    const isInReply = isValidValue(variables.idComment);
+    this.apollo
+      .subscribe({
+        query: SUB_NEWCOMMENTS,
+        variables: variables,
+        fetchPolicy: 'no-cache'
+      })
+      .pipe(pluck('data', 'actionComment'))
+      .subscribe((data: PayloadActionInComment) => {
+        data.comment = Comment.instance(data.comment);
+        // ignore comment is it is ,me
+        actionUpdate(data);
+        console.log('create sub');
+
+        if (!data.comment.isMe) {
+          switch (data.action) {
+            case 'CREATE': {
+              actionCreate(data);
+              break;
+            }
+            case 'UPDATE': {
+            }
+          }
+        }
+      });
+  }
+
+  /**
+   *  suscribe to the changues in the
+   * comment itself
+   */
+
+  // local suscribes
+  private commentsChangues() {
+    this.refComments.valueChanges
+      .pipe(
+        pluck('data', 'getComments'),
+        map((els: IComment[]) => {
+          return els.map((el) => Comment.instance(el));
+        }),
+        untilDestroyed(this)
+      )
+      .subscribe((comments: Comment[]) => {
+        console.log('renew comments');
+        this.commentSubject.next(comments);
+      });
+  }
+
+  // resolver refs
+  get refComments() {
+    if (!this._refComments) {
+      if (!this.idBootstrap) {
+        throw new Error('Not bootstrap id provider for this comment');
+      }
+      this._refComments = this.apollo.watchQuery<
+        NzSafeAny,
+        { bootstrap: number }
+      >({ query: GET_COMMENTS, variables: { bootstrap: this.idBootstrap } });
+      return this._refComments;
+    } else {
+      return this._refComments;
+    }
+  }
+
+  public getComments(variables: { bootstrap: number }): Observable<Comment[]> {
+    return this.apollo
+      .query({ query: GET_COMMENTS, variables: variables })
+      .pipe(
+        pluck('data', 'getComments'),
+        map((els: IComment[]) => {
+          return els.map((el) => Comment.instance(el));
+        })
+      ) as Observable<Comment[]>;
   }
 }

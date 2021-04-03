@@ -1,3 +1,4 @@
+import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
 import { FileResponse } from '../../../@core/models/reponses/response';
 import { JwtService } from './../../../services/jwt.service';
 import { IUser } from './../../../@core/models/User';
@@ -9,6 +10,7 @@ import { catchError, map, tap, pluck } from 'rxjs/operators';
 import { UserResponse } from 'src/app/@core/models/reponses/profile.response';
 import { EVENTFRAGMENT } from '@fragments/event.fragment';
 import { CREDIT_FRAGMENT } from '@fragments/credit';
+import { share } from 'rxjs/operators';
 /*=============================================
        =            queries             =
 =============================================*/
@@ -59,7 +61,6 @@ const GET_USER_WITH_REFERREALS = gql`
       user {
         ...userprofile
         birth
-
         referreals {
           ...userprofile
           birth
@@ -82,6 +83,18 @@ const GET_USER = gql`
       }
       errors {
         message
+      }
+    }
+  }
+`;
+
+const GET_USER_WITH_EVENT_ASSISTED = gql`
+  ${EVENTFRAGMENT}
+  query getEventsAssisted($id: Int!, $mode: String!) {
+    getEventsOfUser(idUser: $id, mode: $mode) {
+      resp
+      events {
+        ...eventFragment
       }
     }
   }
@@ -162,6 +175,23 @@ export class ProfileService {
       return this.user;
     }
   }
+
+  public getEventsOfAssisted(mode?: string): Observable<IEvent[]> {
+    const user = this.jwtService.getUserOfToken();
+    return this.apollo
+      .query({
+        query: GET_USER_WITH_EVENT_ASSISTED,
+        variables: {
+          id: user.id,
+          mode: mode || 'EVENT'
+        },
+        fetchPolicy: 'network-only'
+      })
+      .pipe(pluck('data', 'getEventsOfUser', 'events'), share()) as Observable<
+      IEvent[]
+    >;
+  }
+
   public getUser(
     mode?: string,
     relation?: 'eventscreated' | 'referreals' | 'eventasisted' | 'only'
@@ -182,8 +212,10 @@ export class ProfileService {
           query = GET_USER;
           break;
         }
+        case 'eventasisted': {
+          query = GET_USER_WITH_EVENT_ASSISTED;
+        }
       }
-
     return this.apollo
       .query<{ getUser: UserResponse }>({
         query: query,

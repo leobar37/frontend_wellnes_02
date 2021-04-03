@@ -1,3 +1,4 @@
+import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NgModule } from '@angular/core';
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
@@ -45,7 +46,6 @@ export function createApollo(
   });
   const tokenContext = setContext((operation, context) => {
     const token = localStorage.getItem('token');
-
     if (!token) {
       return null;
     }
@@ -57,7 +57,22 @@ export function createApollo(
   });
   return {
     link: ApolloLink.from([errorHandler, tokenContext, link]),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+      typePolicies: {
+        Comment: {
+          fields: {
+            interaction: {
+              merge: (existing, incomming) => {
+                console.log(incomming);
+                console.log(existing);
+
+                return incomming;
+              }
+            }
+          }
+        }
+      }
+    })
   };
 }
 

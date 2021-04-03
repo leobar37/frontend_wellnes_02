@@ -50,7 +50,7 @@ const zorro = [
   NzSpinModule,
   NzListModule,
   NzImageModule,
-  NzDescriptionsModule,
+  NzDescriptionsModule
 ];
 
 const material = [MatCardModule, ScrollingModule, MatDialogModule];
@@ -65,8 +65,9 @@ const me = [ViewMoreModule];
     ItemSesionComponent,
     CardComponent,
     RowShowComponent,
-    DisplayCategorieComponent,
+    DisplayCategorieComponent
   ],
+  exports: [CardComponent],
   imports: [
     CommonModule,
     EventsviewRoutingModule,
@@ -79,8 +80,8 @@ const me = [ViewMoreModule];
     PipeShortParagraphModule,
     NgxMasonryModule,
     PlayerModule.forRoot(),
-    SwiperModule,
+    SwiperModule
   ],
-  providers: [EventServiceModule, EventService, PrincipalSesionService],
+  providers: [EventServiceModule, EventService, PrincipalSesionService]
 })
 export class EventsviewModule {}

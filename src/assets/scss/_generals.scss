@@ -23,6 +23,12 @@
   opacity: 0.8;
 }
 
+.hide {
+  display: none;
+}
+.show {
+  display: initial;
+}
 /*my tittles*/
 
 .title {
@@ -57,4 +63,9 @@
   font-weight: 600;
   font-size: 1rem;
   margin: 5px 0 default;
+}
+
+.icon_sidebar {
+  font-size: 18px;
+  opacity: 0.8;
 }

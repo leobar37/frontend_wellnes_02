@@ -2,7 +2,7 @@ import {
   AbstractControl,
   ValidatorFn,
   ValidationErrors,
-  FormGroup,
+  FormGroup
 } from '@angular/forms';
 
 import ValidePassword from 'password-validator';
@@ -14,7 +14,7 @@ schemaPasword
   .is()
   .max(100)
   .has()
-  .uppercase()
+  // .uppercase()
   .has()
   .lowercase()
   .has()
@@ -75,7 +75,7 @@ export class MyCustomValidators {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
       const respPassord: string[] = schemaPasword.validate(value, {
-        list: true,
+        list: true
       }) as string[];
       if (respPassord.length === 0) {
         return null;

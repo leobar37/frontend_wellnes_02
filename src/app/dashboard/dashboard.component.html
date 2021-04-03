@@ -26,16 +26,30 @@
               nz-menu-item
               [routerLink]="item.route"
             >
-              <i nz-icon [nzType]="item.icon" *ngIf="item.icon"></i>
-              <span>{{ item.name }}</span>
+              <ng-container *ngIf="!item.isFont; else fontAlternative">
+                <i nz-icon [nzType]="item.icon"></i>
+              </ng-container>
+              <ng-template #fontAlternative>
+                <i [class]="item.icon"> </i>
+              </ng-template>
+              <span>{{ isCollapsed ? "" : item.name }}</span>
             </li>
             <li
               nz-submenu
               class="sidebar_item"
               *ngIf="item.items"
-              [nzTitle]="item.name"
-              nzIcon="{{ item.icon }}"
+              [nzTitle]="titleTpl"
             >
+              <ng-template #titleTpl>
+                <ng-container *ngIf="!item.isFont; else fontAlternative">
+                  <i nz-icon [nzType]="item.icon"></i>
+                </ng-container>
+                <ng-template #fontAlternative>
+                  <i [class]="item.icon"> </i>
+                </ng-template>
+                <span>{{ isCollapsed ? "" : item.name }}</span>
+              </ng-template>
+
               <ul>
                 <li nz-menu-item *ngFor="let subItem of item.items">
                   <a [routerLink]="subItem.route">

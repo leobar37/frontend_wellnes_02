@@ -68,6 +68,7 @@ export class UsersModalComponent implements OnInit, AfterViewInit {
   openModalCredits() {
     this.modal.create({
       nzContent: this.tplCreditsModal,
+      nzZIndex: 50,
       nzOnOk: () => {
         this.operationMultipleCredits();
       }

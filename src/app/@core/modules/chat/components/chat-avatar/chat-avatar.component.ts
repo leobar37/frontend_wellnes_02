@@ -25,7 +25,7 @@ import { InputBoolean, InputNumber } from 'ng-zorro-antd/core/util';
       ></nz-avatar>
       <span class="chat_card_avatar_user" *ngIf="name">
         <ng-container *nzStringTemplateOutlet="name">
-          {{ name | shortParagraph: 6 }}
+          {{ name | shortParagraph: 5:true }}
         </ng-container>
       </span>
     </div>

@@ -61,7 +61,7 @@
 
 @mixin list-chat {
   .list_chats {
-    height: 350px;
+    height: 250px;
     width: 100%;
     @include generateScroll();
     margin: 10px 0;
@@ -146,7 +146,7 @@
   }
   &_list_conversation {
     width: 100%;
-    @include generateScroll(2px);
+    @include generateScroll(5px);
     height: $size-height-container-chat - 200px;
     @extend %reset_list;
     margin: 0;

@@ -1,7 +1,7 @@
-import { UtilsService } from 'src/app/services/utils.service';
-import { CRUD_ACTION } from './../model';
-import { QueryRef } from 'apollo-angular';
-import { CommentService, SUB_NEWCOMMENTS } from './../services/comment.service';
+import { tap } from 'rxjs/operators';
+
+import { CommentService } from './../services/comment.service';
+import { Comment } from '../models/comment.class';
 import {
   Component,
   OnInit,
@@ -9,37 +9,36 @@ import {
   ViewChild,
   AfterViewInit,
   OnDestroy,
-  Input
+  Input,
+  ViewEncapsulation
 } from '@angular/core';
 import { JwtService } from '@services/jwt.service';
-import { NzConfigService } from 'ng-zorro-antd/core/config';
-import { formatDistance } from 'date-fns';
 import { IComment, ICommentDisplay } from '../model';
-import es from 'date-fns/locale/es';
-import { pluck, map, tap } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+
+import { Subscription, Observable, of } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @Component({
   selector: 'app-comments',
   templateUrl: './comments.component.html',
-  styleUrls: ['./comments.component.scss']
+  styleUrls: ['./comments.component.scss', '../style.scss'],
+  encapsulation: ViewEncapsulation.None
 })
-export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
-  user = {
-    name: 'Elmer Joselito',
-    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-  };
-
+@UntilDestroy()
+export class CommentsComponent implements OnInit, AfterViewInit {
   @Input() private idBootrapComment: number;
   @ViewChild('customTpl') customEmptyTpl: TemplateRef<any>;
+
   data: ICommentDisplay[] = [];
-  private commentsRef: QueryRef<{ getComments: IComment[] }>;
-  private recolectorSubs: Subscription[] = [];
+
+  comments$: Observable<Comment[]>;
+
+  // private commentsRef: QueryRef<{ getComments: IComment[] }>;
+  // private recolectorSubs: Subscription[] = [];
 
   constructor(
-    private configService: NzConfigService,
-    private jwtService: JwtService,
-    private commentsService: CommentService,
-    private utilsService: UtilsService
+    // private configService: NzConfigService,
+    private JwtService: JwtService,
+    private commentsService: CommentService // private utilsService: UtilsService
   ) {}
 
   /*=============================================
@@ -48,99 +47,103 @@ export class CommentsComponent implements OnInit, AfterViewInit, OnDestroy {
   public ngAfterViewInit(): void {}
 
   public ngOnInit(): void {
-    this.commentsRef = this.commentsService.getComments(this.idBootrapComment);
-    // listens
-    this.getcomments();
-    // configure sub
-    this.configureSubComments();
-  }
+    console.log('create commments component');
 
-  ngOnDestroy(): void {
-    this.recolectorSubs.forEach((sub) => sub.unsubscribe());
+    // this.commentsRef = this.commentsService.getComments(this.idBootrapComment);
+    // // listens
+    // this.getcomments();
+
+    this.commentsService.init(1);
+
+    this.comments$ = this.commentsService.comments$.pipe(
+      tap((_) => {
+        console.log('get data');
+      })
+    );
+    // // configure sub2
+    // this.configureSubComments();
   }
 
   /*=============================================
 =            LISTENS             =
 =============================================*/
-  private configureSubComments() {
-    this.commentsRef.subscribeToMore({
-      document: SUB_NEWCOMMENTS,
-      variables: {
-        bootstrap: this.idBootrapComment
-      },
-      updateQuery: (
-        prev,
-        {
-          subscriptionData: {
-            data: {
-              actionComment: { action, comment }
-            }
-          }
-        }
-      ) => {
-        let comments = prev.getComments;
-        /**
-         * TODO:
-         * [ ] Recepcionar los cambios
-         */
-        switch (action as CRUD_ACTION) {
-          case 'CREATE':
-            comments = [...comments, comment];
-            break;
-        }
-        return {
-          ...prev,
-          getComments: comments
-        };
-      }
-    });
-  }
+  // private configureSubComments() {
+  //   this.commentsRef.subscribeToMore({
+  //     document: SUB_NEWCOMMENTS,
+  //     variables: {
+  //       bootstrap: this.idBootrapComment
+  //     },
+  //     updateQuery: (
+  //       prev,
+  //       {
+  //         subscriptionData: {
+  //           data: {
+  //             actionComment: { action, comment }
+  //           }
+  //         }
+  //       }
+  //     ) => {
+  //       let comments = prev.getComments;
+  //       /**
+  //        * TODO:
+  //        * [ ] Recepcionar los cambios
+  //        */
+  //       switch (action as CRUD_ACTION) {
+  //         case 'CREATE':
+  //           comments = [...comments, comment];
+  //           break;
+  //       }
+  //       return {
+  //         ...prev,
+  //         getComments: comments
+  //       };
+  //     }
+  //   });
+  // }
 
-  public getcomments() {
-    this.recolectorSubs.push(
-      this.commentsRef.valueChanges
-        .pipe(
-          pluck('data', 'getComments'),
-          map((comments) => {
-            return comments
-              .map(
-                (item) =>
-                  ({
-                    ...item,
-                    displayTime:
-                      'Hace ' +
-                      formatDistance(new Date(), new Date(item.createComment), {
-                        locale: es
-                      }),
-                    author: item.user.name,
-                    avatar: this.utilsService.resolveNormalPathImage(
-                      item.user.image
-                    )
-                    // avatar: this.commentsService.getAvatarOfName(
-                    //   item.user.name,
-                    //   item.user.lastName
-                    // ),
-                  } as ICommentDisplay)
-              )
-              .reverse();
-          })
-        )
-        .subscribe((resp) => (this.data = resp))
-    );
-  }
+  // public getcomments() {
+  //   this.recolectorSubs.push(
+  //     this.commentsRef.valueChanges
+  //       .pipe(
+  //         pluck('data', 'getComments'),
+  //         map((comments) => {
+  //           return comments
+  //             .map(
+  //               (item) =>
+  //                 ({
+  //                   ...item,
+  //                   displayTime:
+  //                     'Hace ' +
+  //                     formatDistance(new Date(), new Date(item.createComment), {
+  //                       locale: es
+  //                     }),
+  //                   author: item.user.name,
+  //                   avatar: this.utilsService.resolveNormalPathImage(
+  //                     item.user.image
+  //                   )
+  //                   // avatar: this.commentsService.getAvatarOfName(
+  //                   //   item.user.name,
+  //                   //   item.user.lastName
+  //                   // ),
+  //                 } as ICommentDisplay)
+  //             )
+  //             .reverse();
+  //         })
+  //       )
+  //       .subscribe((resp) => (this.data = resp))
+  //   );
+  // }
 
   /*=============================================
   =            DOM EVENTS            =
   =============================================*/
   public sendPrincipalComment(content: string): void {
     const resolvePromises = async () => {
-      const user = this.jwtService.getUserOfToken();
-      console.log(user);
-
+      const user = this.JwtService.getUserOfToken();
       await this.commentsService
         .addComment({
           id_user: user.id,
-          id_bootstrap: this.idBootrapComment,
+          id_bootstrap: 1,
           comment: content
         } as IComment)
         .toPromise();

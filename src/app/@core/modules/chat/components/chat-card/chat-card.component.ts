@@ -113,9 +113,6 @@ export class ChatCardComponent implements OnInit, OnChanges, OnDestroy {
     this.chatUiService.observeOpenChat$
       .pipe(untilDestroyed(this))
       .subscribe((val) => {
-        console.log('enter chat');
-        console.log(val);
-
         this.enterChat(val);
       });
   }

@@ -1,3 +1,4 @@
+import { ConversationService } from './services/conversation.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PortalModule } from '@angular/cdk/portal';
@@ -97,6 +98,7 @@ const SWIPER_CONFIG_DEFAULT: SwiperConfigInterface = {
     ChatuiService,
     ListMessageService,
     ChatDataService,
+    ConversationService,
     { provide: SWIPER_CONFIG, useValue: SWIPER_CONFIG_DEFAULT }
   ]
 })

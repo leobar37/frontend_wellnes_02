@@ -21,15 +21,15 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 const tokenGetter = () => {
   return localStorage.getItem('token');
 };
-
+import { Injector } from '@angular/core';
 registerLocaleData(es);
 @NgModule({
   declarations: [AppComponent],
   imports: [
     JwtModule.forRoot({
       config: {
-        tokenGetter,
-      },
+        tokenGetter
+      }
     }),
     FlexLayoutModule,
     BrowserModule,
@@ -43,10 +43,15 @@ registerLocaleData(es);
     AuthModule,
     FontAwesomeModule,
     GraphQLModule,
-    NgxSpinnerModule,
+    NgxSpinnerModule
   ],
   providers: [{ provide: NZ_I18N, useValue: es_ES }],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule {}
+export class AppModule {
+  static injector: Injector;
+  constructor(injector: Injector) {
+    AppModule.injector = injector;
+  }
+}

@@ -32,7 +32,6 @@ import { Observable } from 'rxjs';
           </button>
         </ng-container>
       </div>
-
       <swiper
         *ngIf="!loading; else loadingTpl"
         [config]="configSwiper"

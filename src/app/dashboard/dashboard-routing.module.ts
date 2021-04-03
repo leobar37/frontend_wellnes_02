@@ -45,6 +45,16 @@ const childrenRoutes: Routes = [
       import('./ctrlusers/ctrlusers.module').then((m) => m.CtrlusersModule)
   },
   {
+    path: 'm',
+    loadChildren: () =>
+      import('./me-events/me-events.module').then((m) => m.MeEventsModule)
+  },
+  {
+    path: 'config',
+    loadChildren: () =>
+      import('./config/config.module').then((m) => m.ConfigModule)
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: 'view/explorer?type=events'
