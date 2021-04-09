@@ -37,7 +37,8 @@
               "node_modules/@videogular/ngx-videogular/fonts/videogular.css",
               "src/theme.less",
               "src/styles.scss",
-              "src/assets/scss/main.scss"
+              "src/assets/scss/main.scss",
+              "node_modules/plyr/dist/plyr.css"
             ],
             "scripts": []
           },

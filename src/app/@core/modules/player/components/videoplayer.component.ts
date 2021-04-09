@@ -104,7 +104,6 @@ export class VideoplayerComponent implements OnInit, AfterViewInit, OnChanges {
 Documentation : https://videogular.github.io/ngx-videogular/docs/getting-started/master-media.html
 
 =============================================*/
-
   ngOnInit(): void {}
   ondPlayerReady(api: VgApiService) {
     this.apiVideo = api;
