@@ -10,6 +10,23 @@ import {
 } from '@angular/core';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+
+const positionsBox: { [key: string]: { x: number; y: number } } = {
+  desktop: {
+    x: -85,
+    y: 50
+  },
+  mobile: {
+    x: -40,
+    y: 10
+  }
+};
+import {
+  BreakPointCheck,
+  checkBreakPoint,
+  EBreakpoints
+} from '@core/breakPointCheck/public-api';
+import { MediaObserver } from '@angular/flex-layout';
 @Component({
   selector: 'app-float',
   templateUrl: './float.component.html',
@@ -17,12 +34,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
   animations: []
 })
 @UntilDestroy()
+@BreakPointCheck({ nameObserver: 'mediaObserver' })
 export class FloatComponent implements OnInit {
   open = false;
   portal: Portal<any>;
-  constructor(private uiChatService: ChatuiService) {}
+  constructor(
+    private uiChatService: ChatuiService,
+    private mediaObserver: MediaObserver
+  ) {}
   @ViewChild('vc', { read: ViewContainerRef, static: false })
   vc: ViewContainerRef;
+
+  positionChat: { x: number; y: number } = positionsBox.desktop;
+
   public openEvent() {
     this.open = true;
     this.uiChatService.actionAnimation('card:open');
@@ -53,5 +77,18 @@ export class FloatComponent implements OnInit {
       .subscribe((_) => {
         this.open = false;
       });
+  }
+
+  @checkBreakPoint(EBreakpoints.xs)
+  runInMobile() {
+    console.log('apply chat mobile');
+    this.positionChat = positionsBox.mobile;
+    console.log(this.positionChat);
+  }
+  @checkBreakPoint(EBreakpoints.gtSm)
+  resetChaguesOfMobile() {
+    this.positionChat = positionsBox.desktop;
+    console.log('reset');
+    console.log(this.positionChat);
   }
 }

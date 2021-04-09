@@ -6,19 +6,26 @@ import { Subscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertService } from '@core/modules/alert/alert.service';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Location } from '@angular/common';
+
 import { ConfirmEmailService } from './services/confirm-email.service';
 import { Router } from '@angular/router';
+import { StyleUtils } from '@angular/flex-layout';
+import {
+  checkBreakPoint,
+  BreakPointCheck,
+  EBreakpoints
+} from '@core/breakPointCheck/public-api';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   providers: [ConfirmEmailService]
 })
+@BreakPointCheck({ nameObserver: 'media' })
 export class DashboardComponent implements OnInit, OnDestroy {
   collapsableWidth = 0;
   widthSidebar = '256px';
-  isCollapsed = false;
+  isCollapsed = true;
   menu: Imenu[];
   mediaObserbable: Subscription;
   constructor(
@@ -38,7 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.statusUser.sub.unsubscribe();
   }
   ngOnInit(): void {
-    this.sidebarChangue();
+    // this.sidebarChangue();
     this.prepareDashboardAlerts();
     this.listeRoutes();
   }
@@ -49,8 +56,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (!user.comfirmed) {
         this.alertService.addAlert({
           message: 'Su email todavía no esta confirmado',
-          description:
-            'Necesita confirmar su email: Dispone de un dia o su cuenta puede ser cancelada, puede cambiar su email en su perfil',
           type: 'warning',
           icon: true,
           closable: true,
@@ -60,6 +65,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
     confirmEmail();
   }
+
   private listeRoutes() {
     const user = this.jwtService.getUserOfToken();
     if (!user.comfirmed) {
@@ -81,10 +87,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   private sidebarChangue() {
     this.mediaObserbable = this.media
       .asObservable()
       .subscribe((data: MediaChange[]) => {
+        console.log(data);
+
         const existMd = data.some(
           ({ mqAlias }) => mqAlias.toLocaleLowerCase() === 'gt-xs'
         );
@@ -103,4 +112,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     // this.mediaObserbable.unsubscribe();
   }
+
+  /*=============================================
+  =            lISTENS            =
+  =============================================*/
+
+  @checkBreakPoint(EBreakpoints.gtXs)
+  desktopBreakPoint() {
+    console.log('value in md');
+    this.collapsableWidth = 80;
+    this.widthSidebar = '256px';
+  }
+
+  @checkBreakPoint(EBreakpoints.xs)
+  tabletBreakPoint() {
+    this.collapsableWidth = 0;
+    console.log('apply');
+    this.widthSidebar = '240px';
+  }
+
+  // @checkBreakPoint(EBreakpoints.xs)
+  // mobileBreakPoint() {
+  //   console.log('mobile active');
+  //   this.collapsableWidth = 0;
+  //   this.widthSidebar = '180px';
+  // }
 }

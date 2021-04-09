@@ -1,3 +1,5 @@
+@import "src/sass/variables";
+@import "src/sass/responsive";
 .paragraph {
   font-size: 16px;
   font-weight: 300;
@@ -48,11 +50,17 @@
       background-color: $secondary-color;
     }
   }
-}
-// general size viewport
-.contain {
-  width: 900px;
-  min-height: 100vh;
+
+  @include layout-bp(xs) {
+    font-size: 1.2rem;
+  }
+  .btn_back {
+    border: none;
+    outline: none;
+    background-color: $secondary-color;
+    color: $white-color;
+    cursor: pointer;
+  }
 }
 
 /*=============================================

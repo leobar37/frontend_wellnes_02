@@ -1,6 +1,7 @@
 @import "src/sass/responsive";
 @import "src/sass/mixins";
 @import "src/sass/variables";
+@import "src/sass/responsive";
 
 .table_profile {
   width: 500px;
@@ -65,4 +66,12 @@
 .avatar-uploader {
   @include centerContent();
 }
+.contain {
+  width: 800px;
+  @include mq(md) {
+    width: 600px !important;
+    padding: 20px;
+  }
+}
+
 /***************************alterns*************************************/

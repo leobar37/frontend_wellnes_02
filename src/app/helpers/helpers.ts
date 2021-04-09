@@ -42,3 +42,7 @@ export const isValidValue = (value: any): boolean => {
   }
   return false;
 };
+
+export const cloneArray = <T>(v: T[]): T[] => {
+  return Object.assign([] as T[], v);
+};

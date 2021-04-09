@@ -57,11 +57,30 @@ export class RowShowComponent implements OnInit {
   events: Observable<IEvent[]>;
   configSwiper: SwiperConfigInterface = {
     slidesPerView: 3,
+    width: 800,
     spaceBetween: 10,
     direction: 'horizontal',
-    autoplay: true,
+    autoplay: false,
     speed: 300,
-    loop: true
+    loop: false,
+    breakpoints: {
+      1500: {
+        slidesPerView: 3
+      },
+      1024: {
+        slidesPerView: 3
+      },
+      768: {
+        slidesPerView: 2
+      },
+      500: {
+        slidesPerView: 2
+      },
+      0: {
+        spaceBetween: 0,
+        slidesPerView: 1
+      }
+    }
   };
   constructor(private eventsOperationService: EventsOperationService) {}
   ngOnInit(): void {

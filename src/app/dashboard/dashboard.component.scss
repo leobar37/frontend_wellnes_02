@@ -1,3 +1,9 @@
+@import "src/sass/variables";
+@import "src/sass/mixins";
+@import "src/sass/responsive";
+//local variables
+$space-sidebar: 90px;
+
 :host {
   display: flex;
   text-rendering: optimizeLegibility;
@@ -17,9 +23,18 @@
 .app-layout {
   min-height: 100vh;
 }
+%sidebarmarginAppy {
+  @include layout-bp(lt-sm) {
+    margin-left: 0;
+    margin-right: -10px;
+  }
+  @include layout-bp(gt-xs) {
+    margin-left: $space-sidebar !important;
+  }
+}
 
 .menu-sidebar {
-  position: relative;
+  position: fixed;
   z-index: 10;
   min-height: 100vh;
   box-shadow: 1px 0 5px rgba(0, 21, 41, 0.35);
@@ -93,26 +108,39 @@ nz-header {
   padding: 0;
   width: 100%;
   z-index: 2;
-}
-
-.app-header {
-  position: relative;
-  height: 64px;
-  padding: 0;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  // trigge rfor button menu
-  .header-trigger {
-    float: left;
-    display: flex;
-    justify-content: center;
+  ul {
+    @extend %sidebarmarginAppy;
   }
 }
 
+nz-sider {
+  overflow: visible !important;
+  position: relative;
+  .header-trigger {
+    float: right;
+    display: flex;
+    justify-content: center;
+    right: -50px;
+    top: 80%;
+    background: $white-color;
+    z-index: 20;
+    position: absolute;
+  }
+}
+
+@include contain() {
+}
+
 nz-content {
-  margin: 24px;
+  overflow-x: hidden;
+  margin-left: 0px;
+  @extend %sidebarmarginAppy;
   overflow-y: scroll;
   height: 80vh;
+  margin: 0 !important;
+  @include layout-bp(lt-sm) {
+    width: 105vw !important;
+  }
   &::-webkit-scrollbar {
     visibility: hidden;
   }
@@ -122,4 +150,9 @@ nz-content {
   padding: 24px;
   background: #fff;
   // height: 100%;
+  @include layout-bp(lt-sm) {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  @extend %sidebarmarginAppy;
 }

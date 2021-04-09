@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Comment } from '../models/comment.class';
 import { Subject } from 'rxjs';
 
-export type typeEventBoxComments = 'ADD' | 'ADD:REPLY';
+export type typeEventBoxComments = 'ADD' | 'ADD:REPLY' | '';
 
 @Injectable()
 export class BoxCommentsService {

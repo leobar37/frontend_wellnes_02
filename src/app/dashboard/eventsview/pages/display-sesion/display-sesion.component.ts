@@ -1,23 +1,34 @@
+import { CommonEventSesionComponent } from './../../components/common-event-sesion/common-event-sesion.component';
 import { UtilsService } from '@services/utils.service';
 import { SesionService } from './../../../events/services/sesion.service';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { Isesion } from '@core/models/eventmodels/sesion.model';
 import { isPast } from 'date-fns';
 import { NzModalService } from 'ng-zorro-antd/modal';
 @Component({
   selector: 'app-display-sesion',
   templateUrl: './display-sesion.component.html',
-  styleUrls: ['../styles.scss'],
+  styleUrls: ['../styles.scss']
 })
-export class DisplaySesionComponent implements OnInit {
+export class DisplaySesionComponent
+  extends CommonEventSesionComponent
+  implements OnInit {
   currentSesion: Isesion;
   constructor(
     private activatRoute: ActivatedRoute,
     private sesionServiceex: SesionService,
     private utilsService: UtilsService,
-    private modal: NzModalService
-  ) {}
+    private modal: NzModalService,
+    public changueDetector: ChangeDetectorRef
+  ) {
+    super(changueDetector);
+  }
   ngOnInit(): void {
     this.listenRoutes();
   }
@@ -35,7 +46,7 @@ export class DisplaySesionComponent implements OnInit {
               ...resp.data.sesion,
               sesionCover: this.utilsService.resolvePathImage(
                 sesion.sesionCover
-              ) as string,
+              ) as string
             };
           }
         });
@@ -49,7 +60,7 @@ export class DisplaySesionComponent implements OnInit {
       this.modal.error({
         nzTitle: 'Sesión no disponible',
         nzContent:
-          'Esta sesion ya ha pasado o no esta disponible, si cree que es nuestro error comuniquese con un asesor',
+          'Esta sesion ya ha pasado o no esta disponible, si cree que es nuestro error comuniquese con un asesor'
       });
     } else {
       window.open(this.currentSesion.linkRoom, '_blank');

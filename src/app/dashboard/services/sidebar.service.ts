@@ -47,14 +47,14 @@ export class SidebarService {
         { name: 'Solictitudes', route: 'ctrlus/request' }
       ]
     },
-    {
-      name: 'apps',
-      route: 'calendar',
-      isFont: false,
-      roles: [ERol.USER, ERol.CREATOR, ERol.ADMIN],
-      icon: 'appstore',
-      items: [{ name: 'calendario', route: 'apps/calendar' }]
-    },
+    // {
+    //   name: 'apps',
+    //   route: 'calendar',
+    //   isFont: false,
+    //   roles: [ERol.USER, ERol.CREATOR, ERol.ADMIN],
+    //   icon: 'appstore',
+    //   items: [{ name: 'calendario', route: 'apps/calendar' }]
+    // },
     {
       name: 'Administrar Eventos',
       icon: 'profile',

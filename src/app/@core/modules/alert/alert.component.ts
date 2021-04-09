@@ -5,7 +5,7 @@ import {
   Component,
   OnInit,
   ViewChild,
-  ViewContainerRef,
+  ViewContainerRef
 } from '@angular/core';
 
 @Component({
@@ -24,7 +24,7 @@ import {
     </ng-container>
   `,
   styleUrls: ['./alert.componenent.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertComponent implements OnInit {
   viewref: ViewContainerRef;

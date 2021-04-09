@@ -7,14 +7,16 @@ import { ProfileService } from '../../services/profile.service';
 import { IHistorialCredit } from '@core/models/credits.model';
 import { Observable } from 'rxjs';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+
 interface IformPetitionCredits
   extends Pick<IReuestCredit, 'id_credit' | 'credits' | 'description'> {}
+import { NzTabPosition, NzTabPositionMode } from 'ng-zorro-antd/tabs';
 
 @Component({
   selector: 'app-handle-credits',
   templateUrl: './handle-credits.component.html',
   styleUrls: ['./handle-credits.component.scss'],
-  providers: [HandleCreditService],
+  providers: [HandleCreditService]
 })
 export class HandleCreditsComponent implements OnInit {
   currentUser: IUser;
@@ -23,6 +25,7 @@ export class HandleCreditsComponent implements OnInit {
   requestCredits: Observable<IReuestCredit>;
   formRequest: FormGroup;
   tplModal: TemplateRef<any>;
+  postionTap: NzTabPosition = 'left';
 
   constructor(
     private profileService: ProfileService,
@@ -43,7 +46,7 @@ export class HandleCreditsComponent implements OnInit {
   }
   private buildForms() {
     this.formRequest = this.fb.group({
-      credits: this.fb.control(0, Validators.min(1)),
+      credits: this.fb.control(0, Validators.min(1))
     });
   }
   ngOnInit(): void {

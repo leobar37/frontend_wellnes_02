@@ -19,8 +19,6 @@ export class UiEventsService {
   constructor() {}
 
   public onEventComment(action: CRUD_ACTION): Observable<payloadComment> {
-    console.log('register suscribe');
-
     return this.onlyCommentsEvent$
       .asObservable()
       .pipe(filter((el) => el.action == action));

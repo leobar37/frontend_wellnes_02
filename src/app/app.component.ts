@@ -1,7 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { MediaObserver, MediaChange, BREAKPOINT } from '@angular/flex-layout';
-import { filter, map } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+
 import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-root',

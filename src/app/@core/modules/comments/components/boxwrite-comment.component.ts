@@ -7,7 +7,9 @@ import {
   forwardRef,
   ChangeDetectorRef,
   EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  HostBinding,
+  ViewContainerRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputBoolean } from 'ng-zorro-antd/core/util';
@@ -16,7 +18,6 @@ const placeHolders = {
   default: 'Deja tu comentario',
   reply: 'Respondiendo a {nameUser}'
 };
-
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import format from 'string-template';
 @Component({
@@ -25,6 +26,7 @@ import format from 'string-template';
     <mat-form-field [ngStyle]="styleBox">
       <mat-label> {{ placeHolderBox }} </mat-label>
       <textarea
+        (focus)="onFocusBox()"
         [(ngModel)]="inputValue"
         name="inputValue"
         matInput
@@ -49,21 +51,33 @@ import format from 'string-template';
         {{ inputValue?.length }} / {{ MAX_LENGHT }}
       </mat-hint>
       <mat-hint>
-        <nz-form-item>
-          <button
-            nz-button
-            nzType="primary"
-            (click)="handleSubmit()"
-            [hidden]="inputValue.length == 0"
-          >
-            comentar
-          </button>
-          <!-- <ul class="bars">
-        <a (click)="visiblePickerIcon = !visiblePickerIcon">
-          <i class="far fa-smile-beam icon"></i>
-        </a>
-      </ul> -->
-        </nz-form-item>
+        <nz-space>
+          <nz-space-item>
+            <nz-form-item>
+              <button
+                nz-button
+                *ngIf="inReply"
+                nzDanger
+                nzType="primary"
+                (click)="hideBox()"
+              >
+                cancelar
+              </button>
+            </nz-form-item>
+          </nz-space-item>
+          <nz-space-item>
+            <nz-form-item>
+              <button
+                nz-button
+                nzType="primary"
+                (click)="handleSubmit()"
+                [hidden]="inputValue.length == 0"
+              >
+                comentar
+              </button>
+            </nz-form-item>
+          </nz-space-item>
+        </nz-space>
       </mat-hint>
     </mat-form-field>
   `,
@@ -99,21 +113,43 @@ export class BoxwriteCommentComponent implements OnInit, ControlValueAccessor {
   private _styleBox: CSSStyleDeclaration;
 
   @Input() @InputBoolean() inReply: boolean;
+  // @Input() set visible(v: boolean) {
+  //   console.log('here visible');
+
+  //   // this.hide = !v;
+  // }
   @Output() onComment = new EventEmitter<string>();
+  @Output() hideEvent = new EventEmitter<void>();
 
   constructor(
     private detection: ChangeDetectorRef,
-    private uiEventsService: UiEventsService
+    private uiEventsService: UiEventsService,
+    private viewContainerRef: ViewContainerRef
   ) {}
 
   ngOnInit(): void {
     this.listenSubjects();
   }
 
+  /*=============================================
+  =            Events            =
+  =============================================*/
+  // @HostBinding('class.hide') hide: boolean = false;
+
+  onFocusBox() {
+    if (this.inReply) {
+    }
+  }
+  hideBox() {
+    // this.hide = true;
+    this.hideEvent.emit();
+  }
+
   private listenSubjects() {
     if (this.inReply) {
       this.uiEventsService
         .onEventRespondComment('openReply')
+        .pipe(untilDestroyed(this))
         .subscribe((payload) => {
           this.parentComment = payload.parentComment;
           this.placeHolderBox = format(placeHolders.reply, {
@@ -145,7 +181,7 @@ export class BoxwriteCommentComponent implements OnInit, ControlValueAccessor {
       this.inputValue = '';
     }
   }
-  eventWriteComment($event: InputEvent) {
+  public eventWriteComment($event: InputEvent) {
     if (this.inputValue.length >= this.MAX_LENGHT || $event.data === null) {
       ($event.target as HTMLTextAreaElement).value = this.inputValue.substr(
         0,

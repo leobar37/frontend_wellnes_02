@@ -22,7 +22,7 @@ export interface IModalData {
         {{ data.userCredits }}
       </nz-descriptions-item>
 
-      <nz-descriptions-item nzTitle="Costo del programa" [nzSpan]="4">
+      <nz-descriptions-item [nzTitle]="priceProgramText" [nzSpan]="4">
         {{ data.costCredits }}
       </nz-descriptions-item>
     </nz-descriptions>
@@ -51,7 +51,7 @@ export interface IModalData {
       </button>
     </div>
   </div> `,
-  styleUrls: ['./modal-confirm-inscription.component.scss'],
+  styleUrls: ['./modal-confirm-inscription.component.scss']
 })
 export class ModalConfirmInscriptionComponent implements OnInit {
   constructor(
@@ -61,6 +61,9 @@ export class ModalConfirmInscriptionComponent implements OnInit {
   ngOnInit(): void {}
   actionButton(resp: boolean) {
     this.dialogRef.close(resp);
+  }
+  get priceProgramText() {
+    return 'Costo del ' + this.data.prefix;
   }
 }
 // part module
@@ -78,9 +81,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule,
     NzDescriptionsModule,
     NzButtonModule,
-    NzTypographyModule,
+    NzTypographyModule
   ],
   exports: [],
-  providers: [],
+  providers: []
 })
 export class ModalConfirmModule {}

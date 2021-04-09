@@ -41,6 +41,16 @@ import { ViewMoreModule } from '@core/directives/view-more.module';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { MatRippleModule } from '@angular/material/core';
+import { BagdgeActionComponent } from './components/bagdge-action/bagdge-action.component';
+import { BagdeActionItemComponent } from './components/bagdge-action/bagde-action-item/bagde-action-item.component';
+import { NzOutletModule } from 'ng-zorro-antd/core/outlet';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
+import { TitleModule } from '@core/ui/title/title.module';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { CommonEventSesionComponent } from './components/common-event-sesion/common-event-sesion.component';
 const zorro = [
   NzButtonModule,
   NzModalModule,
@@ -50,11 +60,21 @@ const zorro = [
   NzSpinModule,
   NzListModule,
   NzImageModule,
-  NzDescriptionsModule
+  NzDescriptionsModule,
+  NzIconModule,
+  NzOutletModule,
+  NzTypographyModule,
+  NzDrawerModule,
+  NzBadgeModule
 ];
 
-const material = [MatCardModule, ScrollingModule, MatDialogModule];
-const me = [ViewMoreModule];
+const material = [
+  MatCardModule,
+  MatRippleModule,
+  ScrollingModule,
+  MatDialogModule
+];
+const me = [ViewMoreModule, TitleModule];
 
 @NgModule({
   declarations: [
@@ -65,7 +85,10 @@ const me = [ViewMoreModule];
     ItemSesionComponent,
     CardComponent,
     RowShowComponent,
-    DisplayCategorieComponent
+    DisplayCategorieComponent,
+    BagdgeActionComponent,
+    BagdeActionItemComponent,
+    CommonEventSesionComponent
   ],
   exports: [CardComponent],
   imports: [

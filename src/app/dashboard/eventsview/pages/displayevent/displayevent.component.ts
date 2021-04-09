@@ -1,3 +1,4 @@
+import { CommonEventSesionComponent } from './../../components/common-event-sesion/common-event-sesion.component';
 import { ProfileService } from './../../../profile/services/profile.service';
 import { IUser } from '@core/models/User';
 import { Isesion } from '@core/models/eventmodels/sesion.model';
@@ -6,7 +7,14 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { EventService } from './../../../events/services/event.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { IEvent } from '@core/models/eventmodels/event.model';
-import { Component, OnInit, OnDestroy, Type } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Type,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { switchMap } from 'rxjs/operators';
 import { of, Subscription } from 'rxjs';
 import { JwtService } from '@services/jwt.service';
@@ -22,15 +30,19 @@ import {
   selector: 'app-displayevent',
   templateUrl: './displayevent.component.html',
   styleUrls: ['../styles.scss'],
-  providers: []
+  providers: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DisplayeventComponent implements OnInit, OnDestroy {
+export class DisplayeventComponent
+  extends CommonEventSesionComponent
+  implements OnInit, OnDestroy {
   currentEvent: IEvent;
   public isRegister: boolean = false;
   private modalConfirmRegister: Type<ModalConfirmInscriptionComponent>;
   private refQuerieIsRegister: QueryRef<{ isRegisterEvent: IDetailResponse }>;
   private recolectSubs: Subscription[] = [];
   sizeDisplay = '500px';
+
   constructor(
     private activateRoute: ActivatedRoute,
     private eventService: EventService,
@@ -40,8 +52,11 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
     private modal: NzModalService,
     private router: Router,
     private dialog: MatDialog,
-    private userService: ProfileService
-  ) {}
+    private userService: ProfileService,
+    public changueDetector: ChangeDetectorRef
+  ) {
+    super(changueDetector);
+  }
   /*=============================================
    =           Lfe Cicle            =
    =============================================*/
@@ -99,6 +114,7 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
     );
     this.refQuerieIsRegister.valueChanges.subscribe((resp) => {
       this.isRegister = resp.data.isRegisterEvent.resp;
+      this.changueDetector.markForCheck();
     });
   }
 
@@ -140,7 +156,6 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
   =============================================*/
   public async registerEvent() {
     const user = await this.userService.onlyUser();
-    console.log(user);
     const haveCredits = user.credit.currentCredits >= this.currentEvent.credits;
     if (!haveCredits) {
       this.modal.error({
@@ -173,9 +188,11 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
       });
     });
   }
+
   // navigate sesion sesion
   navigateSesion(sesion: Isesion) {
     //  this.r
+    this.currentEvent.credits;
     this.router.navigate([
       '/dashboard',
       'view',
@@ -183,5 +200,12 @@ export class DisplayeventComponent implements OnInit, OnDestroy {
       this.currentEvent.id,
       sesion.id
     ]);
+  }
+
+  /*=============================================
+=            helpers            =
+=============================================*/
+  get label() {
+    return this.currentEvent.modeEvent == 'EVENT' ? 'evento' : 'programa';
   }
 }

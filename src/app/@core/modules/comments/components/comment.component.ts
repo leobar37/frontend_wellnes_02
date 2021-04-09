@@ -82,8 +82,6 @@ export class CommentComponent implements OnInit {
     this.hide = true;
   }
   ngOnInit(): void {
-    console.log('recreate');
-
     this.listenChagues();
   }
 

@@ -1,13 +1,9 @@
+@import "src/sass/responsive";
+@import "src/sass/mixins";
 :host {
   display: block;
-}
-.viewcardevent {
-  width: 300px;
-  margin: 10px 10px;
-  cursor: pointer;
-  text-align: left;
-  h3 {
-    text-transform: capitalize;
+  @include mq(lg) {
+    transform: scale(0.95);
   }
 }
 
@@ -16,12 +12,23 @@
   width: 1000px;
 }
 .row_galery {
+  overflow: hidden !important;
   .swiper-slide {
-    // background-color: red;
     margin: 10px 10px;
-    overflow: hidden;
+    overflow: hidden !important;
   }
 }
+
 app-card {
   overflow: hidden !important;
+}
+
+@include contain {
+  width: 800px;
+  @include layout-bp(sm) {
+    width: 650px;
+  }
+  @include layout-bp(lt-sm) {
+    width: 80vw !important;
+  }
 }

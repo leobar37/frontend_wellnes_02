@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import _ from 'lodash';
 import { InputBoolean } from 'ng-zorro-antd/core/util';
-
+import pluralize from 'pluralize';
 @Component({
   selector: 'show-replies-btn',
   template: `
@@ -69,13 +69,14 @@ export class ShowRepliesBtnComponent implements OnInit {
     this.changueRef.markForCheck();
   }
   get textShowReplies() {
-    // if (this.comment.isYourLike) {
-    //   return null;
-    // } else {
     if (this.comment.replies.length == 0) {
       return null;
     } else {
-      return `Mostrar ${this.comment.replies.length} respuestas`;
+      return `Mostrar ${pluralize(
+        'respuesta',
+        this.comment.replies.length,
+        true
+      )}`;
     }
     ///}
   }

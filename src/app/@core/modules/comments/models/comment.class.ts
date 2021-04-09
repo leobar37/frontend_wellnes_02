@@ -104,24 +104,6 @@ export class Comment implements IComment {
     } else {
       obj.replies = [];
     }
-
     return obj;
   }
-
-  // public like() {
-
-  //   const interactionService = AppModule.injector.get(InteractionService);
-
-  //   if (!this.isYourLike) {
-  //     console.log('execute');
-  //     const resp = interactionService.addInteraction({
-  //       idComment: this.id_comment,
-  //       idUser: this.userLocal.id
-  //     });
-
-  //     resp.then((d) => {
-  //       console.log(d);
-  //     });
-  //   }
-  // }
 }

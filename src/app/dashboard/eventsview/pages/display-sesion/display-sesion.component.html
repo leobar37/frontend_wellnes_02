@@ -6,7 +6,7 @@
 >
   <!-- MEDIA PREVIEW -->
   <nz-card>
-    <h1 class="title line_addon">{{ currentSesion.nameSesion }}</h1>
+    <le-title [text]="currentSesion.nameSesion" lineAddon leBack></le-title>
     <div class="media">
       <img
         class="media__image"
@@ -22,19 +22,24 @@
     </div>
   </nz-card>
   <nz-space class="information">
-    <nz-card style="background: #ffffff" class="box">
-      <div class="item">
-        <th>Inicio</th>
-        <td>{{ currentSesion.startSesion | date: "medium" }}</td>
-      </div>
-      <div class="item right">
-        <button nz-button nzType="primary" (click)="registerSesion()">
-          Ingresar
-        </button>
-      </div>
-    </nz-card>
+    <div fxLayout fxLayoutAlign="center center" style="width: 100%">
+      <badge-action>
+        <bagde-action-item [count]="50" (click)="openComments()">
+          <i class="fas fa-comments"></i>
+        </bagde-action-item>
+        <bagde-action-item [count]="20">
+          <i
+            nz-icon
+            nzType="like"
+            style="font-size: 28px; margin: 0; padding: 0"
+            nzTheme="outline"
+          ></i>
+        </bagde-action-item>
+      </badge-action>
+    </div>
   </nz-space>
   <!-- content -->
+
   <!-- content -->
   <nz-card class="description">
     <h3 class="title">Descripción</h3>
@@ -43,13 +48,29 @@
         {{ currentSesion.description }}
       </p>
     </div>
+  </nz-card>
+</article>
 
-    <!-- comments -->
-    <ng-container *ngIf="currentSesion.includeComments">
+<nz-drawer
+  nzPlacement="bottom"
+  (nzOnClose)="visibleDrawerComments = false"
+  [nzVisible]="visibleDrawerComments"
+  [nzHeight]="'70vh'"
+>
+  <div fxLayout fxLayoutAlign="center start">
+    <ng-container
+      *ngIf="
+        currentSesion.includeComments && currentSesion?.id_comment;
+        else notFoundComments
+      "
+    >
       <app-comments
-        class="my-4"
         [idBootrapComment]="currentSesion.id_comment"
       ></app-comments>
     </ng-container>
-  </nz-card>
-</article>
+    <ng-template #notFoundComments>
+      <nz-empty nzNotFoundContent="Los comentarios estan desactivados">
+      </nz-empty>
+    </ng-template>
+  </div>
+</nz-drawer>

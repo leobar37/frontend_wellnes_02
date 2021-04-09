@@ -1,4 +1,5 @@
-import { IComment } from './../model';
+import { BehaviorSubject } from 'rxjs';
+import { IComment, EnumboxCommentState } from './../model';
 import { CommentService } from './../services/comment.service';
 import { UiEventsService } from './../services/ui-events.service';
 import { BoxCommentsService } from './../services/box-comments.service';
@@ -18,25 +19,36 @@ import { CommentComponent } from './comment.component';
 
 import { typeEventBoxComments } from '../services/box-comments.service';
 import _ from 'lodash';
+
 @Component({
   selector: 'box-comments',
   template: `
     <!--Box comments -->
     <ul class="comments__box" [ngClass]="{ replies: isReply }">
-      <!-- <ng-content></ng-content> -->
       <nz-space nzDirection="vertical">
         <nz-space-item>
           <app-write-comment
             *ngIf="isReply && showBoxWrite"
+            (hideEvent)="showBoxWrite = false"
             (onComment)="sendReplyComment($event)"
             inReply
           ></app-write-comment>
         </nz-space-item>
         <nz-space-item>
           <ng-template #commentsBox></ng-template>
+          <nz-empty
+            *ngIf="isEmpty$ | async"
+            nzNotFoundContent="Se el primero en comentar"
+          >
+          </nz-empty>
         </nz-space-item>
       </nz-space>
+      <btn-more-comments
+        (moreCommentsEvent)="onMoreComments($event)"
+        [moreComments]="moreComments"
+      ></btn-more-comments>
     </ul>
+
     <!-- <app-write-comment *ngIf="isReply === true"></app-write-comment> -->
   `,
   styles: [],
@@ -48,12 +60,21 @@ export class BoxCommentsComponent implements OnInit {
   showBoxWrite: boolean = false;
   isReply: boolean = false;
   _parentComment: Comment;
+
+  isEmpty$ = new BehaviorSubject<boolean>(false);
+
+  private isEmpty() {
+    this.isEmpty$.next(this.comments.length == 0);
+  }
+
+  moreComments: number = 0;
   /*=============================================
   =            inputs            =
   =============================================*/
 
   @Input() set parentComment(v: Comment) {
     this._parentComment = v;
+
     this.isReply = true;
   }
 
@@ -62,11 +83,26 @@ export class BoxCommentsComponent implements OnInit {
   }
 
   @Input() set comments(v: Comment[]) {
-    console.log('all comments entered');
-
-    this.fillAllComments(v);
+    let commentsShow = Object.assign([] as Comment[], v);
+    if ((this.stateComponent = EnumboxCommentState.COLLECTED)) {
+      // obtain number of the config
+      commentsShow = commentsShow.slice(-3);
+    }
+    this.moreComments = v.length - commentsShow.length;
+    this.fillAllComments(commentsShow);
     this._comments = v;
+    this.isEmpty();
   }
+  private _stateComponent: EnumboxCommentState;
+
+  @Input() set stateComponent(v: EnumboxCommentState) {
+    this._stateComponent = v;
+  }
+
+  get stateComponent() {
+    return this._stateComponent || EnumboxCommentState.COLLECTED;
+  }
+
   @ViewChild('commentsBox', { read: ViewContainerRef, static: true })
   vcComments: ViewContainerRef;
   get comments() {
@@ -92,6 +128,19 @@ export class BoxCommentsComponent implements OnInit {
     this.commentService.subscribeActionComments({
       idComment: this.parentComment.id
     });
+  }
+
+  /*=============================================
+  =            DOM EVENT            =
+  =============================================*/
+  public onMoreComments(countComments: number) {
+    if (countComments == -1) {
+      this.fillAllComments(_.clone(this.comments).slice(-3));
+    } else {
+      _.clone(this.comments)
+        .slice(0, countComments)
+        .forEach((el) => this.addItemComment(el, null));
+    }
   }
 
   private listenSubjects() {
@@ -147,8 +196,10 @@ export class BoxCommentsComponent implements OnInit {
   }
 
   // list comments
-  private fillAllComments(comments: Comment[]) {
-    this.vcComments.clear();
+  private fillAllComments(comments: Comment[], clear: boolean = true) {
+    if (clear) {
+      this.vcComments.clear();
+    }
     comments.forEach((el) => this.addItemComment(el));
   }
 
@@ -165,5 +216,8 @@ export class BoxCommentsComponent implements OnInit {
 
     commentComponent.instance.comment = comment;
     commentComponent.changeDetectorRef.markForCheck();
+
+    this.comments.push(comment);
+    this.isEmpty();
   }
 }

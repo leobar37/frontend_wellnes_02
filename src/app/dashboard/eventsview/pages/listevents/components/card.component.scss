@@ -1,3 +1,4 @@
+@import "src/sass/responsive";
 :host {
   display: block;
   margin: 10px 10px !important;
@@ -10,6 +11,12 @@
 .viewcardevent {
   overflow: hidden;
   width: 300px;
+  @include layout-bp(sm) {
+    width: 280px;
+  }
+  @include layout-bp(lt-sm) {
+    width: 250px;
+  }
   margin: 10px 10px;
   cursor: pointer;
   text-align: left;

@@ -59,6 +59,7 @@
     "ngx-spinner": "^10.0.1",
     "ngx-swiper-wrapper": "^10.0.0",
     "password-validator": "^5.1.1",
+    "pluralize": "^8.0.0",
     "rxjs": "~6.6.0",
     "string-template": "^1.0.0",
     "subscriptions-transport-ws": "^0.9.18",

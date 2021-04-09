@@ -90,3 +90,10 @@
 %reset_list {
   list-style: none;
 }
+
+@mixin contain() {
+  .contain {
+    margin: 0 auto;
+    @content;
+  }
+}

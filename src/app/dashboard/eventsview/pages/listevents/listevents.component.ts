@@ -10,12 +10,13 @@ import { NgxMasonryOptions } from 'ngx-masonry';
 import { AlertService } from '@core/modules/alert/alert.service';
 import { eventsCategoryOperations } from '../../services/events.operation';
 import { Icategorie } from 'src/app/dashboard/categorie/model.categorie';
-
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 @Component({
   selector: 'app-listevents',
   templateUrl: './listevents.component.html',
   styleUrls: ['./listevents.component.scss']
 })
+@UntilDestroy()
 export class ListeventsComponent implements OnInit {
   public items: IEvent[] = [];
   public options: NgxMasonryOptions = {
@@ -94,6 +95,7 @@ export class ListeventsComponent implements OnInit {
     this.eventService
       .getCategories(idCategory)
       .pipe(
+        untilDestroyed(this),
         tap((categorie) => {
           this.currentCategorie = categorie[0];
           this.informationArgs = [];

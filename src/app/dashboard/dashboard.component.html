@@ -6,6 +6,13 @@
     style="overflow: hidden"
     [(nzCollapsed)]="isCollapsed"
   >
+    <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+      <i
+        class="trigger"
+        nz-icon
+        [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+      ></i>
+    </span>
     <div class="logo">
       <img src="assets/wellenesslogo.png" alt="" />
     </div>
@@ -65,41 +72,33 @@
   </nz-sider>
   <nz-layout>
     <nz-header>
-      <nav class="app-header">
-        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-          <i
-            class="trigger"
-            nz-icon
-            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
-          ></i>
-        </span>
-        <ul nz-menu nzMode="horizontal">
-          <li
-            nz-menu-item
-            nzSelected
-            routerLink="view/explorer"
-            [queryParams]="{ type: 'events' }"
-          >
-            Eventos
-          </li>
-          <li
-            nz-menu-item
-            routerLink="view/explorer"
-            [queryParams]="{ type: 'programs' }"
-          >
-            Programas
-          </li>
-          <!-- <li nz-menu-item>Anuncios</li> -->
-          <app-navbar></app-navbar>
-        </ul>
-      </nav>
+      <ul nz-menu nzMode="horizontal">
+        <li
+          nz-menu-item
+          nzSelected
+          routerLink="view/explorer"
+          [queryParams]="{ type: 'events' }"
+        >
+          Eventos
+        </li>
+        <li
+          nz-menu-item
+          routerLink="view/explorer"
+          routerLinkActive=""
+          [queryParams]="{ type: 'programs' }"
+        >
+          Programas
+        </li>
+        <!-- <li nz-menu-item>Anuncios</li> -->
+        <app-navbar></app-navbar>
+      </ul>
     </nz-header>
-    <nz-content>
-      <app-alert></app-alert>
-      <div class="inner-content" fxLayout="row" fxLayoutAlign="center start">
-        <router-outlet></router-outlet>
-      </div>
-    </nz-content>
+    <!-- <nz-content> -->
+    <app-alert></app-alert>
+    <div class="inner-content" fxLayout="row" fxLayoutAlign="center start">
+      <router-outlet></router-outlet>
+    </div>
+    <!-- </nz-content> -->
   </nz-layout>
 </nz-layout>
 <!-- chat type float -->

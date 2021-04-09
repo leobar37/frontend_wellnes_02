@@ -23,6 +23,6 @@ export class AlertService {
   }
   //
   public get getalerts() {
-    return this.alertsObs.asObservable().pipe(tap(console.log));
+    return this.alertsObs.asObservable();
   }
 }

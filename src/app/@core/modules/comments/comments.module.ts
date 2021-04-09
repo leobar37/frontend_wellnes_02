@@ -26,6 +26,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ShowRepliesBtnComponent } from './components/show-replies-btn/show-replies-btn.component';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { ShowMoreCommentsComponent } from './components/show-more-comments/show-more-comments.component';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 const zorro = [
   NzIconModule,
   NzDividerModule,
@@ -37,7 +39,8 @@ const zorro = [
   NzButtonModule,
   NzAvatarModule,
   NzCardModule,
-  NzSpaceModule
+  NzSpaceModule,
+  NzEmptyModule
 ];
 const material = [MatInputModule, MatButtonModule, ScrollingModule];
 
@@ -49,7 +52,8 @@ const nativeModules = [FormsModule, HttpClientModule, PickerModule];
     CommentComponent,
     BoxwriteCommentComponent,
     BoxCommentsComponent,
-    ShowRepliesBtnComponent
+    ShowRepliesBtnComponent,
+    ShowMoreCommentsComponent
   ],
   imports: [CommonModule, ...zorro, ...nativeModules, ...material],
   exports: [CommentsComponent],

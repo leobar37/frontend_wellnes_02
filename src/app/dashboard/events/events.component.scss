@@ -32,3 +32,18 @@
     padding: 1rem;
   }
 }
+
+@import "src/sass/responsive";
+@import "src/sass/mixins";
+
+@include contain {
+  width: 800px;
+  margin: 0 auto;
+  @include mq(lg) {
+    width: 700px;
+  }
+  @include mq(md) {
+    width: 600px !important;
+    padding: 20px;
+  }
+}

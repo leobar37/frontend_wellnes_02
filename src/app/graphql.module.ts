@@ -63,9 +63,6 @@ export function createApollo(
           fields: {
             interaction: {
               merge: (existing, incomming) => {
-                console.log(incomming);
-                console.log(existing);
-
                 return incomming;
               }
             }

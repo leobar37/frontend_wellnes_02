@@ -22,3 +22,16 @@
 :host ::ng-deep .event-uploader {
   display: flex;
 }
+
+@import "src/sass/mixins";
+@import "src/sass/responsive";
+@include contain {
+  width: 800px;
+  @include mq(lg) {
+    width: 700px;
+  }
+  @include mq(md) {
+    width: 600px;
+    padding: 20px;
+  }
+}

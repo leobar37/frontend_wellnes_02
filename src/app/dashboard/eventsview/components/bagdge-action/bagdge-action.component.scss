@@ -1,0 +1,31 @@
+@import "src/sass/variables";
+
+:host {
+  display: block;
+}
+.information__badges {
+  margin: 0 auto !important;
+  width: var(--size-container) !important;
+  border-radius: 10px;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  &_badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin: 10px;
+    background: $secondary-color;
+    color: $white-color;
+    padding: 8px 10px;
+    border-radius: 10px;
+    * {
+      vertical-align: middle;
+      padding: 5px;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 @import "src/sass/mixins.scss";
 @import "src/sass/variables.scss";
+@import "src/sass/responsive";
 :host {
   display: block;
 }
@@ -34,6 +35,9 @@
         color: $white-color;
         background-color: $base-color-chat;
       }
+      @include layout-bp(xs) {
+        @include createCircle($width-avatar - 20px);
+      }
     }
     &_user {
       position: absolute;
@@ -54,7 +58,9 @@
         font-size: 0.3rem;
       }
     }
-
+    @include layout-bp(xs) {
+      @include createCircle($width-avatar - 10px);
+    }
     @include hover;
   }
 }
@@ -136,20 +142,30 @@
   }
 }
 
-@mixin list_messages {
+@mixin button_reverse {
   &_button_reverse {
     @include resetButton();
     color: $white-color;
     margin: 0 10px;
     border-radius: 8px;
     background: $base-color-chat;
+    padding: 5px;
   }
+}
+
+@mixin list_messages {
+  @include button_reverse();
   &_list_conversation {
     width: 100%;
     @include generateScroll(5px);
     height: $size-height-container-chat - 200px;
     @extend %reset_list;
     margin: 0;
+    // mobile container
+    @include layout-bp(xs) {
+      height: $size-height-container-chat - 300px;
+    }
+
     &_item {
       display: grid;
       grid-template-columns: 23% 60%;
@@ -262,4 +278,15 @@
   @include list-chat();
   @include list_messages();
   @include form_send();
+
+  /*=============================================
+  =            mobile            =
+  =============================================*/
+
+  @include layout-bp(xs) {
+    font-size: $base-size-font - 2px;
+    width: 310px;
+    height: $size-height-container-chat - 100px;
+    transform: scale(0.9);
+  }
 }

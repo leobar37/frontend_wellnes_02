@@ -19,7 +19,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { roleModule } from '@core/directives/rol.directive';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 // chat module
 
 import { ChatModule } from '@core/modules/chat/chat.module';
@@ -33,7 +33,8 @@ const zorro = [
   NzBadgeModule,
   NzCardModule,
   NzAvatarModule,
-  NzIconModule
+  NzIconModule,
+  NzSpaceModule
 ];
 import { StatusUserService } from './services/status-user.service';
 const me = [ChatModule, roleModule];

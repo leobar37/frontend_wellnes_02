@@ -39,3 +39,8 @@ export type payloadComment = {
   action: CRUD_ACTION;
   comment: Comment;
 };
+
+export enum EnumboxCommentState {
+  COLLECTED = 'COLLECTED',
+  NORMA = 'NORMAL'
+}

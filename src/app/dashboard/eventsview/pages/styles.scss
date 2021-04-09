@@ -1,16 +1,13 @@
+@import "src/sass/variables";
+@import "src/sass/mixins";
+@import "src/sass/responsive";
 .display {
   width: 100%;
 }
 .singleEvent {
   display: flex;
 }
-.container {
-  width: 60%;
-}
 
-.contain {
-  max-width: 800px;
-}
 .media {
   display: flex;
   flex-direction: column;
@@ -22,14 +19,13 @@
     object-position: center center;
   }
 }
+
 .description {
   width: 100%;
 }
-
 .information {
   padding: 15px 0;
   width: 100%;
-
   .box {
     width: 100%;
     .item {
@@ -54,4 +50,14 @@
 .sesion {
   margin: 10px 15px;
   min-width: 400px;
+}
+
+@include contain() {
+  @include mq(lg) {
+    width: 750px;
+  }
+  @include mq(md) {
+    width: 600px;
+    transform: scale(0.9);
+  }
 }
