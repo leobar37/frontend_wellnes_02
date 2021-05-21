@@ -16,8 +16,13 @@ export const EVENTFRAGMENT = gql`
     video {
       url
     }
+
     credits
     modeEvent
     category_id
+    interactions {
+      id_user
+      id_event
+    }
   }
 `;

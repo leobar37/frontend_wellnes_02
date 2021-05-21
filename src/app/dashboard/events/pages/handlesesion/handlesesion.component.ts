@@ -14,6 +14,8 @@ import {
   OnChanges,
   SimpleChanges,
   OnDestroy,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { mergeDatetTime, isValidValue } from '@helpers/helpers';
 import { UtilsService } from 'src/app/services/utils.service';
@@ -24,10 +26,10 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { switchMap, catchError, tap, pluck } from 'rxjs/operators';
 import { getTimestamp } from '@helpers/helpers';
 import { Router } from '@angular/router';
+import { LoadingService, LoadingType } from '@delon/abc/loading';
 // helpers
 import { NgxSpinnerService } from 'ngx-spinner';
-import { isNull } from 'lodash';
-
+import _, { isNull } from 'lodash';
 interface IformSesion {
   duration: number;
   linkRoom: string;
@@ -44,6 +46,7 @@ interface IformConfigSesion {
   selector: 'app-handlesesion',
   templateUrl: './handlesesion.component.html',
   styleUrls: ['../../events.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public formSesion: FormGroup;
@@ -78,7 +81,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     private ngxSpinner: NgxSpinnerService,
     private serviceStorage: StorageService,
     private resourceService: ResourceService,
-    private sanitize: DomSanitizer
+    private changueDetection: ChangeDetectorRef
   ) {}
   ngOnDestroy(): void {
     this.subs.forEach((sub) => {
@@ -93,7 +96,6 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.buildForms();
     this.idEvent = this.activateRoute.snapshot.params['id'];
-
     /** listen routes */
     this.listentRoutes();
     /**  gets sesions */
@@ -160,13 +162,12 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
             startSesion: mergeDatetTime(
               valueForm.startDateSesion,
               valueForm.startTimeSesion
-            ),
+            )
           };
         }
       },
-      includeComments: valueConfigSesion.includeComments,
+      includeComments: valueConfigSesion.includeComments
     } as Isesion;
-    console.log(sesion);
 
     return sesion;
   }
@@ -181,7 +182,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     } catch (error) {
       this.modal.error({
         nzTitle: 'Error',
-        nzContent: error.message,
+        nzContent: error.message
       });
       return;
     }
@@ -196,7 +197,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         this.modal.error({
           nzTitle: 'Error',
           nzContent:
-            'No se ha incluido un video, debe desabilitar esta opción he incluir un link o solo agregue un video',
+            'No se ha incluido un video, debe desabilitar esta opción he incluir un link o solo agregue un video'
         });
         return;
       }
@@ -219,7 +220,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           const resource = await this.resourceService.createResource({
             key: dataresource.key,
             bucket: dataresource.bucket,
-            type: dataresource.type,
+            type: dataresource.type
           });
           sesion.id_resource = resource.data.createResource.id;
         } else {
@@ -229,7 +230,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
             {
               bucket: dataresource.bucket,
               key: dataresource.key,
-              type: dataresource.type,
+              type: dataresource.type
             },
             this.currentSesion.id_resource
           );
@@ -247,9 +248,15 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   /*=============================================
  =            DELETE SESION            =
  =============================================*/
-  public deleteSesion() {
-    this.sesionService.deleteSesion(this.currentSesion.id).then((result) => {});
-  }
+  deleteSesion = (id: number) => {
+    this.sesionService.deleteSesion(id).then((result) => {
+      const params = this.activateRoute.snapshot.queryParams;
+      const newParams = _.omit(params, 'edit');
+      console.log(newParams);
+      this.router.navigate([], { queryParams: newParams });
+      this.changueDetection.markForCheck();
+    });
+  };
 
   /*=============================================
   =            GET ALL SESIONS            =
@@ -264,6 +271,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           tap((event) => {
             this.currentEvent = event;
             this.sesions = event.sesions;
+            this.changueDetection.markForCheck();
             if (this.currentEvent.modeEvent == 'PROGRAM') {
               this.isProgramEvent.next(true);
             }
@@ -288,6 +296,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         if (response && response.sesion) {
           this.currentSesion = response.sesion;
           this.uploadImage(response.sesion.id);
+
           this.setValuesInForm(this.currentSesion);
           // fill sesions
           this.sesions = response.sesions;
@@ -333,6 +342,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
         const data = resp.data.updateSesion;
         if (resp.data && data.resp) {
           this.sesions = data.sesions;
+
           this.setValuesInForm(data.sesion);
           this.msg.success('actualizado');
           // verify image
@@ -372,23 +382,23 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private setValuesInForm(sesion: Isesion) {
     const videoUrl = sesion?.video?.url;
     this.formSesion.patchValue({
-      duration: sesion.duration,
-      linkRoom: sesion.linkRoom,
+      duration: sesion?.duration,
+      linkRoom: sesion?.linkRoom,
       ...() => {
         // render if is programa
         if (this.isProgram) {
           return {
             startDateSesion: getTimestamp(sesion.startSesion),
-            startTimeSesion: getTimestamp(sesion.startSesion),
+            startTimeSesion: getTimestamp(sesion.startSesion)
           };
         }
       },
-      nameSesion: sesion.nameSesion,
-      description: sesion.description,
+      nameSesion: sesion?.nameSesion,
+      description: sesion?.description
     });
     this.formConfigSesion.patchValue({
       includeVideo: sesion.includeVideo,
-      includeComments: sesion.includeComments,
+      includeComments: sesion.includeComments
     });
     // preview image
     if (!isValidValue(this.previewImage)) {
@@ -412,7 +422,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
       duration: this.fb.control(null),
       linkRoom: this.fb.control(null),
       nameSesion: this.fb.control('', [Validators.required]),
-      description: this.fb.control('', [Validators.required]),
+      description: this.fb.control('', [Validators.required])
     };
     this.subs.push(
       this.isProgramEvent.subscribe((res: boolean) => {
@@ -420,7 +430,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           formSesion = {
             ...formSesion,
             startDateSesion: this.fb.control(null, [Validators.required]),
-            startTimeSesion: this.fb.control(null, [Validators.required]),
+            startTimeSesion: this.fb.control(null, [Validators.required])
           };
         }
       })
@@ -429,7 +439,7 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
     this.formSesion = this.fb.group(formSesion);
     this.formConfigSesion = this.fb.group({
       includeVideo: this.fb.control(false),
-      includeComments: this.fb.control(false),
+      includeComments: this.fb.control(false)
     });
   }
 
@@ -448,19 +458,16 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   public newSesion(): void {
     this.router.navigate([], {
       queryParams: {
-        edit: null,
+        edit: null
       },
-      queryParamsHandling: 'merge',
+      queryParamsHandling: 'merge'
     });
   }
 
   // video function
   selectVideo(video: File) {
     this.videoForUpload = video;
-
-    this.videosrc = this.sanitize.bypassSecurityTrustUrl(
-      URL.createObjectURL(video)
-    );
+    this.videosrc = URL.createObjectURL(video);
   }
 
   /*=============================================
@@ -503,8 +510,8 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
   private navigateSesionEdit(id: number): void {
     this.router.navigate([], {
       queryParams: {
-        edit: id,
-      },
+        edit: id
+      }
     });
   }
 
@@ -531,6 +538,8 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
 
   actionServer = (info: any) => {
     const errors = [];
+    this.messageSpinner = 'cargando imagen..';
+    this.ngxSpinner.show();
     getBase64(info.file, (image) => {
       const imagetest = new Image();
       imagetest.onload = () => {
@@ -553,7 +562,9 @@ export class HandlesesionComponent implements OnInit, OnChanges, OnDestroy {
           this.fileForUpload = info.file;
           this.previewImage = image;
         }
+        this.ngxSpinner.hide();
       };
+
       imagetest.src = URL.createObjectURL(info.file);
     });
     return of(null);

@@ -5,25 +5,22 @@
   fxLayoutAlign="center center"
 >
   <!-- MEDIA PREVIEW -->
-  <nz-card nzBorderless>
+  <nz-card nzBorderless class="w-100" class="media-card">
     <le-title [text]="currentEvent.name" lineAddon leBack> </le-title>
-    <div class="media">
-      <img
-        nz-image
-        class="media__image"
-        *ngIf="!isVideo"
-        [nzSrc]="currentEvent.eventCover | resolveUrl: true"
-        alt=""
-      />
-      <app-videoplayer
-        *ngIf="isVideo"
-        [thumbnail]="currentEvent.eventCover"
-        [src]="currentEvent.video.url"
-      ></app-videoplayer>
-    </div>
+    <img
+      nz-image
+      class="w-100"
+      *ngIf="!isVideo"
+      [nzSrc]="currentEvent.eventCover | resolveUrl: true"
+      alt=""
+    />
+    <le-reproductor
+      *ngIf="isVideo"
+      [video]="currentEvent.video.url"
+      [poster]="currentEvent.eventCover | resolveUrl: true"
+    ></le-reproductor>
   </nz-card>
   <!-- information -->
-
   <nz-space class="information">
     <div fxLayout fxLayoutAlign="center center" style="width: 100%">
       <badge-action>
@@ -34,28 +31,24 @@
         >
           <i class="far fa-address-book"></i>
         </bagde-action-item>
-        <bagde-action-item [count]="50" (click)="openComments()">
+        <bagde-action-item
+          [count]="sizeComments | async"
+          (click)="openComments()"
+        >
           <i class="fas fa-comments"></i>
         </bagde-action-item>
-        <bagde-action-item [count]="20">
+        <bagde-action-item [count]="20" (click)="addInteraction()">
           <i
             nz-icon
             nzType="like"
             style="font-size: 28px; margin: 0; padding: 0"
-            nzTheme="outline"
-          ></i>
-        </bagde-action-item>
-        <bagde-action-item [count]="20">
-          <i
-            nz-icon
-            style="font-size: 28px; margin: 0; padding: 0"
-            nzType="share-alt"
-            nzTheme="outline"
+            [nzTheme]="currentEvent.isMeReaction ? 'fill' : 'outline'"
           ></i>
         </bagde-action-item>
       </badge-action>
     </div>
   </nz-space>
+  <!-- is not register -->
   <nz-ribbon [nzText]="currentEvent.credits + ' C'" *ngIf="!isRegister">
     <nz-card class="w-100 my-4">
       <p nz-typography>Aún no ha sido registrado a este {{ label }}</p>
@@ -81,7 +74,7 @@
 </article>
 
 <nz-drawer
-  [nzWidth]="700"
+  [nzWidth]="drawerWidth"
   [nzVisible]="visibleSesions"
   (nzOnClose)="visibleSesions = !visibleSesions"
 >
@@ -100,7 +93,10 @@
       </ng-template>
       <cdk-virtual-scroll-viewport
         itemSize="10"
-        *ngIf="currentEvent.sesions.length > 0; else notFoundSesions"
+        *ngIf="
+          currentEvent?.sesions && currentEvent.sesions.length > 0;
+          else notFoundSesions
+        "
         class="display"
         [ngStyle]="{ height: sizeDisplay }"
       >
@@ -115,16 +111,33 @@
   </nz-card>
   <!-- comments -->
 </nz-drawer>
+<!-- drawer coments -->
 <nz-drawer
-  nzPlacement="bottom"
+  nzMask="false"
+  nzPlacement="right"
   (nzOnClose)="visibleDrawerComments = false"
   [nzVisible]="visibleDrawerComments"
-  [nzHeight]="'70vh'"
+  nzWrapClassName="commentStylesDrawer"
+  [nzBodyStyle]="stylesCommentBodyDrawer"
+  [nzWidth]="widthComments"
 >
-  <div fxLayout fxLayoutAlign="center start">
+  <div fxLayout="column" fxLayoutAlign="center center">
+    <le-title
+      [text]="(sizeComments | async) || '' + ' comentarios'"
+      leBack
+      lineAddon
+      class="w-100"
+      [leCustomBackCallback]="closeCommentsDrawer"
+    >
+    </le-title>
+    <div class="w-100">
+      <p nz-typography>
+        {{ currentEvent?.description }}
+      </p>
+    </div>
     <ng-container
       *ngIf="
-        currentEvent.includeComments && currentEvent?.id_comment;
+        currentEvent?.includeComments && currentEvent?.id_comment;
         else notFoundComments
       "
     >

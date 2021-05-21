@@ -51,6 +51,10 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { TitleModule } from '@core/ui/title/title.module';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { CommonEventSesionComponent } from './components/common-event-sesion/common-event-sesion.component';
+import { MediaModule } from '@delon/abc/media';
+import { ReproductorComponent } from './components/reproductor/reproductor.component';
+import { PlyrModule } from 'ngx-plyr';
+import { InteractionServiceEvent } from './services/interaction.service';
 const zorro = [
   NzButtonModule,
   NzModalModule,
@@ -65,7 +69,8 @@ const zorro = [
   NzOutletModule,
   NzTypographyModule,
   NzDrawerModule,
-  NzBadgeModule
+  NzBadgeModule,
+  MediaModule
 ];
 
 const material = [
@@ -88,7 +93,8 @@ const me = [ViewMoreModule, TitleModule];
     DisplayCategorieComponent,
     BagdgeActionComponent,
     BagdeActionItemComponent,
-    CommonEventSesionComponent
+    CommonEventSesionComponent,
+    ReproductorComponent
   ],
   exports: [CardComponent],
   imports: [
@@ -103,8 +109,14 @@ const me = [ViewMoreModule, TitleModule];
     PipeShortParagraphModule,
     NgxMasonryModule,
     PlayerModule.forRoot(),
-    SwiperModule
+    SwiperModule,
+    PlyrModule
   ],
-  providers: [EventServiceModule, EventService, PrincipalSesionService]
+  providers: [
+    EventServiceModule,
+    EventService,
+    InteractionServiceEvent,
+    PrincipalSesionService
+  ]
 })
 export class EventsviewModule {}

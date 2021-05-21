@@ -1,3 +1,4 @@
+import { ZoneOutside } from '@delon/util';
 import { FormControl } from '@angular/forms';
 import { ERol } from './../../../../services/rol.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -99,6 +100,8 @@ export class UserModalComponent implements OnInit, OnChanges {
       this.updateStateUser(!val);
     } else {
       this.modalService.confirm({
+        nzZIndex: 1000,
+        nzMask: true,
         nzTitle: '¿Esta seguro que desea suspender esta cuenta?',
         nzContent:
           'El usuario no tendra acceso a su cuenta hasta que le vuelva a reactivar',
@@ -129,7 +132,7 @@ export class UserModalComponent implements OnInit, OnChanges {
   }
 
   showModalCredits() {
-    this.modalService.create({
+    const ref = this.modalService.create({
       nzContent: this.creditsTpl,
       nzTitle: 'Aumentar o disminuir creditos',
       nzOnOk: () => {
@@ -149,6 +152,7 @@ export class UserModalComponent implements OnInit, OnChanges {
               };
               this.userReportService.refreshQuierUsers();
               this.changueDetection.markForCheck();
+              ref.destroy();
             });
         } else {
           this.modalService.error({

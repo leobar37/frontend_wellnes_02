@@ -1,4 +1,3 @@
-import { CommentService } from './../services/comment.service';
 import { UiEventsService } from './../services/ui-events.service';
 import { InputBoolean } from 'ng-zorro-antd/core/util';
 import { InteractionService } from './../services/interaction.service';

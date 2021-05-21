@@ -56,6 +56,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (!user.comfirmed) {
         this.alertService.addAlert({
           message: 'Su email todavía no esta confirmado',
+          description: 'Puedes encontrar más información en tu perfil',
           type: 'warning',
           icon: true,
           closable: true,
@@ -119,7 +120,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   @checkBreakPoint(EBreakpoints.gtXs)
   desktopBreakPoint() {
-    console.log('value in md');
     this.collapsableWidth = 80;
     this.widthSidebar = '256px';
   }
@@ -127,7 +127,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @checkBreakPoint(EBreakpoints.xs)
   tabletBreakPoint() {
     this.collapsableWidth = 0;
-    console.log('apply');
     this.widthSidebar = '240px';
   }
 

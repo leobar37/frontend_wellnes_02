@@ -18,7 +18,6 @@ const CONFIRM_USER = gql`
 @Injectable()
 export class ConfirmEmailService {
   constructor(private apollo: Apollo) {}
-
   public confirmUser(token: string) {
     const respForToken = (token: string) => {
       if (token) {
@@ -32,10 +31,6 @@ export class ConfirmEmailService {
     };
     return this.apollo
       .mutate({ mutation: CONFIRM_USER, variables: { token } })
-      .pipe(
-        pluck('data', 'confirmUser', 'token'),
-        map(respForToken),
-        tap(console.log)
-      );
+      .pipe(pluck('data', 'confirmUser', 'token'), map(respForToken));
   }
 }

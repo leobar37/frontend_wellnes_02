@@ -9,16 +9,17 @@
     <le-title [text]="currentSesion.nameSesion" lineAddon leBack></le-title>
     <div class="media">
       <img
-        class="media__image"
+        nz-image
+        class="w-100"
         *ngIf="!isVideo"
-        [src]="currentSesion.sesionCover"
+        [src]="currentSesion.sesionCover | resolveUrl: true"
         alt=""
       />
-      <app-videoplayer
+      <le-reproductor
         *ngIf="isVideo"
-        [thumbnail]="currentSesion.sesionCover"
-        [src]="currentSesion.video.url"
-      ></app-videoplayer>
+        [video]="currentSesion.video.url"
+        [poster]="currentSesion.sesionCover | resolveUrl: true"
+      ></le-reproductor>
     </div>
   </nz-card>
   <nz-space class="information">
@@ -27,14 +28,14 @@
         <bagde-action-item [count]="50" (click)="openComments()">
           <i class="fas fa-comments"></i>
         </bagde-action-item>
-        <bagde-action-item [count]="20">
+        <!-- <bagde-action-item [count]="20">
           <i
             nz-icon
             nzType="like"
             style="font-size: 28px; margin: 0; padding: 0"
             nzTheme="outline"
           ></i>
-        </bagde-action-item>
+        </bagde-action-item> -->
       </badge-action>
     </div>
   </nz-space>

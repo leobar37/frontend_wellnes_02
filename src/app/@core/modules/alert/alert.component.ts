@@ -1,5 +1,4 @@
 import { AlertService } from './alert.service';
-import { IAlert } from './model.alert';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +19,9 @@ import {
         [nzDescription]="alert.description || null"
         [nzMessage]="alert.message"
         [nzCloseable]="alert.closable || false"
-      ></nz-alert>
+      >
+     
+      </nz-alert>
     </ng-container>
   `,
   styleUrls: ['./alert.componenent.scss'],

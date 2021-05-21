@@ -28,6 +28,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { ShowMoreCommentsComponent } from './components/show-more-comments/show-more-comments.component';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { TitleModule } from '@core/ui/title/title.module';
 const zorro = [
   NzIconModule,
   NzDividerModule,
@@ -55,7 +56,7 @@ const nativeModules = [FormsModule, HttpClientModule, PickerModule];
     ShowRepliesBtnComponent,
     ShowMoreCommentsComponent
   ],
-  imports: [CommonModule, ...zorro, ...nativeModules, ...material],
+  imports: [CommonModule, ...zorro, ...nativeModules, ...material, TitleModule],
   exports: [CommentsComponent],
   providers: [
     CommentService,

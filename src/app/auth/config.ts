@@ -14,5 +14,5 @@ export const IdatConfigAuth: IconfigAuth = {
   test: 'hello',
   imageForLogin: 'assets/img/bg_login.jpg',
   imageForRegister: 'assets/img/imageRegiter.jpg',
-  timePrevent: 30,
+  timePrevent: 30
 };

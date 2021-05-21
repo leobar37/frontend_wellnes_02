@@ -130,8 +130,8 @@ export class SesionService {
       mutation: ADD_SESION,
       variables: {
         idEvent,
-        sesion: this.buildSesion(sesion),
-      },
+        sesion: this.buildSesion(sesion)
+      }
     });
   }
 
@@ -145,14 +145,14 @@ export class SesionService {
       ...() => {
         if (sesion.startSesion) {
           return {
-            startSesion: getTimestamp(sesion.startSesion),
+            startSesion: getTimestamp(sesion.startSesion)
           };
         }
       },
       description: sesion.description,
       cloudinarySource: sesion.cloudinarySource,
       id_resource: Number(sesion?.id_resource),
-      includeVideo: sesion.includeVideo,
+      includeVideo: sesion.includeVideo
     };
   }
   public editSesion(
@@ -163,8 +163,8 @@ export class SesionService {
       mutation: EDIT_SESION,
       variables: {
         idSesion,
-        sesion: this.buildSesion(sesion),
-      },
+        sesion: this.buildSesion(sesion)
+      }
     });
   }
 
@@ -174,31 +174,29 @@ export class SesionService {
     return this.apollo.query({
       query: GETSESIONS,
       variables: {
-        idEvent: Number(id),
-      },
+        idEvent: Number(id)
+      }
     });
   }
 
-  public deleteSesion(
-    idSesion: number
-  ): Promise<ApolloQueryResult<{ deleteSesion: ISesionResponse }>> {
+  public deleteSesion(idSesion: number) {
     /** se elimina la sesion tambien toca eliminar el recurso*/
     return this.apollo
-      .watchQuery<{ deleteSesion: ISesionResponse }>({
-        query: DELETE_SESION,
+      .mutate<{ deleteSesion: ISesionResponse }>({
+        mutation: DELETE_SESION,
         variables: {
-          idSesion: idSesion,
-        },
+          idSesion: idSesion
+        }
       })
-      .result();
+      .toPromise();
   }
 
   public getSesion(idSesion?: number): QueryRef<{ sesion: Isesion }> {
     return this.apollo.watchQuery({
       query: GETSESION,
       variables: {
-        idSesion: idSesion ?? null,
-      },
+        idSesion: idSesion ?? null
+      }
     });
   }
 
@@ -210,11 +208,11 @@ export class SesionService {
       mutation: UPLOAD_COVER,
       variables: {
         picture: file,
-        idSesion: Number(id),
+        idSesion: Number(id)
       },
       context: {
-        useMultipart: true,
-      },
+        useMultipart: true
+      }
     });
   }
 }

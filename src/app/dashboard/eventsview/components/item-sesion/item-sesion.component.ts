@@ -7,16 +7,13 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
   template: `
     <nz-card nzHoverable>
       <div fxLayout fxLayoutGap="15px" class="container_sesion_item">
-        <div class="image" fxFlex="40%">
+        <!-- <div class="image" fxFlex="40%">
           <img [src]="sesion.sesionCover" />
-        </div>
+        </div> -->
         <div class="detail" fxFlex="60%">
           <h2 class="title font-italic">
             {{ sesion.nameSesion }}
           </h2>
-          <p class="paragraph my-2">
-            {{ sesion.description | shortParagraph: 150 }}
-          </p>
           <span class="text-mute font-italic">
             {{ sesion.createdSesion | date: 'short' }}
           </span>
@@ -26,15 +23,15 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
   `,
   styleUrls: ['./item-sesion.component.scss'],
   host: {
-    '(click)': 'clickItem()',
-  },
+    '(click)': 'clickItem()'
+  }
 })
 export class ItemSesionComponent implements OnInit {
   private source: Isesion;
   @Input('sesion') set sesion(ev: Isesion) {
     ev = {
       ...ev,
-      sesionCover: this.utilService.resolveNormalPathImage(ev.sesionCover),
+      sesionCover: this.utilService.resolveNormalPathImage(ev.sesionCover)
     };
     this.source = ev;
   }

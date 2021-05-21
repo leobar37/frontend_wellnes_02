@@ -34,9 +34,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-
+import { MediaModule } from '@delon/abc/media';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { MatIconModule } from '@angular/material/icon';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { LoadingModule } from '@delon/abc/loading';
 /*
    Embed video in html : 
    NPM :  https://www.npmjs.com/package/ngx-embed-video
@@ -51,10 +55,12 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { StorageModule } from '@core/modules/storage/storage.module';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { TitleModule } from '@core/ui/title/title.module';
 const zorro = [
   NzSpaceModule,
   NzSliderModule,
   NzTagModule,
+  NzMenuModule,
   NzModalModule,
   NzButtonModule,
   NzUploadModule,
@@ -72,9 +78,14 @@ const zorro = [
   NzTableModule,
   NzBadgeModule,
   NzDividerModule,
-  NzInputNumberModule
+  NzInputNumberModule,
+  MediaModule,
+  NzDropDownModule,
+  LoadingModule
 ];
 
+const me = [TitleModule];
+const material = [MatIconModule];
 @NgModule({
   declarations: [
     EventsComponent,
@@ -96,7 +107,9 @@ const zorro = [
     CustomCheckboxModule,
     PlayerModule.forRoot(),
     CloudinaryModule,
-    zorro
+    zorro,
+    material,
+    me
   ],
   providers: [EventService, SesionService]
 })

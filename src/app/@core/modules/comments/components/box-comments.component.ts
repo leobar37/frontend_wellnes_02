@@ -1,3 +1,4 @@
+import { isValidValue } from './../../../../helpers/helpers';
 import { BehaviorSubject } from 'rxjs';
 import { IComment, EnumboxCommentState } from './../model';
 import { CommentService } from './../services/comment.service';
@@ -19,7 +20,7 @@ import { CommentComponent } from './comment.component';
 
 import { typeEventBoxComments } from '../services/box-comments.service';
 import _ from 'lodash';
-
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 @Component({
   selector: 'box-comments',
   template: `
@@ -55,6 +56,7 @@ import _ from 'lodash';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+@UntilDestroy()
 export class BoxCommentsComponent implements OnInit {
   _comments: Comment[];
   showBoxWrite: boolean = false;
@@ -74,7 +76,6 @@ export class BoxCommentsComponent implements OnInit {
 
   @Input() set parentComment(v: Comment) {
     this._parentComment = v;
-
     this.isReply = true;
   }
 
@@ -83,6 +84,10 @@ export class BoxCommentsComponent implements OnInit {
   }
 
   @Input() set comments(v: Comment[]) {
+    if (!isValidValue(v)) {
+      v = [];
+    }
+
     let commentsShow = Object.assign([] as Comment[], v);
     if ((this.stateComponent = EnumboxCommentState.COLLECTED)) {
       // obtain number of the config
@@ -125,9 +130,12 @@ export class BoxCommentsComponent implements OnInit {
 
   // suscribers
   private suscribeActionComments() {
-    this.commentService.subscribeActionComments({
-      idComment: this.parentComment.id
-    });
+    this.commentService
+      .subscribeActionComments({
+        idComment: this.parentComment.id
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   /*=============================================
@@ -216,8 +224,9 @@ export class BoxCommentsComponent implements OnInit {
 
     commentComponent.instance.comment = comment;
     commentComponent.changeDetectorRef.markForCheck();
-
-    this.comments.push(comment);
-    this.isEmpty();
+    if (this.comments) {
+      this.comments.push(comment);
+      this.isEmpty();
+    }
   }
 }

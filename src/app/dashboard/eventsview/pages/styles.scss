@@ -15,9 +15,14 @@
   align-items: center;
   &__image {
     width: 90%;
+    width: 10%;
     object-fit: cover;
     object-position: center center;
   }
+}
+
+.media-card {
+  @include resetSpaces();
 }
 
 .description {
@@ -53,11 +58,14 @@
 }
 
 @include contain() {
-  @include mq(lg) {
-    width: 750px;
+  @include layout-bp(gt-sm) {
+    width: 800px;
   }
-  @include mq(md) {
+  @include layout-bp(md) {
     width: 600px;
-    transform: scale(0.9);
+  }
+  @include layout-bp(xs) {
+    width: 100% !important;
+    overflow: hidden;
   }
 }

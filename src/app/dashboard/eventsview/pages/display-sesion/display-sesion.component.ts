@@ -1,3 +1,4 @@
+import { CommentService } from './../../../../@core/modules/comments/services/comment.service';
 import { CommonEventSesionComponent } from './../../components/common-event-sesion/common-event-sesion.component';
 import { UtilsService } from '@services/utils.service';
 import { SesionService } from './../../../events/services/sesion.service';
@@ -25,9 +26,10 @@ export class DisplaySesionComponent
     private sesionServiceex: SesionService,
     private utilsService: UtilsService,
     private modal: NzModalService,
-    public changueDetector: ChangeDetectorRef
+    public changueDetector: ChangeDetectorRef,
+    public commentService: CommentService
   ) {
-    super(changueDetector);
+    super(changueDetector, commentService);
   }
   ngOnInit(): void {
     this.listenRoutes();

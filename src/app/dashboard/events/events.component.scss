@@ -37,8 +37,9 @@
 @import "src/sass/mixins";
 
 @include contain {
-  width: 800px;
+  width: 900px;
   margin: 0 auto;
+
   @include mq(lg) {
     width: 700px;
   }

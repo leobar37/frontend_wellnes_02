@@ -73,7 +73,7 @@ const ADD_COMMENT = gql`
 type PayloadActionInComment = { action: CRUD_ACTION; comment: Comment };
 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-
+import _ from 'lodash';
 @Injectable()
 @UntilDestroy()
 export class CommentService {
@@ -98,6 +98,12 @@ export class CommentService {
     private apollo: Apollo,
     private boxCommentsService: BoxCommentsService
   ) {}
+
+  public lengthComments() {
+    return this.commentSubject
+      .asObservable()
+      .pipe(map((el) => (isValidValue(el?.length) ? el.length : 0)));
+  }
 
   public addComment(comment: IComment, isReply: boolean = false) {
     return this.apollo
@@ -127,7 +133,9 @@ export class CommentService {
     // initialize ref with new id bootstrap
     this.refComments;
     this.commentsChangues();
-    this.subscribeActionComments({ bootstrap: id_bootstrap });
+    this.subscribeActionComments({ bootstrap: id_bootstrap })
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   // subs
@@ -152,30 +160,31 @@ export class CommentService {
 
     // suscribe action comments
     const isInReply = isValidValue(variables.idComment);
-    this.apollo
+    // FIXME: esta suscripcion causa muchos oyentes en el backed -> se debe generalizar
+    return this.apollo
       .subscribe({
         query: SUB_NEWCOMMENTS,
         variables: variables,
         fetchPolicy: 'no-cache'
       })
       .pipe(pluck('data', 'actionComment'))
-      .subscribe((data: PayloadActionInComment) => {
-        data.comment = Comment.instance(data.comment);
-        // ignore comment is it is ,me
-        actionUpdate(data);
-        console.log('create sub');
-
-        if (!data.comment.isMe) {
-          switch (data.action) {
-            case 'CREATE': {
-              actionCreate(data);
-              break;
-            }
-            case 'UPDATE': {
+      .pipe(
+        tap((data: PayloadActionInComment) => {
+          data.comment = Comment.instance(data.comment);
+          // ignore comment is it is ,me
+          actionUpdate(data);
+          if (!data.comment.isMe) {
+            switch (data.action) {
+              case 'CREATE': {
+                actionCreate(data);
+                break;
+              }
+              case 'UPDATE': {
+              }
             }
           }
-        }
-      });
+        })
+      );
   }
 
   /**

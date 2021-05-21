@@ -1,7 +1,7 @@
 @import "src/sass/mixins";
 @import "src/sass/variables";
 @import "src/sass/functions";
-
+@import "src/sass/responsive";
 @mixin body-comment {
   &__body {
     .username {
@@ -62,17 +62,42 @@
   }
 }
 
+@mixin responsiveComment($base-size, $rest, $avatar: 10, $body: 80, $like: 10) {
+  $width-size-comment-lg: $base-size - $rest;
+  grid-template-columns:
+    percent($avatar, $width-size-comment-lg) percent(
+      $body,
+      $width-size-comment-lg
+    )
+    percent($like, $width-size-comment-lg);
+}
+
 @mixin comment {
   .comment {
-    margin: 10px 0;
+    margin: 8px 0;
     display: grid;
     grid-template-columns:
       percent(10, $width-size-comment) percent(80, $width-size-comment)
       percent(10, $width-size-comment);
+
+    @include layout-bp(lt-lg) {
+      @include responsiveComment($width-size-comment, 180px);
+    }
+    @include layout-bp(lt-sm) {
+      @include responsiveComment($width-size-comment, 380px, 30, 60);
+    }
     &.reply {
+      margin-left: 28px;
       grid-template-columns:
         percent(10, $width-size-reply) percent(80, $width-size-reply)
         percent(10, $width-size-reply);
+      @include layout-bp(lt-lg) {
+        @include responsiveComment($width-size-reply, 210px);
+      }
+      @include layout-bp(lt-sm) {
+        margin-left: 0px !important;
+        @include responsiveComment($width-size-reply, 360px, 30, 60);
+      }
     }
     // avatar
     @include avatar-comment();
@@ -86,9 +111,11 @@
     margin-left: 50px;
   }
 }
-
 .comments {
   font-size: 16px;
+  @include layout-bp(lt-sm) {
+    font-size: 12px;
+  }
   &__box {
     width: 100%;
     @include comment();

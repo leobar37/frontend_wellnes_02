@@ -1,4 +1,4 @@
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 
 import { CommentService } from './../services/comment.service';
 import { Comment } from '../models/comment.class';
@@ -45,8 +45,6 @@ export class CommentsComponent implements OnInit, AfterViewInit {
     this.commentsService.init(this.idBootrapComment);
 
     this.comments$ = this.commentsService.comments$;
-    // // configure sub2
-    // this.configureSubComments();
   }
 
   /*=============================================

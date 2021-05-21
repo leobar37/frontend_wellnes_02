@@ -29,9 +29,11 @@ const listenEventMediaObserver = (target: SafeAny, nameObserver: string) => {
   target[_subscriptionObserver] = (target[nameObserver] as MediaObserver)
     .asObservable()
     .subscribe((changues: MediaChange[]) => {
-      (target[_register] as BreakWithCallback[]).forEach((el) => {
-        el.matchBrakPoint(changues);
-      });
+      obtainInitializeArray<BreakWithCallback>(target, _register).forEach(
+        (el) => {
+          el.matchBrakPoint(changues);
+        }
+      );
     });
 };
 
@@ -57,7 +59,7 @@ export const BreakPointCheck = (options: OptionBreakPoint): ClassDecorator => {
     target.prototype.ngOnDestroy = function (...args: []) {
       onDestroyPrperties(this);
 
-      originalOnDestroy.apply(this, args);
+      originalOnDestroy && originalOnDestroy.apply(this, args);
     };
   };
 };

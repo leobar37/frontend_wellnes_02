@@ -12,6 +12,7 @@ export class MangeErrors {
     response
   }: ErrorResponse) {
     const error = graphQLErrors[0].extensions.code;
+
     const message = SERVER_ERRORS.get(error);
     if (error == 'TOKEN_EXPIRED') {
       this.router.navigateByUrl('/login');

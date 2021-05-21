@@ -20,3 +20,6 @@
     font-size: $size-icon-chat;
   }
 }
+app-overlay {
+  z-index: 1000;
+}

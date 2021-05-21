@@ -22,13 +22,13 @@ export class SidebarService {
         { name: 'Referidos', route: 'account/referreals', icon: 'user' }
       ]
     },
-    {
-      name: 'Mis eventos',
-      icon: 'fas fa-calendar-week pr-2 icon_sidebar',
-      route: 'm/events',
-      isFont: true,
-      roles: [ERol.USER]
-    },
+    // {
+    //   name: 'Mis eventos',
+    //   icon: 'fas fa-calendar-week pr-2 icon_sidebar',
+    //   route: 'm/events',
+    //   isFont: true,
+    //   roles: [ERol.USER]
+    // }
     {
       name: 'Mis Programas',
       icon: 'fas fa-indent pr-2 icon_sidebar',
@@ -55,19 +55,19 @@ export class SidebarService {
     //   icon: 'appstore',
     //   items: [{ name: 'calendario', route: 'apps/calendar' }]
     // },
-    {
-      name: 'Administrar Eventos',
-      icon: 'profile',
-      isFont: false,
-      roles: [ERol.CREATOR, ERol.ADMIN],
-      items: [
-        { name: 'Agregar Evento', route: 'events' },
-        {
-          name: 'Lista de eventos',
-          route: 'events/list/event'
-        }
-      ]
-    },
+    // {
+    //   name: 'Administrar Eventos',
+    //   icon: 'profile',
+    //   isFont: false,
+    //   roles: [ERol.CREATOR, ERol.ADMIN],
+    //   items: [
+    //     { name: 'Agregar Evento', route: 'events' },
+    //     {
+    //       name: 'Lista de eventos',
+    //       route: 'events/list/event'
+    //     }
+    //   ]
+    // },
     {
       name: 'Administrar Programas',
       icon: 'profile',

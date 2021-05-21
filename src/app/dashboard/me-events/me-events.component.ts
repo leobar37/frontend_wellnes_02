@@ -1,3 +1,4 @@
+import { tap } from 'rxjs/operators';
 import { NgxMasonryOptions } from 'ngx-masonry';
 import { Observable } from 'rxjs';
 import { IEvent } from 'src/app/@core/models/eventmodels/event.model';
@@ -25,7 +26,12 @@ export class MeEventsComponent implements OnInit {
       if (this.isEvent) {
         this.events$ = this.profileService.getEventsOfAssisted('EVENT');
       } else {
-        this.events$ = this.profileService.getEventsOfAssisted('PROGRAMS');
+        console.log('fetch programas');
+        this.events$ = this.profileService.getEventsOfAssisted('PROGRAM').pipe(
+          tap((data) => {
+            console.log(data);
+          })
+        );
       }
     });
   }

@@ -33,8 +33,8 @@ export class EventService {
       mutation: ATTEND_SESION,
       variables: {
         idUser: idUser,
-        idEvent: idEvent,
-      },
+        idEvent: idEvent
+      }
     });
   }
   public isRegisterinEvent(idUser: number, idEvent: number) {
@@ -42,8 +42,8 @@ export class EventService {
       query: ISATTENDEVENT,
       variables: {
         idUser: idUser,
-        idEvent: idEvent,
-      },
+        idEvent: idEvent
+      }
     });
   }
 }

@@ -71,11 +71,6 @@ export class UsersComponent implements OnInit {
   }
 
   opendModalMultipleUsers() {
-    // import('../modals/users-modal/users-modal.component').then(
-    //   ({ UsersModalComponent }) => {
-    //     this.dialog.open(UsersModalComponent);
-    //   }
-    // );
     this.dialog.open(UsersModalComponent, {
       data: { ids: Array.from(this.idsSelect) }
     });

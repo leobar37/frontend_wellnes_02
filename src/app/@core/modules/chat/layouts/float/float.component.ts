@@ -81,14 +81,9 @@ export class FloatComponent implements OnInit {
 
   @checkBreakPoint(EBreakpoints.xs)
   runInMobile() {
-    console.log('apply chat mobile');
-    this.positionChat = positionsBox.mobile;
-    console.log(this.positionChat);
-  }
+    this.positionChat = positionsBox.mobile;  }
   @checkBreakPoint(EBreakpoints.gtSm)
   resetChaguesOfMobile() {
     this.positionChat = positionsBox.desktop;
-    console.log('reset');
-    console.log(this.positionChat);
   }
 }
